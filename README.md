@@ -2,7 +2,7 @@
 
 > 百一度v2.0 前端 by react
 
-
+```bash
 npm script
 
 # dev start
@@ -13,3 +13,4 @@ npm run build
 
 # run test
 npm run test
+```
