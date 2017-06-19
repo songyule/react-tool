@@ -1,0 +1,44 @@
+/**
+ * @module 测试页面1
+ */
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { add } from 'actions'
+import { Button } from 'antd';
+import { createBrowserHistory } from 'history'
+
+import styles from './demo.css'
+console.log(styles, 1)
+const history = createBrowserHistory()
+
+/**
+ * Class 测试页面
+ * @extends Component
+ */
+// @CSSModules(styles)
+class Demo extends Component {
+  static propTypes = {
+    text: PropTypes.string
+  }
+
+  handlerClick () {
+    history.push('/tacos')
+  }
+
+  render () {
+    return (
+      <div>
+        <span onClick={this.handlerClick.bind(this)}>go</span>
+        <Button type="primary" onClick={e => {
+          const { dispatch } = this.props
+          dispatch(add(2))
+        }}>加一</Button>
+        <span className={styles.what}>这里是一个页面 </span>
+      </div>
+    )
+  }
+}
+
+export default connect()(Demo)
+
