@@ -1,78 +1,36 @@
 import React from 'react'
+import app from 'pages/App'
 import {
-  // BrowserRouter as Router,
-  Route,
-  Link
+  BrowserRouter as Router,
+  Route
 } from 'react-router-dom'
-// import Demo from '../pages/demo'
-// import Test from '../pages/test'
+import { createBrowserHistory } from 'history'
+import { syncHistoryWithStore } from 'react-router-redux'
+import store from '@/redux/store'
+import { asyncComponent } from './utils'
 
-const Tacos = ({ routes }) => (
-  <div>
-    <h2>Tacos</h2>
-    <ul>
-      <li><Link to="/tacos/bus">Bus</Link></li>
-      <li><Link to="/tacos/cart">Cart</Link></li>
-    </ul>
-  </div>
-)
+const history = syncHistoryWithStore(createBrowserHistory(), store)
 
-const What = (route) => (
-  <div>
-    <h2>What</h2>
-    {console.log(route.match)}
-    <div>{route.match.params.id}</div>
-  </div>
-)
-
-
-const RouteConfigExample = () => (
+const routes =  () => (
+  <Router history={history}>
     <div>
-      <Route exact path='/' component={Tacos} />
-      <Route path='/tacos' component={Test}/>
-      <Route path='/sandwiches' component={Demo}/>
-      <Route path='/what/:id' component={What} />
+      <Route path='/' component={app} />
+      <Route path='/tacos' component={Test}  />
+      <Route path='/sandwiches' component={Demo} />
     </div>
+  </Router>
 )
 
-export default RouteConfigExample
+export default routes
 
-/**
- *
- * 组件懒加载
- *
- * @param {any} 组件引入的func
- * @returns 懒加载的组件
- */
-function asyncComponent(getComponent) {
-  return class AsyncComponent extends React.Component {
-    static Component = null
-    state = { Component: AsyncComponent.Component }
-
-    componentWillMount() {
-      if (!this.state.Component) {
-        getComponent(Component => {
-          AsyncComponent.Component = Component
-          this.setState({ Component })
-        })
-      }
-    }
-    render() {
-      const { Component } = this.state
-      if (Component) {
-        return <Component {...this.props} />
-      }
-      return <div>loading</div>
-    }
-  }
-}
+// 组件懒加载
 
 const Demo = asyncComponent(cb =>
   require.ensure([], require => {
-    cb(require("../pages/demo").default)
+    cb(require("components/demo").default)
   }))
 
 const Test = asyncComponent(cb =>
   require.ensure([], require => {
-    cb(require("../pages/test").default)
+    cb(require("components/test").default)
   }))

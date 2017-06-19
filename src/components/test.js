@@ -27,6 +27,7 @@ class Test extends Component {
 
 const mapStateToProps = state => {
   const { resultNumber } = state
+  console.log(state)
 
   return {
     resultNumber

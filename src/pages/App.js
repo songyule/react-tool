@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import CustomRoute from 'router'
 import '../styles/App.css'
 import { Menu } from 'antd'
-import { Link,   BrowserRouter as Router } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { getHomeData } from 'api/shop'
 
 class App extends Component {
   state = {
@@ -13,15 +13,18 @@ class App extends Component {
       current: e.key
     })
   }
-      // <ul>
-      //   <li><Link to="/tacos">Tacos</Link></li>
-      //   <li><Link to="/sandwiches">Sandwiches</Link></li>
-      // </ul>
+
+  componentDidMount() {
+    getHomeData({
+      body: 123
+    }).then(res => {
+      console.log(res)
+    })
+  }
 
   render() {
     return (
-      <Router>
-      <div className="App">
+        <div className="App">
           <Menu
             onClick={this.handleClick}
             selectedKeys={[this.state.current]}
@@ -37,9 +40,7 @@ class App extends Component {
               <Link to="/what/123">what/123</Link>
             </Menu.Item>
           </Menu>
-          <CustomRoute/>
-      </div>
-      </Router>
+        </div>
     )
   }
 }

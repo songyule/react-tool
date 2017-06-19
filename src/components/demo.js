@@ -6,11 +6,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { add } from 'actions'
 import { Button } from 'antd';
-import { createBrowserHistory } from 'history'
 
 import styles from './demo.css'
-console.log(styles, 1)
-const history = createBrowserHistory()
+
+// import { createBrowserHistory } from 'history'
+// const history = createBrowserHistory()
 
 /**
  * Class 测试页面
@@ -23,7 +23,7 @@ class Demo extends Component {
   }
 
   handlerClick () {
-    history.push('/tacos')
+    this.props.history.push('/tacos')
   }
 
   render () {

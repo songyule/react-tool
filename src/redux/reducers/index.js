@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import * as constants from 'constants'
+import { routerReducer } from 'react-router-redux'
 
 const resultNumber = (state = 1, action) => {
   switch (action.type) {
@@ -11,7 +12,9 @@ const resultNumber = (state = 1, action) => {
 }
 
 const rootReducer = combineReducers({
-  resultNumber
+  resultNumber,
+  // 路由
+  routing: routerReducer
 })
 
 export default rootReducer
