@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 
 /**
  *
@@ -7,25 +7,35 @@ import React from 'react'
  * @param {any} 组件引入的func
  * @returns 懒加载的组件
  */
-export function asyncComponent(getComponent) {
-  return class AsyncComponent extends React.Component {
-    static Component = null
-    state = { Component: AsyncComponent.Component }
+
+export const asyncComponent = loadComponent => (
+  class AsyncComponent extends PureComponent {
+    state = {
+      Component: null,
+    }
 
     componentWillMount() {
-      if (!this.state.Component) {
-        getComponent(Component => {
-          AsyncComponent.Component = Component
+      if (this.hasLoadedComponent()) {
+        return
+      }
+      loadComponent()
+        .then(module => module.default)
+        .then((Component) => {
           this.setState({ Component })
         })
-      }
+        .catch((err) => {
+          console.error(`Cannot load component in <AsyncComponent />`)
+          throw err
+        })
     }
+
+    hasLoadedComponent() {
+      return this.state.Component !== null
+    }
+
     render() {
       const { Component } = this.state
-      if (Component) {
-        return <Component {...this.props} />
-      }
-      return <div>loading</div>
+      return (Component) ? <Component {...this.props} /> : null
     }
   }
-}
+)

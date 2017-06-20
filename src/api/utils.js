@@ -18,7 +18,7 @@ const errorMessages = (res) => `${res.status} ${res.statusText}`
  */
 function check401(res) {
   // 登陆界面不需要做401校验
-  if (res.status === 401 && !res.url.match('auth')) {
+  if (res.status === 401) {
     // Modal.error({
     //   title: "登陆验证过期",
     //   content: "您的登陆验证已过期，请重新登陆",
@@ -170,6 +170,9 @@ function fetchData (url, opts) {
     .then(check404)
     .then(checkStatus)
     .then(jsonParse)
+    .catch(err => {
+      console.log('%c' + err, 'color: red');
+    })
 }
 
 /**

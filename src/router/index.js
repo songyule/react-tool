@@ -15,7 +15,7 @@ const routes =  () => (
   <Router history={history}>
     <div>
       <Route path='/' component={app} />
-      <Route path='/tacos' component={Test}  />
+      <Route path='/tacos' component={Test}/>
       <Route path='/sandwiches' component={Demo} />
     </div>
   </Router>
@@ -25,12 +25,5 @@ export default routes
 
 // 组件懒加载
 
-const Demo = asyncComponent(cb =>
-  require.ensure([], require => {
-    cb(require("components/demo").default)
-  }))
-
-const Test = asyncComponent(cb =>
-  require.ensure([], require => {
-    cb(require("components/test").default)
-  }))
+const Demo = asyncComponent(() => import ('components/demo'))
+const Test = asyncComponent(() => import ('components/test'))

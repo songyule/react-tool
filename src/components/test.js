@@ -5,10 +5,17 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import styles from './test.css'
+import { Link, Route } from 'react-router-dom'
+import Item01 from './item1'
+import Item02 from './item2'
+
 /**
  * Class 测试页面2
  * @extends Component
  */
+@connect(
+  state => ({ resultNumber: state.resultNumber })
+)
 class Test extends PureComponent {
   static propTypes = {
     // openLoginModal: PropTypes.func
@@ -19,20 +26,17 @@ class Test extends PureComponent {
     return (
       <div>
         <span className={styles.ly}>测试测试</span>
-        <span>{resultNumber}</span>
+        <Link to="/tacos/item01">item1</Link>
+        <Link to="/tacos/item02">item2</Link>
+        <p>{resultNumber}</p>
+        <Route path='/tacos/item01' component={Item01} />
+        <Route path='/tacos/item02' component={Item02} />
       </div>
     )
   }
 }
 
-const mapStateToProps = state => {
-  const { resultNumber } = state
-  console.log(state)
 
-  return {
-    resultNumber
-  }
-}
 
-export default connect(mapStateToProps)(Test)
+export default Test
 

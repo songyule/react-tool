@@ -14,6 +14,7 @@ import styles from './demo.css'
  * @extends Component
  */
 // @CSSModules(styles)
+@connect()
 class Demo extends PureComponent {
   static propTypes = {
     text: PropTypes.string
@@ -37,5 +38,5 @@ class Demo extends PureComponent {
   }
 }
 
-export default connect()(Demo)
+export default Demo
 
