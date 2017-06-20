@@ -2,22 +2,19 @@
  * @module 测试页面1
  */
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { add } from 'actions'
 import { Button } from 'antd';
 
 import styles from './demo.css'
 
-// import { createBrowserHistory } from 'history'
-// const history = createBrowserHistory()
-
 /**
  * Class 测试页面
  * @extends Component
  */
 // @CSSModules(styles)
-class Demo extends Component {
+class Demo extends PureComponent {
   static propTypes = {
     text: PropTypes.string
   }

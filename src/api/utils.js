@@ -1,15 +1,21 @@
-import fetch from 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch'
 import { API_ROOT } from './config'
 import {
   message,
   // Modal
 } from 'antd'
-import StandardError from 'standard-error';
+import StandardError from 'standard-error'
 
 require('es6-promise').polyfill()
 
-const errorMessages = (res) => `${res.status} ${res.statusText}`;
+const errorMessages = (res) => `${res.status} ${res.statusText}`
 
+/**
+ * 请求401
+ *
+ * @param {any} res
+ * @returns promise
+ */
 function check401(res) {
   // 登陆界面不需要做401校验
   if (res.status === 401 && !res.url.match('auth')) {
@@ -22,115 +28,205 @@ function check401(res) {
       // }
     // })
 
-    return Promise.reject(errorMessages(res));
-
+    return Promise.reject(errorMessages(res))
   }
-  return res;
+  return res
 }
 
+/**
+ * 请求404
+ *
+ * @param {any} res
+ * @returns promise
+ */
 function check404(res) {
   if (res.status === 404) {
-    return Promise.reject(errorMessages(res));
+    return Promise.reject(errorMessages(res))
   }
-  return res;
+  return res
 }
 
+/**
+ * 正常请求
+ *
+ * @param {any} response
+ * @returns promise
+ */
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
-    return response;
+    return response
   } else {
     // 这里补充更多错误参数
     return response.text().then(errorMsg => {
       return new StandardError({
         statusCode: response.status,
         msg: errorMsg
-      });
-    }).then(err => { throw err; });
+      })
+    }).then(err => { throw err })
   }
 }
 
+/**
+ * json化
+ *
+ * @param {any} res
+ * @returns Promise
+ */
 function jsonParse(res) {
-  return res.json();
+  return res.json()
 }
 
+/**
+ * 设置param
+ *
+ * @param {any} keys
+ * @param {any} value
+ * @param {any} keyPostfix
+ * @returns
+ */
 function setUriParam(keys, value, keyPostfix) {
-  let keyStr = keys[0];
+  let keyStr = keys[0]
 
   keys.slice(1).forEach((key) => {
-    keyStr += `[${key}]`;
-  });
+    keyStr += `[${key}]`
+  })
 
   if (keyPostfix) {
-    keyStr += keyPostfix;
+    keyStr += keyPostfix
   }
 
-  return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`;
+  return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
 }
 
+/**
+ *
+ * 获取param
+ *
+ * @param {any} keys
+ * @param {any} object
+ * @returns
+ */
 function getUriParam(keys, object) {
-  const array = [];
+  const array = []
 
   if (object instanceof(Array)) {
     object.forEach((value) => {
-      array.push(setUriParam(keys, value, '[]'));
-    });
+      array.push(setUriParam(keys, value, '[]'))
+    })
   } else if (object instanceof(Object)) {
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
-        const value = object[key];
+        const value = object[key]
 
-        array.push(getUriParam(keys.concat(key), value));
+        array.push(getUriParam(keys.concat(key), value))
       }
     }
   } else {
     if (object !== undefined) {
-      array.push(setUriParam(keys, object));
+      array.push(setUriParam(keys, object))
     }
   }
 
-  return array.join('&');
+  return array.join('&')
 }
 
+/**
+ * params 转 String
+ *
+ * @param {object} params
+ * @returns String
+ */
 function toQueryString(object) {
-  const array = [];
+  const array = []
 
   for (const key in object) {
     if (object.hasOwnProperty(key)) {
-      const str = getUriParam([key], object[key]);
+      const str = getUriParam([key], object[key])
 
       if (str !== '') {
-        array.push(str);
+        array.push(str)
       }
     }
   }
 
-  return array.join('&');
+  return array.join('&')
 }
 
+/**
+ * 获取数据 && 拦截
+ *
+ * @param {any} url
+ * @param {any} opts
+ * @returns
+ */
+function fetchData (url, opts) {
+  opts.headers = {
+    ...opts.headers
+    // 'Authorization': cookie.get('access_token') || ''
+  }
+
+  return fetch(url, opts)
+    .then(check401)
+    .then(check404)
+    .then(checkStatus)
+    .then(jsonParse)
+}
+
+/**
+ * fetch请求
+ *
+ * @class cFetch
+ */
 class cFetch {
+
+  /**
+   * get请求
+   *
+   * @static
+   * @param {any} url
+   * @param {any} options
+   * @returns promise
+   * @memberof cFetch
+   */
   static get (url, options) {
-    let mergeUrl = API_ROOT + url;
+    let mergeUrl = API_ROOT + url
     const defaultOptions = {
       method: 'GET'
-    };
+    }
 
-    const opts = Object.assign({}, defaultOptions, {...options});
+    const opts = Object.assign({}, defaultOptions, {...options})
 
     // add query params to url when method is GET
     if (opts && opts.method === "GET" && opts['params']) {
-      mergeUrl = mergeUrl + '?' + toQueryString(opts['params']);
+      mergeUrl = mergeUrl + '?' + toQueryString(opts['params'])
     }
 
-    opts.headers = {
-      ...opts.headers
-      // 'Authorization': cookie.get('access_token') || ''
-    };
+    return fetchData(mergeUrl, opts)
+  }
 
-    return fetch(mergeUrl, opts)
-      .then(check401)
-      .then(check404)
-      .then(checkStatus)
-      .then(jsonParse)
+  /**
+   * post 请求
+   *
+   * @static
+   * @param {any} url
+   * @param {any} options
+   * @returns promise
+   * @memberof cFetch
+   */
+  static post (url, options) {
+    let mergeUrl = API_ROOT + url
+    const defaultOptions = {
+      method: 'POST'
+    }
+
+    const opts = Object.assign({}, defaultOptions, {...options})
+
+    // add query params to url when method is GET
+    if (opts && opts.method === "POST" && opts['body']) {
+      opts['body'] = JSON.stringify(opts['body'])
+    }
+
+    return fetchData(mergeUrl, opts)
   }
 }
 
@@ -138,9 +234,8 @@ class cFetch {
 window.addEventListener("unhandledrejection", function(err) {
   const ex = err.reason
   if (ex.constructor && (ex.constructor === StandardError || ex.msg)) {
-    console.log(err)
     message.error(ex.msg, 2.5)
   }
-});
+})
 
 export default cFetch

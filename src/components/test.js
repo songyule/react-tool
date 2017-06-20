@@ -2,14 +2,14 @@
  * @module 测试页面2
  */
 // import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import styles from './test.css'
 /**
  * Class 测试页面2
  * @extends Component
  */
-class Test extends Component {
+class Test extends PureComponent {
   static propTypes = {
     // openLoginModal: PropTypes.func
   }
