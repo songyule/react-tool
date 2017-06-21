@@ -1,0 +1,11 @@
+.container {
+  margin: 0 48px;
+  background: #fff;
+  border-radius: 4px;
+  padding: 24px 0 0;
+  margin-bottom: 24px;
+
+  &__content {
+    padding: 0 40px 0;
+  }
+}

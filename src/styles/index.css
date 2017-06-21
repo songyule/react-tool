@@ -1,12 +1,6 @@
 /*$blue: #056ef0;*/
-$blue: #eee;
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background: $blue;
+:global body {
+  background: #ececec!important;
 }
-
 /*@import '~antd/dist/antd.css'*/
 /*@import './App.css'*/

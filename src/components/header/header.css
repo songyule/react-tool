@@ -1,0 +1,18 @@
+.header {
+  width: 100%;
+  background: #fff;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  &__menu {
+    height: 100%;
+    line-height: 78px;
+    border-bottom: none;
+  }
+
+  &__logo {
+    line-height: 80px;
+  }
+}

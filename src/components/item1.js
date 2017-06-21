@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react'
  * Class 测试页面2
  * @extends Component
  */
-class Test extends PureComponent {
+export default class extends PureComponent {
   static propTypes = {
     // openLoginModal: PropTypes.func
   }
@@ -20,5 +20,3 @@ class Test extends PureComponent {
     )
   }
 }
-
-export default Test
