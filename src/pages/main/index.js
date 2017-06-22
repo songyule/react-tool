@@ -1,11 +1,12 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import style from './main.css'
 import { Menu, Row, Col } from 'antd'
 import { Link, Route } from 'react-router-dom'
 // import { getHomeData } from 'actions'
 import { asyncComponent } from 'router/utils'
+// import Ueditor from 'components/ueditor/index'
 
-export default class extends PureComponent {
+export default class extends Component {
   state = {
     current: 'mail'
   }
@@ -27,7 +28,7 @@ export default class extends PureComponent {
     return (
       <div className={style.container}>
         <Row>
-          <Col lg={{ span: 4 }} md={{ span: 6 }}>
+          <Col lg={{ span: 4 }} md={{ span: 4 }} sm={{ span: 0 }} xs={{ span: 0 }}>
             <Menu
               className={style.header__menu}
               onClick={this.handleClick}
@@ -40,14 +41,15 @@ export default class extends PureComponent {
                 <Link to="/main/sandwiches">Sandwiches</Link>
               </Menu.Item>
               <Menu.Item key="what">
-                <Link to="/main/what/123">what/123</Link>
+                <Link to="/main/what">what/123</Link>
               </Menu.Item>
             </Menu>
           </Col>
-          <Col lg={{ span: 20 }} md={{ span: 18 }}>
+          <Col lg={{ span: 20 }} md={{ span: 20 }} sm={{ span: 24 }} xs={{ span: 24 }}>
             <div className={style.container__content}>
               <Route path='/main/tacos' component={What}/>
               <Route path='/main/sandwiches' component={Demo} />
+              <Route path='/main/what' component={Ueditor}/>
             </div>
           </Col>
         </Row>
@@ -60,3 +62,4 @@ export default class extends PureComponent {
 
 const Demo = asyncComponent(() => import ('components/demo/index'))
 const What = asyncComponent(() => import ('components/what/index'))
+const Ueditor = asyncComponent(() => import ('components/ueditor/index'))
