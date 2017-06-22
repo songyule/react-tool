@@ -49,12 +49,12 @@ export default class extends Component {
             <div className={style.container__content}>
               <Route path='/main/tacos' component={What}/>
               <Route path='/main/sandwiches' component={Demo} />
-              <Route path='/main/what' component={Ueditor}/>
             </div>
           </Col>
         </Row>
       </div>
     )
+              // <Route path='/main/what' component={Ueditor}/>
   }
 }
 
@@ -62,4 +62,4 @@ export default class extends Component {
 
 const Demo = asyncComponent(() => import ('components/demo/index'))
 const What = asyncComponent(() => import ('components/what/index'))
-const Ueditor = asyncComponent(() => import ('components/ueditor/index'))
+// const Ueditor = asyncComponent(() => import ('components/ueditor/index'))
