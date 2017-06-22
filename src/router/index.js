@@ -3,6 +3,8 @@ import React from 'react'
 import Header from 'components/header'
 import main from 'pages/main/index'
 import notFound from 'pages/404/index'
+import Login from 'pages/login/index'
+import Goods from 'pages/commodity/index'
 
 import {
   BrowserRouter as Router,
@@ -21,7 +23,9 @@ const routes =  () => (
     <div>
       <Header></Header>
       <Switch>
+        <Route path='/login' component={Login} />
         <Route path='/main' component={main} />
+        <Route path='/goods' component={Goods} />
         <Route path='*' component={notFound} />
       </Switch>
     </div>

@@ -161,9 +161,11 @@ function toQueryString(object) {
  */
 function fetchData (url, opts) {
   opts.headers = {
+    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImQyMDEzMTNiMWE3ZTQwMjY4NDBlNTVkMDUwYzhiZDIwIiwiZXhwIjoxNTAwNzE0ODExfQ.8QbK03MFByCTsUI0sHl-bJ2BqMCpj44HKRvzGVpnO48',
     ...opts.headers
     // 'Authorization': cookie.get('access_token') || ''
   }
+  console.log(opts)
 
   return fetch(url, opts)
     .then(check401)
