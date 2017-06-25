@@ -10,6 +10,7 @@
     "isomorphic-fetch": "^2.2.1",
     "rc-queue-anim": "^1.0.5",
     "rc-tween-one": "^1.2.7",
+    "lazyimage": "^2.1.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.5",
