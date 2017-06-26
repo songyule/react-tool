@@ -1,0 +1,22 @@
+.login {
+
+  &__box {
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 30px;
+  }
+  &__title {
+    margin-bottom: 8px;
+  }
+  &__code-item {
+
+    :global(.ant-form-item-control)  {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  &__code-btn {
+    margin-left: 8px;
+  }
+}

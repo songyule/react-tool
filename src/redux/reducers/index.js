@@ -11,8 +11,18 @@ const resultNumber = (state = 1, action) => {
   }
 }
 
+const userLogin = (state = {}, action) => {
+  switch (action.type) {
+    case constants.LOGIN_SUCCESS:
+      return action.user
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   resultNumber,
+  userLogin,
   // 路由
   routing: routerReducer
 })

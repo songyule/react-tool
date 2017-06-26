@@ -5,6 +5,7 @@ import {
   // Modal
 } from 'antd'
 import StandardError from 'standard-error'
+import store from '../redux/store/index'
 
 require('es6-promise').polyfill()
 
@@ -161,9 +162,11 @@ function toQueryString(object) {
  */
 function fetchData (url, opts) {
   opts.headers = {
-    ...opts.headers
+    ...opts.headers,
+    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImQyMDEzMTNiMWE3ZTQwMjY4NDBlNTVkMDUwYzhiZDIwIiwiZXhwIjoxNTAwNzE0ODExfQ.8QbK03MFByCTsUI0sHl-bJ2BqMCpj44HKRvzGVpnO48'
     // 'Authorization': cookie.get('access_token') || ''
   }
+  if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
   return fetch(url, opts)
     .then(check401)
