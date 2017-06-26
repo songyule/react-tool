@@ -44,7 +44,7 @@ class LoginForm extends PureComponent {
   }
 
   render () {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldError } = this.props.form
     return (
       <div className="page_login">
         <div className={style.login__box}>
@@ -67,7 +67,7 @@ class LoginForm extends PureComponent {
               })(
                 <Input className={style['login__code-input']} onChange={this.changeCode} placeholder="验证码"></Input>
               )}
-              <Button className={style['login__code-btn']} onClick={this.clickCode}>获取验证码</Button>
+              <Button className={style['login__code-btn']} onClick={this.clickCode} disabled={ getFieldError('mobile') }>获取验证码</Button>
             </Form.Item>
             <Button onClick={this.handleLogin}>登录</Button>
           </Form>
