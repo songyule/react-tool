@@ -5,8 +5,11 @@
   "dependencies": {
     "antd": "^2.10.2",
     "babel-plugin-import": "^1.2.1",
+    "enquire.js": "^2.1.6",
     "es6-promise": "^4.1.0",
     "isomorphic-fetch": "^2.2.1",
+    "rc-queue-anim": "^1.0.5",
+    "rc-tween-one": "^1.2.7",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.5",
@@ -52,6 +55,7 @@
     "postcss": "^6.0.1",
     "postcss-flexbugs-fixes": "3.0.0",
     "postcss-import": "^10.0.0",
+    "postcss-load-config": "^1.2.0",
     "postcss-loader": "^2.0.5",
     "postcss-mixins": "^6.0.0",
     "postcss-nested": "^2.0.2",
@@ -68,6 +72,7 @@
     "webpack": "2.6.1",
     "webpack-dev-server": "2.4.5",
     "webpack-manifest-plugin": "1.1.0",
+    "webpack-merge": "^4.1.0",
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {

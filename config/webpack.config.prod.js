@@ -1,27 +1,18 @@
 'use strict';
 
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const eslintFormatter = require('react-dev-utils/eslintFormatter');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+// // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
-const AUTOPREFIXER_BROWSERS = [
-  'Android 2.3',
-  'Android >= 4',
-  'Chrome >= 35',
-  'Firefox >= 31',
-  'Explorer >= 9',
-  'iOS >= 7',
-  'Opera >= 12',
-  'Safari >= 7.1',
-]
+
+var merge = require('webpack-merge')
+var baseWebpackConfig = require('./webpack.config.base')
+
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
 const publicPath = paths.servedPath;
@@ -56,7 +47,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
-module.exports = {
+module.exports = merge(baseWebpackConfig, {
   // Don't attempt to continue if there are any errors.
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
@@ -78,113 +69,8 @@ module.exports = {
     devtoolModuleFilenameTemplate: info =>
       path.relative(paths.appSrc, info.absoluteResourcePath),
   },
-  resolve: {
-    alias: {
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web',
-      '@': path.resolve(__dirname, '../src'),
-      'api': path.resolve(__dirname, '../src/api'),
-      'actions': path.resolve(__dirname, '../src/redux/actions'),
-      'utils': path.resolve(__dirname, '../src/utils'),
-      'router': path.resolve(__dirname, '../src/router'),
-      'mock': path.resolve(__dirname, '../src/mock'),
-      'constants': path.resolve(__dirname, '../src/redux/constants'),
-      'components': path.resolve(__dirname, '../src/components'),
-      'pages': path.resolve(__dirname, '../src/pages'),
-      'styles': path.resolve(__dirname, '../src/styles'),
-      'reducers': path.resolve(__dirname, '../src/redux/reducers')
-    },
-    // This allows you to set a fallback for where Webpack should look for modules.
-    // We placed these paths second because we want `node_modules` to "win"
-    // if there are any conflicts. This matches Node resolution mechanism.
-    // https://github.com/facebookincubator/create-react-app/issues/253
-    modules: ['node_modules', paths.appNodeModules].concat(
-      // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
-    ),
-    // These are the reasonable defaults supported by the Node ecosystem.
-    // We also include JSX as a common component filename extension to support
-    // some tools, although we do not recommend using it, see:
-    // https://github.com/facebookincubator/create-react-app/issues/290
-    extensions: ['.js', '.json', '.jsx'],
-    plugins: [
-      // Prevents users from importing files from outside of src/ (or node_modules/).
-      // This often causes confusion because we only process files within src/ with babel.
-      // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
-      // please link the files into your node_modules/ and let module-resolution kick in.
-      // Make sure your source files are compiled, as they will not be processed in any way.
-      new ModuleScopePlugin(paths.appSrc),
-    ],
-  },
   module: {
-    strictExportPresence: true,
     rules: [
-      // TODO: Disable require.ensure as it's not a standard language feature.
-      // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
-      // { parser: { requireEnsure: false } },
-
-      // First, run the linter.
-      // It's important to do this before Babel processes the JS.
-      {
-        test: /\.(js|jsx)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: eslintFormatter,
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-      },
-      // ** ADDING/UPDATING LOADERS **
-      // The "file" loader handles all assets unless explicitly excluded.
-      // The `exclude` list *must* be updated with every change to loader extensions.
-      // When adding a new loader, you must add its `test`
-      // as a new entry in the `exclude` list in the "file" loader.
-
-      // "file" loader makes sure those assets end up in the `build` folder.
-      // When you `import` an asset, you get its filename.
-      {
-        exclude: [
-          /\.html$/,
-          /\.(js|jsx)$/,
-          /\.css$/,
-          /\.json$/,
-          /\.bmp$/,
-          /\.gif$/,
-          /\.jpe?g$/,
-          /\.png$/,
-        ],
-        loader: require.resolve('file-loader'),
-        options: {
-          name: 'static/media/[name].[hash:8].[ext]',
-        },
-      },
-      // "url" loader works just like "file" loader but it also embeds
-      // assets smaller than specified size as data URLs to avoid requests.
-      {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-        loader: require.resolve('url-loader'),
-        options: {
-          limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]',
-        },
-      },
-      // Process JS with Babel.
-      {
-        test: /\.(js|jsx)$/,
-        include: paths.appSrc,
-        loader: require.resolve('babel-loader'),
-        options: {
-          plugins: [
-            ['import', { libraryName: 'antd', style: 'css' }]
-          ],
-          cacheDirectory: true,
-        },
-      },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.
       // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -217,22 +103,7 @@ module.exports = {
                     sourceMap: true,
                   },
                 },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-                    plugins: (bundler) => [
-                      require('postcss-import')({ addDependencyTo: bundler }),
-                      require('postcss-nested'),
-                      require('postcss-mixins')(),
-                      require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        browsers: AUTOPREFIXER_BROWSERS,
-                        flexbox: 'no-2009',
-                      }),
-                    ],
-                  },
-                },
+                'postcss-loader',
               ],
             },
             extractTextPluginOptions
@@ -245,6 +116,7 @@ module.exports = {
         include: [
           /node_modules\/.*antd\/.*/,
           /node_modules\\.*antd\\.*/,
+          path.resolve(__dirname, '../public/ueditor'),
         ],
         loader: ExtractTextPlugin.extract(
           Object.assign(
@@ -260,22 +132,7 @@ module.exports = {
                     sourceMap: true,
                   },
                 },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-                    plugins: (bundler) => [
-                      require('postcss-import')({ addDependencyTo: bundler }),
-                      require('postcss-nested'),
-                      require('postcss-mixins')(),
-                      require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        browsers: AUTOPREFIXER_BROWSERS,
-                        flexbox: 'no-2009',
-                      }),
-                    ],
-                  },
-                },
+                'postcss-loader',
               ],
             },
             extractTextPluginOptions
@@ -293,7 +150,7 @@ module.exports = {
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     // In production, it will be an empty string unless you specify "homepage"
     // in `package.json`, in which case it will be the pathname of that URL.
-    new InterpolateHtmlPlugin(env.raw),
+    // new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
@@ -315,7 +172,7 @@ module.exports = {
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
-    new webpack.DefinePlugin(env.stringified),
+    // new webpack.DefinePlugin(env.stringified),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -369,18 +226,5 @@ module.exports = {
       // https://github.com/facebookincubator/create-react-app/issues/2235
       stripPrefix: paths.appBuild.replace(/\\/g, '/') + '/',
     }),
-    // Moment.js is an extremely popular library that bundles large locale files
-    // by default due to how Webpack interprets its code. This is a practical
-    // solution that requires the user to opt into importing specific locales.
-    // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
-    // You can remove this if you don't use Moment.js:
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-  },
-};
+});
