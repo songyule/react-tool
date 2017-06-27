@@ -26,7 +26,7 @@ REMOTE_USER = 'fly'
 REMOTE_DIR = '/home/{}/{}'.format(REMOTE_USER, APP_NAME)
 LOCAL_DIR = os.path.dirname(os.path.realpath(__file__))
 VENV_DIR = '{}/venv'.format(REMOTE_DIR)
-DIST_DIR = '{}/{}'.format(LOCAL_DIR, 'dist')
+DIST_DIR = '{}/{}'.format(LOCAL_DIR, 'build')
 
 env.use_ssh_config = True
 env.keepalive = 60
