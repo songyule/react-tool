@@ -201,7 +201,7 @@ class CommodityList extends PureComponent {
     })
     console.log(arrayToTree(classes)[0].children)
   }
-  
+
   pageChange = (value) => {
     this.setState({
       spu: {...this.state.spu, currentPage: value }

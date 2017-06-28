@@ -82,6 +82,23 @@ export function format (time, formatStr) {
   })
 }
 
+export function generateAttrTree (data, pid) {
+  let result = []
+  let temp = []
+  for (var i = 0; i < data.length; i++) {
+    if ((!data[i].parant_id && !pid) || data[i].parent_id === pid) {
+      const obj = { name_cn: data[i].name_cn, id: data[i].id, rgb: data[i].value_str }
+      temp = generateAttrTree(data, data[i].id)
+
+      if (temp.length > 0) {
+        obj.children = temp
+      }
+      result.push(obj)
+    }
+  }
+  return result
+}
+
 /**
  * 对象转成搜索参数
  * @param  {[type]} params [description]
