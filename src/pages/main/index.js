@@ -1,14 +1,21 @@
 import React, { Component } from 'react'
 import style from './main.css'
-import { Menu, Row, Col } from 'antd'
+import { Menu, Icon, Tooltip } from 'antd'
 import { Link, Route } from 'react-router-dom'
-// import { getHomeData } from 'actions'
 import { asyncComponent } from 'router/utils'
-// import Ueditor from 'components/ueditor/index'
+
+import cs from 'classnames'//引入classnames依赖库
+
+const SubMenu = Menu.SubMenu;
 
 export default class extends Component {
-  state = {
-    current: 'mail'
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      current: 'mail',
+      isFold: false
+    }
   }
   handleClick = (e) => {
     this.setState({
@@ -16,42 +23,101 @@ export default class extends Component {
     })
   }
 
+  controlMenu = (e) => {
+    this.setState({
+      isFold: !this.state.isFold
+    })
+  }
+
   async componentDidMount() {
-    // getHomeData({
-    //   body: 123
-    // }).then(res => {
-    //   console.log(res)
-    // })
   }
 
   render() {
+    const menuStyle = cs({
+      [style.container__menu]: true,
+      [style.container__menu__fold]: this.state.isFold
+    })
+
+    const menuArr = [
+      {
+        key: 'key01',
+        title: 'navigator one',
+        children: [
+          {
+            key: 'chil01',
+            title: 'Option1',
+            router: '/main/option1'
+          },
+          {
+            key: 'chil02',
+            title: 'Option2',
+            router: '/main/tacos'
+          },
+          {
+            key: 'chil03',
+            title: 'Option3',
+            router: '/main/option3'
+          },
+          {
+            key: 'chil04',
+            title: 'Option4',
+            router: '/main/option4'
+          }
+        ]
+      }
+    ]
+
     return (
       <div className={style.container}>
-        <Row>
-          <Col lg={{ span: 4 }} md={{ span: 4 }} sm={{ span: 0 }} xs={{ span: 0 }}>
+          <div className={menuStyle}>
+            <div className={style.menu__control} onClick={this.controlMenu}><Icon type="bars"></Icon></div>
             <Menu
-              className={style.header__menu}
+              theme={'dark'}
+              mode="inline"
               onClick={this.handleClick}
               selectedKeys={[this.state.current]}
             >
-              <Menu.Item key="mail">
-                <Link to="/main/tacos">tacos</Link>
-              </Menu.Item>
-              <Menu.Item key="app">
-                <Link to="/main/sandwiches">Sandwiches</Link>
-              </Menu.Item>
-              <Menu.Item key="what">
-                <Link to="/main/what">what/123</Link>
-              </Menu.Item>
+              {
+                menuArr.map(sub => (
+                    <SubMenu key={sub.key} title={
+                      this.state.isFold ? (
+                        <Tooltip placement="right" title={<span>{sub.title}</span>}>
+                          <div>
+                            <Icon type="caret-right" /><span>{sub.title}</span>
+                          </div>
+                        </Tooltip>
+                      ) : (
+                        <span><Icon type="caret-right" /><span>{sub.title}</span></span>
+                      )
+                    }>
+                      {
+                        sub.children && sub.children.map(item => (
+                          <Menu.Item key={item.key}>
+                            {
+                              this.state.isFold ?
+                              (
+                                <Tooltip placement="right" title={<span>{item.title}</span>}>
+                                  <Link to={item.router}>
+                                    <Icon type="minus-square" /><span>{item.title}</span>
+                                  </Link>
+                                </Tooltip>
+                              ) :
+                              (<Link to={item.router}><div><Icon type="minus-square" /> <span>{item.title}</span></div></Link>)
+                            }
+                          </Menu.Item>
+                        ))
+                      }
+                    </SubMenu>
+                  )
+                )
+              }
             </Menu>
-          </Col>
-          <Col lg={{ span: 20 }} md={{ span: 20 }} sm={{ span: 24 }} xs={{ span: 24 }}>
+
+          </div>
             <div className={style.container__content}>
               <Route path='/main/tacos' component={What}/>
               <Route path='/main/sandwiches' component={Demo} />
             </div>
-          </Col>
-        </Row>
       </div>
     )
               // <Route path='/main/what' component={Ueditor}/>
