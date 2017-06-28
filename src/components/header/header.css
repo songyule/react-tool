@@ -1,18 +1,20 @@
 .header {
   width: 100%;
-  background: #fff;
-  height: 80px;
+  background: #373d41;
+  height: 50px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
-
-  &__menu {
-    height: 100%;
-    line-height: 78px;
-    border-bottom: none;
-  }
 
   &__logo {
-    line-height: 80px;
+    width: 40px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 50px;
+
+    img {
+      height: 30px;
+    }
   }
 }
