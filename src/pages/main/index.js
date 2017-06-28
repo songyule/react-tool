@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import style from './main.css'
+import Header from 'components/header'
 import { Menu, Icon, Tooltip } from 'antd'
 import { Link, Route } from 'react-router-dom'
 import { asyncComponent } from 'router/utils'
@@ -16,11 +17,6 @@ export default class extends Component {
       current: 'mail',
       isFold: false
     }
-  }
-  handleClick = (e) => {
-    this.setState({
-      current: e.key
-    })
   }
 
   controlMenu = (e) => {
@@ -68,59 +64,59 @@ export default class extends Component {
     ]
 
     return (
-      <div className={style.container}>
-          <div className={menuStyle}>
-            <div className={style.menu__control} onClick={this.controlMenu}><Icon type="bars"></Icon></div>
-            <Menu
-              theme={'dark'}
-              mode="inline"
-              onClick={this.handleClick}
-              selectedKeys={[this.state.current]}
-            >
-              {
-                menuArr.map(sub => (
-                    <SubMenu key={sub.key} title={
-                      this.state.isFold ? (
-                        <Tooltip placement="right" title={<span>{sub.title}</span>}>
-                          <div>
-                            <Icon type="caret-right" /><span>{sub.title}</span>
-                          </div>
-                        </Tooltip>
-                      ) : (
-                        <span><Icon type="caret-right" /><span>{sub.title}</span></span>
-                      )
-                    }>
-                      {
-                        sub.children && sub.children.map(item => (
-                          <Menu.Item key={item.key}>
-                            {
-                              this.state.isFold ?
-                              (
-                                <Tooltip placement="right" title={<span>{item.title}</span>}>
-                                  <Link to={item.router}>
-                                    <Icon type="minus-square" /><span>{item.title}</span>
-                                  </Link>
-                                </Tooltip>
-                              ) :
-                              (<Link to={item.router}><div><Icon type="minus-square" /> <span>{item.title}</span></div></Link>)
-                            }
-                          </Menu.Item>
-                        ))
-                      }
-                    </SubMenu>
+      <div style={{ height: '100%' }}>
+        <Header></Header>
+        <div className={style.container}>
+            <div className={menuStyle}>
+              <div className={style.menu__control} onClick={this.controlMenu}><Icon type="bars"></Icon></div>
+              <Menu
+                theme={'dark'}
+                mode="inline"
+                selectedKeys={[this.state.current]}
+              >
+                {
+                  menuArr.map(sub => (
+                      <SubMenu key={sub.key} title={
+                        this.state.isFold ? (
+                          <Tooltip placement="right" title={<span>{sub.title}</span>}>
+                            <div>
+                              <Icon type="caret-right" /><span>{sub.title}</span>
+                            </div>
+                          </Tooltip>
+                        ) : (
+                          <span><Icon type="caret-right" /><span>{sub.title}</span></span>
+                        )
+                      }>
+                        {
+                          sub.children && sub.children.map(item => (
+                            <Menu.Item key={item.key}>
+                              {
+                                this.state.isFold ?
+                                (
+                                  <Tooltip placement="right" title={<span>{item.title}</span>}>
+                                    <Link to={item.router}>
+                                      <Icon type="minus-square" /><span>{item.title}</span>
+                                    </Link>
+                                  </Tooltip>
+                                ) :
+                                (<Link to={item.router}><div><Icon type="minus-square" /> <span>{item.title}</span></div></Link>)
+                              }
+                            </Menu.Item>
+                          ))
+                        }
+                      </SubMenu>
+                    )
                   )
-                )
-              }
-            </Menu>
-
-          </div>
+                }
+              </Menu>
+            </div>
             <div className={style.container__content}>
               <Route path='/main/tacos' component={What}/>
               <Route path='/main/sandwiches' component={Demo} />
             </div>
+        </div>
       </div>
     )
-              // <Route path='/main/what' component={Ueditor}/>
   }
 }
 
