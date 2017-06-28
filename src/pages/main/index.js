@@ -18,6 +18,11 @@ export default class extends Component {
       isFold: false
     }
   }
+  handleClick = (e) => {
+    this.setState({
+      current: e.key
+    })
+  }
 
   controlMenu = (e) => {
     this.setState({
@@ -72,6 +77,7 @@ export default class extends Component {
               <Menu
                 theme={'dark'}
                 mode="inline"
+                onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
               >
                 {
