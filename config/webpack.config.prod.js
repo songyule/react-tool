@@ -114,8 +114,7 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.css$/,
         include: [
-          /node_modules\/.*antd\/.*/,
-          /node_modules\\.*antd\\.*/,
+          path.resolve(__dirname, '../node_modules'),
           path.resolve(__dirname, '../public/ueditor'),
         ],
         loader: ExtractTextPlugin.extract(

@@ -5,7 +5,6 @@ import { QINIU_PREFIX } from './config'
 
 // 七牛上传
 export function uploadQiniu ({ file, token }) {
-  /* eslint-disable no-undef */
   const formData = new FormData()
   formData.append('file', formData)
   formData.append('token', token)
