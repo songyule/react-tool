@@ -161,14 +161,33 @@ function toQueryString(object) {
  * @returns
  */
 function fetchData (url, opts) {
-  opts.headers = {
-    ...opts.headers,
-    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImQyMDEzMTNiMWE3ZTQwMjY4NDBlNTVkMDUwYzhiZDIwIiwiZXhwIjoxNTAwNzE0ODExfQ.8QbK03MFByCTsUI0sHl-bJ2BqMCpj44HKRvzGVpnO48'
-    // 'Authorization': cookie.get('access_token') || ''
+  let baseUrl = opts.base_url ? opts.base_url : API_ROOT
+  let mergeUrl = baseUrl + url
+
+  // add query params to url when method is GET
+  if (opts && opts.method === "GET" && opts['params']) {
+    mergeUrl = mergeUrl + '?' + toQueryString(opts['params'])
   }
+  // add api body when method is not GET
+  if (opts && opts.method !== "GET" && opts['body']) {
+    opts['body'] = JSON.stringify(opts['body'])
+  }
+  // add headers
+  opts.headers = Object.assign({
+    'content-type': 'application/json',
+    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAwODAxNzA4fQ.272QZu49rD2MtXttJYZVzHzFyO1uZs0ph5b67axivtc'},
+    opts.headers
+  )
+  // delete opts.headers['content-type']
+  // console.log(opts.headers)
+  // if (opts.headers['content-type'] === 'multipart/form-data') {
+    // opts.headers['content-type']+= `;boundary=${formData.getBoundary()}`
+  // }
+  // console.log(opts)
+
   if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
-  return fetch(url, opts)
+  return fetch(mergeUrl, opts)
     .then(check401)
     .then(check404)
     .then(checkStatus)
@@ -183,58 +202,28 @@ function fetchData (url, opts) {
  *
  * @class cFetch
  */
-class cFetch {
 
-  /**
-   * get请求
-   *
-   * @static
-   * @param {any} url
-   * @param {any} options
-   * @returns promise
-   * @memberof cFetch
-   */
-  static get (url, options) {
-    let mergeUrl = API_ROOT + url
+const cFetch = {}
+const API_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'PATCH']
+
+/**
+ * 请求的构造函数
+ *
+ * @param {any} url
+ * @param {any} options
+ * @returns function
+ */
+API_METHODS.forEach(method => {
+  cFetch[method.toLowerCase()] = (url, options) => {
     const defaultOptions = {
-      method: 'GET'
+      method
     }
 
     const opts = Object.assign({}, defaultOptions, {...options})
 
-    // add query params to url when method is GET
-    if (opts && opts.method === "GET" && opts['params']) {
-      mergeUrl = mergeUrl + '?' + toQueryString(opts['params'])
-    }
-
-    return fetchData(mergeUrl, opts)
+    return fetchData(url, opts)
   }
-
-  /**
-   * post 请求
-   *
-   * @static
-   * @param {any} url
-   * @param {any} options
-   * @returns promise
-   * @memberof cFetch
-   */
-  static post (url, options) {
-    let mergeUrl = API_ROOT + url
-    const defaultOptions = {
-      method: 'POST'
-    }
-
-    const opts = Object.assign({}, defaultOptions, {...options})
-
-    // add query params to url when method is GET
-    if (opts && opts.method === "POST" && opts['body']) {
-      opts['body'] = JSON.stringify(opts['body'])
-    }
-
-    return fetchData(mergeUrl, opts)
-  }
-}
+})
 
 //catch all the unhandled exception
 window.addEventListener("unhandledrejection", function(err) {
