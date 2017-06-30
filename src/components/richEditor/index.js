@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Editor } from 'react-draft-wysiwyg'
 import draftToHtml from 'draftjs-to-html'
@@ -8,7 +8,7 @@ import { wrapperUploadQiniu } from 'api/common'
 
 // https://github.com/applesstt/moe/blob/075358400793565b8b881471db0310eeea0284ef/src/components/RichEditor/RichEditor.js
 
-export default class RichEditor extends Component {
+export default class RichEditor extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

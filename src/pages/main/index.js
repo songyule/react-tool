@@ -50,6 +50,11 @@ export default class extends Component {
             router: '/main/topic'
           },
           {
+            key: 'trend',
+            title: '趋势文章',
+            router: '/main/trend'
+          },
+          {
             key: 'chil02',
             title: 'Option2',
             router: '/main/tacos'
@@ -118,7 +123,9 @@ export default class extends Component {
             </div>
             <div className={style.container__content}>
               <Route path='/main/topic' component={Topic}/>
+              <Route path='/main/trend' component={Trend}/>
               <Route path='/main/add-topic' component={addTopic}/>
+              <Route path='/main/add-trend' component={addTrend}/>
             </div>
         </div>
       </div>
@@ -130,6 +137,8 @@ export default class extends Component {
 // 组件懒加载
 
 const Topic = asyncComponent(() => import ('pages/topic/index'))
+const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
+const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
 // const What = asyncComponent(() => import ('components/what/index'))
 // const Ueditor = asyncComponent(() => import ('components/ueditor/index'))

@@ -4,12 +4,12 @@ import { Upload, Icon, Modal } from 'antd'
 import { wrapperUploadQiniu } from 'api/common'
 import style from './upload.css'
 
-function customRequest(config){
-  wrapperUploadQiniu(config.file).then(res => {
-    config.onSuccess(res)
-  })
-}
-
+/**
+ *
+ * @export
+ * @component
+ * @module 图片上传模块
+ */
 export default class extends PureComponent {
   constructor (props) {
     super(props)
@@ -31,6 +31,13 @@ export default class extends PureComponent {
     onChange: PropTypes.func.isRequired
   }
 
+  customRequest = (config) =>{
+    wrapperUploadQiniu(config.file).then(res => {
+      config.onSuccess(res)
+    })
+  }
+
+
   handleCancel = () => this.setState({ previewVisible: false })
 
   handlePreview = (file) => {
@@ -50,10 +57,9 @@ export default class extends PureComponent {
     const { fileList, previewVisible, previewImage } = this.state;
 
     const uploadProps = {
-      action: '//jsonplaceholder.typicode.com/posts/',
       listType: 'picture-card',
       defaultFileList: [...fileList],
-      customRequest: customRequest,
+      customRequest: this.customRequest,
       onChange: this.handleChange,
       onPreview: this.handlePreview,
       className: style['upload-list-inline']
@@ -66,7 +72,7 @@ export default class extends PureComponent {
             ? null
             : (<div>
                 <Icon type="plus" />
-                <div className="ant-upload-text">Upload</div>
+                <div className="ant-upload-text">上传图片</div>
               </div>)
           }
         </Upload>

@@ -173,17 +173,12 @@ function fetchData (url, opts) {
     opts['body'] = JSON.stringify(opts['body'])
   }
   // add headers
+    // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'},
   opts.headers = Object.assign({
-    'content-type': 'application/json',
-    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAwODAxNzA4fQ.272QZu49rD2MtXttJYZVzHzFyO1uZs0ph5b67axivtc'},
+      'content-type': 'application/json'
+    },
     opts.headers
   )
-  // delete opts.headers['content-type']
-  // console.log(opts.headers)
-  // if (opts.headers['content-type'] === 'multipart/form-data') {
-    // opts.headers['content-type']+= `;boundary=${formData.getBoundary()}`
-  // }
-  // console.log(opts)
 
   if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
