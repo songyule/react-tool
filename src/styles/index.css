@@ -2,6 +2,7 @@
 :global {
   body {
     background: #ececec!important;
+    min-width: 1000px;
   }
   #root, [data-reactroot] {
     height: 100%;

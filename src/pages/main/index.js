@@ -42,12 +42,17 @@ export default class extends Component {
     const menuArr = [
       {
         key: 'key01',
-        title: 'navigator one',
+        title: '前台管理',
         children: [
           {
-            key: 'chil01',
-            title: 'Option1',
-            router: '/main/option1'
+            key: 'topic',
+            title: '专题文章',
+            router: '/main/topic'
+          },
+          {
+            key: 'trend',
+            title: '趋势文章',
+            router: '/main/trend'
           },
           {
             key: 'chil02',
@@ -117,17 +122,23 @@ export default class extends Component {
               </Menu>
             </div>
             <div className={style.container__content}>
-              <Route path='/main/tacos' component={What}/>
-              <Route path='/main/sandwiches' component={Demo} />
+              <Route path='/main/topic' component={Topic}/>
+              <Route path='/main/trend' component={Trend}/>
+              <Route path='/main/add-topic' component={addTopic}/>
+              <Route path='/main/add-trend' component={addTrend}/>
             </div>
         </div>
       </div>
     )
   }
 }
+// <Route path='/main/sandwiches' component={} />
 
 // 组件懒加载
 
-const Demo = asyncComponent(() => import ('components/demo/index'))
-const What = asyncComponent(() => import ('components/what/index'))
+const Topic = asyncComponent(() => import ('pages/topic/index'))
+const Trend = asyncComponent(() => import ('pages/trend/index'))
+const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
+const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
+// const What = asyncComponent(() => import ('components/what/index'))
 // const Ueditor = asyncComponent(() => import ('components/ueditor/index'))

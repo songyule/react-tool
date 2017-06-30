@@ -1,0 +1,14 @@
+@component content {
+  width: 1000px;
+}
+
+.upload-list-inline{
+  :global {
+    .ant-upload-list-item {
+      float: left;
+      width: 200px;
+      height: auto;
+      margin-right: 8px;
+    }
+  }
+}

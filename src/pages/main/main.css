@@ -49,6 +49,7 @@
   }
 
   &__content {
+    padding: 0 15px;
     flex: 1;
     overflow: scroll;
     /*padding: 0 40px 0;*/
