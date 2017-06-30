@@ -13,6 +13,14 @@ module.exports = (ctx) => ({
   plugins: [
     require('postcss-import')({ addDependencyTo: ctx }),
     require('postcss-nested')(),
+    require('postcss-bem')({
+      style: 'bem',
+      separators: {
+        namespace: '_',
+        descendent: '__',
+        modifier: '--'
+      }
+    }),
     require('postcss-mixins')(),
     require('postcss-flexbugs-fixes')(),
     require('autoprefixer')({
