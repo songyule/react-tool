@@ -1,5 +1,6 @@
 import  React, { PureComponent } from 'react'
 import { Table, Button } from 'antd'
+import style from './index.css'
 const ButtonGroup = Button.Group
 
 export default class AccountList extends PureComponent {
@@ -7,34 +8,33 @@ export default class AccountList extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-
     }
-
-    this.handleUse = this.handleUse.bind(this)
-    this.handleDisable = this.handleDisable.bind(this)
   }
 
   componentWillMount () {
     this.getList()
   }
 
-  handleUse = (e, idx) => {
+  handleUse (e, idx) {
     e.stopPropagation()
     const { list } = this.state
     list[idx].state = '有效'
     this.setState({ list: [...list] })
   }
 
-  handleDisable = (e, idx) => {
+  handleDisable (e, idx) {
     e.stopPropagation()
     const { list } = this.state
     list[idx].state = '无效'
     this.setState({ list: [...list] })
   }
 
-  handleDetail = (data, idx) => {
-    console.log(data, idx)
-    this.props.history.push('/account-edit', data)
+  handleDetail (data) {
+    this.props.history.push('/main/account-edit', data)
+  }
+
+  handleCreate () {
+    this.props.history.push('/main/account-create')
   }
 
   getList () {
@@ -63,6 +63,7 @@ export default class AccountList extends PureComponent {
   }
 
   render () {
+    const { list } = this.state
     const columns = [
       {
         title: 'ID',
@@ -101,18 +102,18 @@ export default class AccountList extends PureComponent {
       },
       {
         title: '操作',
-        render: (text, record, index) => (
-          this.state.list[index].state === '有效'
+        render: (text, record, idx) => (
+          list[idx].state === '有效'
             ? (
               <ButtonGroup>
-                <Button type="danger" onClick={(e) => this.handleDisable(e, index)}>
+                <Button type="danger" onClick={(e) => this.handleDisable(e, idx)}>
                   禁用
                 </Button>
               </ButtonGroup>
             )
             : (
               <ButtonGroup>
-                <Button type="primary" onClick={(e) => this.handleUse(e, index)}>
+                <Button type="primary" onClick={(e) => this.handleUse(e, idx)}>
                   启用
                 </Button>
               </ButtonGroup>
@@ -122,12 +123,15 @@ export default class AccountList extends PureComponent {
     ]
 
     return (
-      <div className="page_account-list">
+      <div className={style['page_account-list']}>
+        <Button type="primary" onClick={::this.handleCreate}>
+          新建账户
+        </Button>
         <Table
           rowKey="id"
           dataSource={this.state.list}
           columns={columns}
-          onRowClick={this.handleDetail}
+          onRowClick={::this.handleDetail}
         />
       </div>
     )
