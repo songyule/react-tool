@@ -92,3 +92,22 @@ export function searchParams (params) {
     return encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
   }).join('&')
 }
+
+export function getAttrTree (data, pid) { // 将属性分解成树形结构
+  let result = []
+  let temp = []
+  for (var i = 0; i < data.length; i++) {
+    if ((!data[i].parant_id && !pid) || data[i].parent_id === pid) {
+      const obj = { name_cn: data[i].name_cn, id: data[i].id, rgb: data[i].value_str, parent_id: data[i].parent_id, level: data[i].level }
+      temp = getAttrTree(data, data[i].id)
+
+      if (temp.length > 0) {
+        obj.children = temp
+      }
+      result.push(obj)
+    }
+  }
+  return result
+}
+
+export const has = Object.prototype.hasOwnProperty
