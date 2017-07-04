@@ -23,7 +23,6 @@ const routes =  () => (
         <Route path='/login' component={Login} />
         <Route path='/main' component={main} />
         <Route path='/goods' component={Goods} />
-        <Route path='/attributes' component={Attributes} />
         <Route path='*' component={notFound} />
       </Switch>
     </div>
