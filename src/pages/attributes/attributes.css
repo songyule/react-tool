@@ -1,0 +1,8 @@
+.tree {
+  display: flex;
+
+  &__list {
+    display: block;
+    width: 200px;
+  }
+}
