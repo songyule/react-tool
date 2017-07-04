@@ -1,8 +1,13 @@
 .tree {
   display: flex;
-
+  margin-top: 10px;
+  
   &__list {
     display: block;
-    width: 200px;
+    min-width: 300px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 2px;
+    background-color: #fff;
+    margin: 5px;
   }
 }
