@@ -1,16 +1,15 @@
 import React, { PureComponent } from 'react'
+import Title from 'components/title'
 import AccountForm from './form'
 import { Button } from 'antd'
 
 export default class CreateAccount extends PureComponent {
 
-  componentWillMount () {
-    console.log(this.props.location.state)
-  }
-
   render () {
     return (
-      <div className="page_account-edit">
+      <div>
+        <Title title="新建账户">
+        </Title>
         <AccountForm>
         </AccountForm>
         <Button>

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { Form, Input, Row, Col, Radio, Select } from 'antd'
 const [FormItem, RadioGroup, Option] = [Form.Item, Radio.Group, Select.Option]
 
-class AccountForm extends PureComponent {
+@Form.create()
+export default class AccountForm extends PureComponent {
   static propTypes = {
     id: PropTypes.string,
     userName: PropTypes.string,
@@ -98,5 +99,3 @@ class AccountForm extends PureComponent {
     )
   }
 }
-
-export default Form.create()(AccountForm)

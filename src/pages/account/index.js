@@ -1,7 +1,7 @@
 import  React, { PureComponent } from 'react'
-import { Table, Button } from 'antd'
+import { Table, Button, Switch } from 'antd'
+import Title from 'components/title'
 import style from './index.css'
-const ButtonGroup = Button.Group
 
 export default class AccountList extends PureComponent {
 
@@ -15,17 +15,10 @@ export default class AccountList extends PureComponent {
     this.getList()
   }
 
-  handleUse (e, idx) {
-    e.stopPropagation()
+  handleSwitch (text, idx) {
+    console.log(text, idx)
     const { list } = this.state
-    list[idx].state = '有效'
-    this.setState({ list: [...list] })
-  }
-
-  handleDisable (e, idx) {
-    e.stopPropagation()
-    const { list } = this.state
-    list[idx].state = '无效'
+    list[idx].state = !list[idx].state
     this.setState({ list: [...list] })
   }
 
@@ -46,7 +39,7 @@ export default class AccountList extends PureComponent {
         phone: '15757103387',
         email: '3357458@qq.com',
         org: '辅料易',
-        state: '有效'
+        state: 1
       },
       {
         id: '2',
@@ -55,7 +48,7 @@ export default class AccountList extends PureComponent {
         phone: '15757103387',
         email: '3357458@qq.com',
         org: '辅料易',
-        state: '有效'
+        state: 0
       }
     ]
 
@@ -98,40 +91,27 @@ export default class AccountList extends PureComponent {
       {
         title: '状态',
         dataIndex: 'state',
-        key: 'state'
+        render: (text, record, idx) => <Switch defaultChecked={!!text} onChange={() => this.handleSwitch(text, idx)} checkedChildren={'启用'} unCheckedChildren={'禁用'} />
       },
       {
         title: '操作',
-        render: (text, record, idx) => (
-          list[idx].state === '有效'
-            ? (
-              <ButtonGroup>
-                <Button type="danger" onClick={(e) => this.handleDisable(e, idx)}>
-                  禁用
-                </Button>
-              </ButtonGroup>
-            )
-            : (
-              <ButtonGroup>
-                <Button type="primary" onClick={(e) => this.handleUse(e, idx)}>
-                  启用
-                </Button>
-              </ButtonGroup>
-            )
-        )
+        render: (text, record) => <Button onClick={() => this.handleDetail(record)}>查看</Button>
       }
     ]
 
     return (
-      <div className={style['page_account-list']}>
-        <Button type="primary" onClick={::this.handleCreate}>
-          新建账户
-        </Button>
+      <div>
+        <Title title="账户列表">
+          <div className={style['account-list__add-button']}>
+            <Button type="primary" onClick={::this.handleCreate}>
+              新建账户
+            </Button>
+          </div>
+        </Title>
         <Table
           rowKey="id"
-          dataSource={this.state.list}
+          dataSource={list}
           columns={columns}
-          onRowClick={::this.handleDetail}
         />
       </div>
     )
