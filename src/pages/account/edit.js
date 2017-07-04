@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import Title from 'components/title'
 import AccountForm from './form'
 import AccountTabs from './tabs'
 import { Button } from 'antd'
@@ -16,7 +17,9 @@ export default class EditAccount extends PureComponent {
   render () {
     const { id, user_name, login_name, phone, email } = this.props.location.state
     return (
-      <div className="page_account-edit">
+      <div>
+        <Title title={user_name}>
+        </Title>
         <AccountForm
           id={id}
           userName={user_name}

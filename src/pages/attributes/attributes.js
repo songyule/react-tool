@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react'
 import AttributeList from './attributes-list'
 import PropTypes from 'prop-types'
 import style from './attributes.css'
+import { Button } from 'antd'
+const ButtonGroup = Button.Group
 
 export default class AttributesTree extends PureComponent {
   constructor () {
@@ -22,7 +24,18 @@ export default class AttributesTree extends PureComponent {
   }
 
   handleEdit () {
+    const { editable } = this.state
+    this.setState({ editable: !editable })
+  }
 
+  handleSave () {
+    const { editable } = this.state
+    this.setState({ editable: !editable })
+  }
+
+  handleCancel () {
+    const { editable } = this.state
+    this.setState({ editable: !editable })
   }
 
   firstRender () {
@@ -46,7 +59,7 @@ export default class AttributesTree extends PureComponent {
         : tree = [...tree, receiveTree]
 
     } else {
-      tree.splice(SPLICE_INDEX, SPLICE_LENGTH)
+      tree.splice(SPLICE_INDEX, SPLICE_LENGTH, [])
     }
 
     tree[SPLICE_INDEX - 1].forEach(each => each.active = false)
@@ -59,12 +72,24 @@ export default class AttributesTree extends PureComponent {
     const { tree, editable } = this.state
     return (
       <div>
-        <div onClick={::this.handleEdit}></div>
+        <div>
+        {
+          editable
+           ? (
+             <ButtonGroup>
+               <Button onClick={::this.handleSave}> 保存 </Button>
+               <Button onClick={::this.handleCancel}> 取消 </Button>
+             </ButtonGroup>
+           )
+           : (<Button onClick={::this.handleEdit}> 编辑 </Button>)
+        }
+        </div>
         <div className={style['tree']}>
         {
           tree.map((item, idx) => (
             <div key={idx} className={style['tree__list']}>
               <AttributeList
+                level={idx}
                 editable={editable}
                 treeItemData={item}
                 treeRender={(next, idx) => this.treeRender(next, idx)}
