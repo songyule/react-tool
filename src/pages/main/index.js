@@ -137,8 +137,6 @@ export default class extends Component {
               <Route path='/main/trend' component={Trend}/>
               <Route path='/main/add-topic' component={addTopic}/>
               <Route path='/main/add-trend' component={addTrend}/>
-              <Route path='/main/tacos' component={What}/>
-              <Route path='/main/sandwiches' component={Demo} />
               <Route path='/main/account-list' component={AccountList} />
               <Route path='/main/account-create' component={AccountCreate} />
               <Route path='/main/account-edit' component={AccountEdit} />
@@ -156,9 +154,6 @@ const Topic = asyncComponent(() => import ('pages/topic/index'))
 const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
 const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
-// const What = asyncComponent(() => import ('components/what/index'))
-const Demo = asyncComponent(() => import ('components/demo/index'))
-const What = asyncComponent(() => import ('components/what/index'))
 const AccountList = asyncComponent(() => import ('pages/account/index'))
 const AccountCreate = asyncComponent(() => import ('pages/account/create'))
 const AccountEdit = asyncComponent(() => import ('pages/account/edit'))
