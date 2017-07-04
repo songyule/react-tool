@@ -3,35 +3,21 @@ import style from './index.css'
 import PropTypes from 'prop-types'
 
 export default class AttributeList extends PureComponent {
-  constructor () {
-    super()
-
-    this.state = {
-      activeItemIdx: null
-    }
-  }
-
-  // componentWillUpdate () {
-  //   this.setState({ activeItemIdx: null })
-  // }
 
   static propTypes = {
     treeItemData: PropTypes.array,
-    level: PropTypes.number,
-    treeRender: PropTypes.func
+    treeRender: PropTypes.func,
+    editable: PropTypes.bool
   }
 
   handleClick (attr, idx) {
-    const { activeItemIdx } = this.state
+    const { activeItemIdx } = this.props
     if (idx === activeItemIdx) return
-    this.setState({ activeItemIdx: idx })
 
-    this.props.treeRender(attr.children || attr)
+    this.props.treeRender(attr.children || attr, idx)
   }
 
   render () {
-
-    const { activeItemIdx } = this.state
     const { treeItemData, level } = this.props
 
     const levelMap = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
@@ -46,7 +32,7 @@ export default class AttributeList extends PureComponent {
               key={idx}
               onClick={() => this.handleClick(attr, idx)}
               className={
-                activeItemIdx === idx
+                treeItemData[idx].active
                   ? style['list__item--active']
                   : style['list__item']
               }
