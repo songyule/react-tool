@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import AttributesTree from './attributes'
 import data from './attr'
+import Title from 'components/title'
 import arrayToTree from 'array-to-tree'
 
 class Attributes extends PureComponent {
@@ -15,8 +16,12 @@ class Attributes extends PureComponent {
   render () {
     const { data } = this.state
     return (
-      <AttributesTree treeData={data}>
-      </AttributesTree>
+      <div>
+        <Title title="商城通用类目">
+        </Title>
+        <AttributesTree treeData={data}>
+        </AttributesTree>
+      </div>
     )
   }
 }
