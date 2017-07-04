@@ -3,7 +3,6 @@ import main from 'pages/main/index'
 import notFound from 'pages/404/index'
 import Login from 'pages/login/index'
 import Goods from 'pages/commodity/index'
-import Attributes from 'pages/attributes/index'
 
 import {
   BrowserRouter as Router,
