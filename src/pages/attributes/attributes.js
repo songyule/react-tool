@@ -58,20 +58,22 @@ export default class AttributesTree extends PureComponent {
   render () {
     const { tree, editable } = this.state
     return (
-      <div onClick={::this.handleEdit}></div>
-      <div className={style['tree']}>
-      {
-        tree.map((item, idx) => (
-          <div key={idx} className={style['tree__list']}>
-            <AttributeList
-              editable={editable}
-              treeItemData={item}
-              treeRender={(next, idx) => this.treeRender(next, idx)}
-            >
-            </AttributeList>
-          </div>
-        ))
-      }
+      <div>
+        <div onClick={::this.handleEdit}></div>
+        <div className={style['tree']}>
+        {
+          tree.map((item, idx) => (
+            <div key={idx} className={style['tree__list']}>
+              <AttributeList
+                editable={editable}
+                treeItemData={item}
+                treeRender={(next, idx) => this.treeRender(next, idx)}
+              >
+              </AttributeList>
+            </div>
+          ))
+        }
+        </div>
       </div>
     )
   }
