@@ -34,9 +34,10 @@ export default class extends PureComponent {
       }, () => {
         this.init()
       })
+    } else {
+      this.init()
     }
     console.log(this.props.location.state)
-
   }
 
   init () {
