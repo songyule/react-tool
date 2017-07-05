@@ -1,8 +1,13 @@
-.list {
-  &__item {
-    &--active {
-      background-color: blue;
-      color: #fff;
+:global(.ant-tree li .ant-tree-node-content-wrapper) {
+  width: calc(100% - 18px);
+}
+
+.tree {
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    & > span {
+      line-height: 22px;
     }
   }
 }

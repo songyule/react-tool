@@ -16,7 +16,6 @@ export default class AccountList extends PureComponent {
   }
 
   handleSwitch (text, idx) {
-    console.log(text, idx)
     const { list } = this.state
     list[idx].state = !list[idx].state
     this.setState({ list: [...list] })
@@ -103,9 +102,7 @@ export default class AccountList extends PureComponent {
       <div>
         <Title title="账户列表">
           <div className={style['account-list__add-button']}>
-            <Button type="primary" onClick={::this.handleCreate}>
-              新建账户
-            </Button>
+            <Button type="primary" onClick={::this.handleCreate}> 新建账户 </Button>
           </div>
         </Title>
         <Table

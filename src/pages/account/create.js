@@ -8,13 +8,9 @@ export default class CreateAccount extends PureComponent {
   render () {
     return (
       <div>
-        <Title title="新建账户">
-        </Title>
-        <AccountForm>
-        </AccountForm>
-        <Button>
-          创建
-        </Button>
+        <Title title="新建账户" />
+        <AccountForm />
+        <Button> 创建 </Button>
       </div>
     )
   }

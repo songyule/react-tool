@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
 import cs from 'classnames'
-import style from './attributes-list.css'
+import style from './classes-list.css'
 import PropTypes from 'prop-types'
 import { Button } from 'antd'
 const ButtonGroup = Button.Group
 
-export default class AttributeList extends PureComponent {
+export default class ClassesList extends PureComponent {
 
   static propTypes = {
     treeItemData: PropTypes.array,
@@ -61,23 +61,10 @@ export default class AttributeList extends PureComponent {
                           <ButtonGroup>
                             {
                               !attr.children
-                                ? (
-                                  <Button
-                                    size="small"
-                                    onClick={(e) => this.handleDelete(e)}
-                                  >
-                                    删除
-                                  </Button>
-                                )
+                                ? (<Button size="small" onClick={(e) => this.handleDelete(e)}> 删除 </Button>)
                                 : null
                             }
-                            <Button
-                              type="primary"
-                              size="small"
-                              onClick={(e) => this.handleEdit(e)}
-                            >
-                              编辑
-                            </Button>
+                            <Button type="primary" size="small" onClick={(e) => this.handleEdit(e)}> 编辑 </Button>
                           </ButtonGroup>
                         </div>
                       )

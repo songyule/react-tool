@@ -76,8 +76,13 @@ export default class extends Component {
         title: '类目与商品管理',
         children: [
           {
-            key: 'attributes',
+            key: 'classes',
             title: '商城通用类目',
+            router: '/main/classes'
+          },
+          {
+            key: 'attributes',
+            title: '属性管理',
             router: '/main/attributes'
           }
         ]
@@ -151,6 +156,7 @@ export default class extends Component {
               <Route path='/main/account-list' component={AccountList} />
               <Route path='/main/account-create' component={AccountCreate} />
               <Route path='/main/account-edit' component={AccountEdit} />
+              <Route path='/main/classes' component={Classes} />
               <Route path='/main/attributes' component={Attributes} />
             </div>
         </div>
@@ -169,6 +175,7 @@ const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
 const AccountList = asyncComponent(() => import ('pages/account/index'))
 const AccountCreate = asyncComponent(() => import ('pages/account/create'))
 const AccountEdit = asyncComponent(() => import ('pages/account/edit'))
-const Attributes = asyncComponent(() => import ('pages/attributes/index'))
+const Classes = asyncComponent(() => import ('pages/classes'))
+const Attributes = asyncComponent(() => import ('pages/attributes'))
 
 // const Ueditor = asyncComponent(() => import ('components/ueditor/index'))

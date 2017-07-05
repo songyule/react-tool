@@ -72,15 +72,17 @@ export default class AccountForm extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            {formItemArr.map(item => (
-              <Col key={item.key} span={9}>
-                <FormItem {...formItemLayout} label={item.label}>
-                  {getFieldDecorator(item.valid, { initialValue: this.props[item.valid] })(
-                    <Input placeholder={item.placeholder} />
-                  )}
-                </FormItem>
-              </Col>
-            ))}
+            {
+              formItemArr.map(item => (
+                <Col key={item.key} span={9}>
+                  <FormItem {...formItemLayout} label={item.label}>
+                    {getFieldDecorator(item.valid, { initialValue: this.props[item.valid] })(
+                      <Input placeholder={item.placeholder} />
+                    )}
+                  </FormItem>
+                </Col>
+              ))
+            }
             <Col span={9}>
               <FormItem {...formItemLayout} label="状态">
                 <Select defaultValue="lucy" onChange={this.handleSelectChange}>

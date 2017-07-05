@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
-import AttributeList from './attributes-list'
+import ClassesList from './classes-list'
 import PropTypes from 'prop-types'
-import style from './attributes.css'
+import style from './classes.css'
 import { Button } from 'antd'
 const ButtonGroup = Button.Group
 
-export default class AttributesTree extends PureComponent {
+export default class ClassesTree extends PureComponent {
   constructor () {
     super()
 
@@ -51,19 +51,19 @@ export default class AttributesTree extends PureComponent {
 
     isArray && receiveTree.forEach(each => each.active = false)
 
-    const SPLICE_INDEX = isArray ? level - 1 : level
-    const SPLICE_LENGTH = tree.length - level + 1
+    const index = isArray ? level - 1 : level
+    const length = tree.length - level + 1
     if (isArray) {
       level <= tree.length
-        ? tree.splice(SPLICE_INDEX, SPLICE_LENGTH, receiveTree)
+        ? tree.splice(index, length, receiveTree)
         : tree = [...tree, receiveTree]
 
     } else {
-      tree.splice(SPLICE_INDEX, SPLICE_LENGTH, [])
+      tree.splice(index, length, [])
     }
 
-    tree[SPLICE_INDEX - 1].forEach(each => each.active = false)
-    tree[SPLICE_INDEX - 1][idx].active = true
+    tree[index - 1].forEach(each => each.active = false)
+    tree[index - 1][idx].active = true
 
     this.setState({ tree: [...tree] })
   }
@@ -88,13 +88,12 @@ export default class AttributesTree extends PureComponent {
         {
           tree.map((item, idx) => (
             <div key={idx} className={style['tree__list']}>
-              <AttributeList
+              <ClassesList
                 level={idx}
                 editable={editable}
                 treeItemData={item}
                 treeRender={(next, idx) => this.treeRender(next, idx)}
-              >
-              </AttributeList>
+              />
             </div>
           ))
         }
