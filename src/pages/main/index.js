@@ -14,7 +14,7 @@ export default class extends Component {
     super(props)
 
     this.state = {
-      current: 'mail',
+      current: 'clientlist',
       isFold: false
     }
   }
@@ -68,6 +68,28 @@ export default class extends Component {
             key: 'chil04',
             title: 'Option4',
             router: '/main/option4'
+          }
+        ]
+      },
+      {
+        key: 'client',
+        title: '客户档案',
+        children: [
+          {
+            key: 'clientlist',
+            title: '客户列表',
+            router: '/main/clientList'
+          }
+        ]
+      },
+      {
+        key: 'supplier',
+        title: '供应商档案',
+        children: [
+          {
+            key: 'supplierlist',
+            title: '供应商列表',
+            router: '/main/supplierList'
           }
         ]
       },
@@ -149,6 +171,12 @@ export default class extends Component {
               </Menu>
             </div>
             <div className={style.container__content}>
+              <Route path='/main/clientList' component={ClientList} />
+              <Route path='/main/supplierList' component={ClientList} />
+              <Route path='/main/clientNew' component={CreatOrg} />
+              <Route path='/main/supplierNew' component={CreatOrg} />
+              <Route path='/main/clientEdit' component={OrgEdit} />
+              <Route path='/main/supplierEdit' component={OrgEdit} />
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>
               <Route path='/main/add-topic' component={addTopic}/>
@@ -168,6 +196,11 @@ export default class extends Component {
 
 // 组件懒加载
 
+// const Demo = asyncComponent(() => import ('components/demo/index'))
+// const What = asyncComponent(() => import ('components/what/index'))
+const ClientList = asyncComponent(() => import ('components/client/list'))
+const CreatOrg = asyncComponent(() => import ('components/client/new'))
+const OrgEdit = asyncComponent(() => import ('components/client/edit'))
 const Topic = asyncComponent(() => import ('pages/topic/index'))
 const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))

@@ -1,0 +1,38 @@
+.box {
+  padding: 10px 20px;
+  background: white;
+  .boxTop {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .boxBottom {
+    display: flex;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+  .orgCardBox {
+    margin-bottom: 10px;
+  }
+  .orgCard {
+    display: flex;
+    .orgImg {
+      margin-right: 10px;
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+    }
+    .orgMessage {
+      height: 60px;
+    }
+    p {
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .text {
+    text-align: center;
+    padding: 10px 0;
+  }
+}

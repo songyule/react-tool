@@ -1,0 +1,43 @@
+.newContent {
+  padding: 20px 15px;
+  .input {
+    width: 300px;
+  }
+  .formitme {
+    display: flex;
+  }
+  .formTop {
+    display: flex;
+    justify-content: space-around;
+    .fromTopCenter {
+      flex: 1;
+    }
+    .fromTopRight {
+      width: 300px;
+      button {
+        margin: 0 10px;
+      }
+    }
+  }
+  .fromMiddleA {
+    display: flex;
+  }
+  .fromMiddleB {
+    display: flex;
+  }
+  .fromBottom {
+    display: flex;
+  }
+
+  :global{
+    .ant-form-item-label {
+      /*background: pink;*/
+      width: 80px;
+      text-align: right;
+    }
+    .ant-form-item {
+      display: flex;
+    }
+  }
+}
+

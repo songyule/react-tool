@@ -1,0 +1,14 @@
+.box {
+  padding: 10px 20px;
+  background: white;
+  .boxTop {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .boxBottom {
+    display: flex;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+}

@@ -13,6 +13,7 @@
     "html-to-draftjs": "^0.1.0-beta7",
     "isomorphic-fetch": "^2.2.1",
     "lazyimage": "^2.1.2",
+    "query-string": "^4.3.4",
     "prop-types": "^15.5.10",
     "rc-queue-anim": "^1.0.5",
     "rc-tween-one": "^1.2.7",
@@ -81,6 +82,7 @@
     "url-loader": "0.5.8",
     "webpack": "2.6.1",
     "webpack-dev-server": "2.4.5",
+    "webpack-hot-middleware": "^2.18.0",
     "webpack-manifest-plugin": "1.1.0",
     "webpack-merge": "^4.1.0",
     "whatwg-fetch": "2.0.3"

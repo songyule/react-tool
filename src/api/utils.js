@@ -8,6 +8,7 @@ import StandardError from 'standard-error'
 import store from '../redux/store/index'
 
 require('es6-promise').polyfill()
+const queryString = require('query-string')
 
 const errorMessages = (res) => `${res.status} ${res.statusText}`
 
@@ -85,19 +86,19 @@ function jsonParse(res) {
  * @param {any} keyPostfix
  * @returns
  */
-function setUriParam(keys, value, keyPostfix) {
-  let keyStr = keys[0]
+// function setUriParam(keys, value, keyPostfix) {
+//   let keyStr = keys[0]
 
-  keys.slice(1).forEach((key) => {
-    keyStr += `[${key}]`
-  })
+//   keys.slice(1).forEach((key) => {
+//     keyStr += `[${key}]`
+//   })
 
-  if (keyPostfix) {
-    keyStr += keyPostfix
-  }
+//   if (keyPostfix) {
+//     keyStr += keyPostfix
+//   }
 
-  return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
-}
+//   return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
+// }
 
 /**
  *
@@ -107,51 +108,29 @@ function setUriParam(keys, value, keyPostfix) {
  * @param {any} object
  * @returns
  */
-function getUriParam(keys, object) {
-  const array = []
+// function getUriParam(keys, object) {
+//   const array = []
 
-  if (object instanceof(Array)) {
-    object.forEach((value) => {
-      array.push(setUriParam(keys, value, '[]'))
-    })
-  } else if (object instanceof(Object)) {
-    for (const key in object) {
-      if (object.hasOwnProperty(key)) {
-        const value = object[key]
+//   if (object instanceof(Array)) {
+//     object.forEach((value) => {
+//       array.push(setUriParam(keys, value, '[]'))
+//     })
+//   } else if (object instanceof(Object)) {
+//     for (const key in object) {
+//       if (object.hasOwnProperty(key)) {
+//         const value = object[key]
 
-        array.push(getUriParam(keys.concat(key), value))
-      }
-    }
-  } else {
-    if (object !== undefined) {
-      array.push(setUriParam(keys, object))
-    }
-  }
+//         array.push(getUriParam(keys.concat(key), value))
+//       }
+//     }
+//   } else {
+//     if (object !== undefined) {
+//       array.push(setUriParam(keys, object))
+//     }
+//   }
 
-  return array.join('&')
-}
-
-/**
- * params 转 String
- *
- * @param {object} params
- * @returns String
- */
-function toQueryString(object) {
-  const array = []
-
-  for (const key in object) {
-    if (object.hasOwnProperty(key)) {
-      const str = getUriParam([key], object[key])
-
-      if (str !== '') {
-        array.push(str)
-      }
-    }
-  }
-
-  return array.join('&')
-}
+//   return array.join('&')
+// }
 
 /**
  * 获取数据 && 拦截
@@ -163,10 +142,9 @@ function toQueryString(object) {
 function fetchData (url, opts) {
   let baseUrl = opts.base_url ? opts.base_url : API_ROOT
   let mergeUrl = baseUrl + url
-
   // add query params to url when method is GET
   if (opts && opts.method === "GET" && opts['params']) {
-    mergeUrl = mergeUrl + '?' + toQueryString(opts['params'])
+    mergeUrl = mergeUrl + '?' + queryString.stringify(opts['params'])
   }
   // add api body when method is not GET
   if (opts && opts.method !== "GET" && opts['body']) {
@@ -175,6 +153,7 @@ function fetchData (url, opts) {
   // add headers
     // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'},
   opts.headers = Object.assign({
+      'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAxNjM5MjM5fQ.M0wUIGduWMoVgjJOrkWADazmHDCr-9rohiYymiLz5Qo',
       'content-type': 'application/json'
     },
     opts.headers
