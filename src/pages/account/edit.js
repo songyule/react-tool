@@ -18,21 +18,16 @@ export default class EditAccount extends PureComponent {
     const { id, user_name, login_name, phone, email } = this.props.location.state
     return (
       <div>
-        <Title title={user_name}>
-        </Title>
+        <Title title={user_name} />
         <AccountForm
           id={id}
           userName={user_name}
           loginName={login_name}
           phone={phone}
           email={email}
-        >
-        </AccountForm>
-        <Button onClick={this.handleSave}>
-          保存
-        </Button>
-        <AccountTabs>
-        </AccountTabs>
+        />
+        <Button onClick={this.handleSave}> 保存 </Button>
+        <AccountTabs />
       </div>
     )
   }
