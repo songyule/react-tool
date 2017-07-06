@@ -14,7 +14,7 @@ export default class extends Component {
     super(props)
 
     this.state = {
-      current: 'clientlist',
+      current: 'topic',
       isFold: false
     }
   }
