@@ -22,3 +22,23 @@ export const login = (data) => async (dispatch, getState) => {
     console.log('error: ', error)
   }
 }
+
+export const getUserList = async (body) => {
+  const response = await fetch.post('/user/search', { body })
+  return response
+}
+
+export const getRoleList = async () => {
+  const response = await fetch.get('/user/role/list')
+  return response
+}
+
+export const getResourceList = async () => {
+  const response = await fetch.get('/user/resource/list')
+  return response
+}
+
+export const getUserInfo = async (id) => {
+  const response = await fetch.get(`/user/u/${id}`)
+  return response
+}
