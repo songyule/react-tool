@@ -18,8 +18,7 @@ const history = syncHistoryWithStore(createBrowserHistory(), store)
 
 function homeRedirect () {
   return store.getState().userLogin.token ? (
-    // <Redirect to="/main/topic"></Redirect>
-    null
+    <main></main>
   ) : (
     <Redirect to="/login"></Redirect>
   )
@@ -28,7 +27,7 @@ function homeRedirect () {
 const routes =  () => (
   <Router history={history}>
     <div>
-      <Route path='' exact component={homeRedirect} />
+      <Route path='' exact strict component={homeRedirect} />
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/main' component={main} />

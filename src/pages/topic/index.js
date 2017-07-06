@@ -230,7 +230,7 @@ export default class extends PureComponent {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'不显'} onChange={(e) => this.changeDisplay(record, e)}/>
+      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'隐藏'} onChange={(e) => this.changeDisplay(record, e)}/>
     },
     {
       title: '操作',
