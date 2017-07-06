@@ -155,7 +155,7 @@ class create extends PureComponent {
             {getFieldDecorator('icon', {
               rules: [],
             })(
-              <MyUpload onChange={this.handleChange}></MyUpload>
+              <MyUpload fileList={this.state.fileList} onChange={this.handleChange}></MyUpload>
             )}
           </FormItem>
           <div className={style.fromTopCenter}>
