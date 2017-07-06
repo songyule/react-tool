@@ -1,17 +1,10 @@
 import React, { PureComponent } from 'react'
-import { Modal } from 'antd'
-// import { Input, Icon, Table, Button, Switch, Modal } from 'antd'
-
-const style = {
-  border: '1px dashed gray',
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
-  marginRight: '.5rem',
-  backgroundColor: 'white',
-  cursor: 'pointer',
-  width: '200px',
-  height: '100px',
-}
+import { Modal, Icon } from 'antd'
+// import Goods from 'pages/topic/components/goods-dialog'
+import AddGoods from 'pages/topic/components/add-goods'
+import MyUpload from 'pages/topic/components/img-upload'
+import styles from './trend-item.css'
+// import { Button, Icon } from 'antd'
 
 /**
  *
@@ -24,32 +17,81 @@ export default class extends PureComponent {
     super(props)
 
     this.state = {
+      pageVisible: false,
+      goodsVisible: false,
+      fileList: props.fileList || '',
+      selectedRowObjs: props.fileList || []
     }
   }
 
-  showModal = () => this.setState({visible: true})
-  hideModal = () => this.setState({visible: false})
+  static defaultProps = {
+    isAdd: false
+  }
+
+  componentWillReceiveProps (e) {
+    console.log(e)
+    this.setState({
+      fileList: e.fileList || '',
+      selectedRowObjs: e.selectedRowObjs || []
+    })
+  }
+
+  clear = () => {
+    this.setState({
+      fileList: '',
+      selectedRowObjs: []
+    })
+  }
+
+
+  goodsChange = (selectedRowObjs) => this.setState({ selectedRowObjs })
+  handleChange = (fileList) => {
+    this.setState({ fileList })
+  }
+
+  showModal = () => this.setState({pageVisible: true})
+  hideModal = () => this.setState({pageVisible: false})
+
+  clickOkModal = () => {
+    const { fileList, selectedRowObjs } = this.state
+    this.hideModal()
+    this.props.onChange(fileList, selectedRowObjs)
+  }
+
+  goodsShowModal = () => this.setState({goodsVisible: true})
+  goodsHideModal = () => this.setState({goodsVisible: false})
+
 
   render () {
-    const { text, isDragging } = this.props;
-    const opacity = isDragging ? 0 : 1;
+    const { isDragging, isAdd } = this.props
+    const { selectedRowObjs, fileList } = this.state
+    const opacity = isDragging ? 0 : 1
 
     return (
       <div>
-        <div style={{ ...style, opacity }} onClick={this.showModal}>
-          {text}
-        </div>
+        {
+          (fileList && !isAdd && fileList.length) ? (
+            <div  className={styles.box} style={{ opacity }} onClick={this.showModal}>
+              <Icon className={styles.box__close} type="close-square" onClick={this.props.delPage} />
+              <img src={fileList[0].response} alt="" style={{width: '100%'}} />
+            </div>
+          ) : null
+        }
         <Modal
-          title="Modal"
-          visible={this.state.visible}
-          onOk={this.hideModal}
+          title="上传内容"
+          width={800}
+          visible={this.state.pageVisible}
+          onOk={this.clickOkModal}
           onCancel={this.hideModal}
           okText="确认"
           cancelText="取消"
         >
-          <p>Bla bla ...</p>
-          <p>Bla bla ...</p>
-          <p>Bla bla ...</p>
+          <MyUpload
+            fileList={fileList}
+            className={styles.upload}
+            onChange={ this.handleChange }
+          ></MyUpload>
+          <AddGoods selectedRowObjs={selectedRowObjs} onChange={this.goodsChange}></AddGoods>
         </Modal>
       </div>
     )

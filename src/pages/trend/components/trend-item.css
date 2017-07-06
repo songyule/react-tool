@@ -1,0 +1,28 @@
+.upload {
+  :global {
+    .ant-upload-list-item {
+      float: none;
+      width: 100%;
+      max-height: 500px;
+    }
+  }
+}
+
+.box {
+  border: 1px dashed gray;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  background: white;
+  cursor: pointer;
+  width: 200px;
+  height: 100px;
+  overflow: hiddem;
+  position: relative;
+
+  &__close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 16px;
+  }
+}

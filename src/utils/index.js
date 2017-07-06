@@ -8,7 +8,7 @@ export function showClasses (classes) {
 }
 
 export function showPrice (skus) {
-  if (skus.length === 0) {
+  if (!skus || skus.length === 0) {
     return '暂无价格'
   }
   let priceList = []

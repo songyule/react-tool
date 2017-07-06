@@ -4,11 +4,11 @@ import { qiniuRequest } from 'api/customRequest'
 import { QINIU_PREFIX } from './config'
 
 // 七牛上传
-export function uploadQiniu ({ file, token }) {
+export function uploadQiniu ({ file, token, onProgress }) {
   const formData = new FormData()
   formData.append('file', formData)
   formData.append('token', token)
-  return qiniuRequest(file, { token })
+  return qiniuRequest(file, { token, onProgress })
 }
 
 // 获取七牛token
@@ -16,9 +16,9 @@ export function getQiniuToken () {
   return fetch.get('/pic/upload_token')
 }
 
-export function wrapperUploadQiniu (file) {
+export function wrapperUploadQiniu (file, onProgress) {
   return getQiniuToken()
-  .then(res => uploadQiniu({ file, token: res.data.token }))
+  .then(res => uploadQiniu({ file, token: res.data.token, onProgress }))
   .then(res => `${QINIU_PREFIX}${res.key}`)
 }
 

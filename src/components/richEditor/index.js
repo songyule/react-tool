@@ -12,11 +12,19 @@ export default class RichEditor extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-      contentState: this.props.contentState
+      contentState: this.props.contentState,
+      then: !!props.contentState
     }
   }
   static propTypes = {
     onChange: PropTypes.func.isRequired
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      contentState: nextProps.contentState,
+      then: true
+    })
   }
 
   uploadImageCallBack = async (e) => {
@@ -32,27 +40,21 @@ export default class RichEditor extends PureComponent {
   render() {
     require('../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css')
     const style = require('./editor.css')
-    const contentState = EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(this.state.contentState)))
-
-    // const toolbar = {
-    //   options: ['inline', 'colorPicker', 'textAlign', 'link',
-    //     'emoji', 'image', 'embedded', 'history'],
-    //   inline: {
-    //     options: ['bold', 'italic', 'strikethrough'],
-    //   },
-    //   textAlign: {
-    //     options: ['left', 'center', 'right']
-    //   }
-    // }
-        // toolbar={toolbar}
+    var contentState = ''
+    contentState = this.state.contentState && EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(this.state.contentState)))
+    console.log(contentState, this.state.contentState)
     return (
-      <Editor
-        defaultEditorState={contentState}
-        wrapperClassName={style.wrapper}
-        editorClassName={style.editor}
-        onContentStateChange={this.onChange}
-        uploadCallback={this.uploadImageCallBack}
-        />
+      <div>
+        {
+          this.state.then ? ( <Editor
+          defaultEditorState={contentState}
+          wrapperClassName={style.wrapper}
+          editorClassName={style.editor}
+          onContentStateChange={this.onChange}
+          uploadCallback={this.uploadImageCallBack}
+          />) : null
+        }
+      </div>
     )
   }
 }
