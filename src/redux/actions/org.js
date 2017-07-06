@@ -124,4 +124,8 @@ export const postContact = async body => { // 创建联系人接口
   } catch (error) {
     console.log('error: ', error)
   }
+
+export const getGroupList = async () => {
+  const response = await fetch.get('/org/fly/group')
+  return response
 }
