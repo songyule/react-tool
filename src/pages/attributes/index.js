@@ -15,7 +15,6 @@ export default class Attributes extends PureComponent {
     }
   }
   onSelect = (expandedKeys, info) => {
-    console.log('selected', expandedKeys, info)
     this.setState({ expandedKeys })
   }
   

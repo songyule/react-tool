@@ -12,7 +12,6 @@ const Option = Select.Option
 export default class extends PureComponent {
   constructor(props) {
     super(props)
-    console.log(this)
     this.state = {
       orgMes: {},
       props: {
@@ -37,12 +36,10 @@ export default class extends PureComponent {
     } else {
       this.init()
     }
-    console.log(this.props.location.state)
   }
 
   init () {
     getOrgMes(this.props.location.state).then(res => {
-      console.log(res)
       if (res.data.sn) res.data.snCode = this.state.isClientEdit ? 'CL' + res.data.sn : 'SU' + res.data.sn
       res.data.orgId = this.props.location.state
       res.data.from = this.state.isClientEdit ? 'clientEdit' : 'supplierEdit'
@@ -51,13 +48,11 @@ export default class extends PureComponent {
       })
     })
     getAccountNumber({offset: 0, limit: 1000, org_id: this.props.location.state}).then(res => {
-      console.log(res.data.user)
       this.setState({
         salesArr: res.data.user
       })
     })
     getSales({client_id:this.props.location.state}).then(res => {
-      console.log(res.data.id)
       this.setState({
         defaultSales: res.data.id
       })
@@ -74,7 +69,6 @@ export default class extends PureComponent {
     }, () => {
       if (this.state.disabled) {
         setSales({client_id: this.props.location.state, user_id: this.state.salesId}).then(res => {
-          console.log(res)
         })
       }
     })

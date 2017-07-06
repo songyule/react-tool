@@ -10,7 +10,6 @@ class linkman extends PureComponent {
     userMes: {},
   }
   changeRadio (e) { // 点击单选按钮
-    console.log(e.target.value)
     this.setState({
       radioDefalut: e.target.value
     })
@@ -64,12 +63,11 @@ class linkman extends PureComponent {
     })
   }
 
-  componentWillMount() { // 进入页面执行
-    console.log(this.props)
-  }
+  // componentWillMount() { // 进入页面执行
+  //   console.log(this.props)
+  // }
 
   componentWillReceiveProps (nextProps) { // props 更新时候触发
-    console.log(nextProps.visible)
     this.setState({
       visible: nextProps.visible,
       userMes: nextProps.userMes

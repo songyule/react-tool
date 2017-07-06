@@ -29,7 +29,6 @@ export default class extends PureComponent {
   }
 
   componentWillReceiveProps (e) {
-    console.log(e)
     this.setState({
       fileList: e.fileList || '',
       selectedRowObjs: e.selectedRowObjs || []

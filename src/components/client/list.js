@@ -26,7 +26,6 @@ export default class extends PureComponent {
 
   getOrgMess (val, current) { // 搜索结果
     let a = this.state.isClientList ? 2 : 3
-    console.log(this.state.isClientList)
     this.setState({
       searchData: {
         kw: val,
