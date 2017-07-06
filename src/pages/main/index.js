@@ -210,15 +210,10 @@ const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
 const editTopic = asyncComponent(() => import ('pages/topic/edit-topic'))
 const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
-<<<<<<< HEAD
 const AccountList = asyncComponent(() => import ('pages/account/index'))
 const AccountCreate = asyncComponent(() => import ('pages/account/create'))
 const AccountEdit = asyncComponent(() => import ('pages/account/edit'))
 const Classes = asyncComponent(() => import ('pages/classes'))
 const Attributes = asyncComponent(() => import ('pages/attributes'))
-
-=======
 const editTrend = asyncComponent(() => import ('pages/trend/edit-trend'))
-// const What = asyncComponent(() => import ('components/what/index'))
->>>>>>> :sparkles: add trend topic pages
-// const Ueditor = asyncComponent(() => import ('components/ueditor/index'))
+
