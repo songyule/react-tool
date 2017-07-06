@@ -1,16 +1,31 @@
 import fetch from 'isomorphic-fetch'
 import { API_ROOT } from './config'
-import {
-  message,
-  // Modal
-} from 'antd'
+import { message } from 'antd'
 import StandardError from 'standard-error'
 import store from '../redux/store/index'
+import progress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 require('es6-promise').polyfill()
 const queryString = require('query-string')
 
 const errorMessages = (res) => `${res.status} ${res.statusText}`
+
+export const apiConfig = {
+  count: 0
+}
+
+/**
+ * 清算加载进度条
+ *
+ * @param {any} res
+ * @returns promise
+ */
+function changeApiCount (res) {
+  apiConfig.count--
+  if (!apiConfig.count) progress.set(1 / (apiConfig.count + 1))
+  return res
+}
 
 /**
  * 请求401
@@ -79,60 +94,6 @@ function jsonParse(res) {
 }
 
 /**
- * 设置param
- *
- * @param {any} keys
- * @param {any} value
- * @param {any} keyPostfix
- * @returns
- */
-// function setUriParam(keys, value, keyPostfix) {
-//   let keyStr = keys[0]
-
-//   keys.slice(1).forEach((key) => {
-//     keyStr += `[${key}]`
-//   })
-
-//   if (keyPostfix) {
-//     keyStr += keyPostfix
-//   }
-
-//   return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
-// }
-
-/**
- *
- * 获取param
- *
- * @param {any} keys
- * @param {any} object
- * @returns
- */
-// function getUriParam(keys, object) {
-//   const array = []
-
-//   if (object instanceof(Array)) {
-//     object.forEach((value) => {
-//       array.push(setUriParam(keys, value, '[]'))
-//     })
-//   } else if (object instanceof(Object)) {
-//     for (const key in object) {
-//       if (object.hasOwnProperty(key)) {
-//         const value = object[key]
-
-//         array.push(getUriParam(keys.concat(key), value))
-//       }
-//     }
-//   } else {
-//     if (object !== undefined) {
-//       array.push(setUriParam(keys, object))
-//     }
-//   }
-
-//   return array.join('&')
-// }
-
-/**
  * 获取数据 && 拦截
  *
  * @param {any} url
@@ -161,7 +122,11 @@ function fetchData (url, opts) {
 
   if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
+  progress.start()
+  apiConfig.count++
+
   return fetch(mergeUrl, opts)
+    .then(changeApiCount)
     .then(check401)
     .then(check404)
     .then(checkStatus)

@@ -42,11 +42,11 @@ export default class extends PureComponent {
   }
 
   componentWillReceiveProps (nextProps) {
-    // if (!this.state.isFirst) return
+    if (!this.state.isFirst) return
 
-    // this.setState({
-    //   isFirst: false
-    // })
+    this.setState({
+      isFirst: false
+    })
     if (nextProps.trend_image) {
       let temp = nextProps.trend_image.map(item => {
         return ({
