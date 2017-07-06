@@ -94,7 +94,7 @@ export default class extends PureComponent {
 
   getGoodsData = async () => {
     const params = {}
-    params.offset = this.state.spu.currentPage * this.state.spu.pageSize
+    params.offset = (this.state.spu.currentPage - 1) * this.state.spu.pageSize
     params.limit = this.state.spu.pageSize
     params.as_supplier = 1
     if (this.state.spu.check_status) params.check_status = this.state.spu.check_status

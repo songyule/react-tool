@@ -81,7 +81,7 @@ export default class extends PureComponent {
     return (
       <div>
           <Upload {...uploadProps}>
-            {fileList && fileList.length < this.props.length
+            {!fileList || fileList.length < this.props.length
               ? (<div>
                   <Icon type="plus" />
                   <div className="ant-upload-text">上传图片</div>
