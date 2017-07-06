@@ -94,6 +94,17 @@ export default class extends Component {
         ]
       },
       {
+        key: 'requisition',
+        title: '需求单',
+        children: [
+          {
+            key: 'original',
+            title: '原版',
+            router: '/main/req-original'
+          }
+        ]
+      },
+      {
         key: 'key02',
         title: '类目与商品管理',
         children: [
@@ -177,6 +188,8 @@ export default class extends Component {
               <Route path='/main/supplierNew' component={CreatOrg} />
               <Route path='/main/clientEdit' component={OrgEdit} />
               <Route path='/main/supplierEdit' component={OrgEdit} />
+              {/*需求单相关 ====> */}
+              <Route path='/main/req-original' component={ReqOriginial} />
               {/*文章相关 ====> */}
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>
@@ -202,6 +215,7 @@ export default class extends Component {
 
 // const Demo = asyncComponent(() => import ('components/demo/index'))
 // const What = asyncComponent(() => import ('components/what/index'))
+const ReqOriginial = asyncComponent(() => import ('components/requisition/original'))
 const ClientList = asyncComponent(() => import ('components/client/list'))
 const CreatOrg = asyncComponent(() => import ('components/client/new'))
 const OrgEdit = asyncComponent(() => import ('components/client/edit'))

@@ -1,0 +1,25 @@
+.original_box {
+  padding: 20px 10px;
+  .title {
+    font-size: 16px;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .inputTitle {
+    width: 60px;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .flex {
+    display: flex;
+  }
+  :global {
+    .ant-row {
+      margin-bottom: 15px;
+    }
+  }
+}
