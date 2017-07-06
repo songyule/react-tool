@@ -177,10 +177,14 @@ export default class extends Component {
               <Route path='/main/supplierNew' component={CreatOrg} />
               <Route path='/main/clientEdit' component={OrgEdit} />
               <Route path='/main/supplierEdit' component={OrgEdit} />
+              {/*文章相关 ====> */}
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>
               <Route path='/main/add-topic' component={addTopic}/>
+              <Route path='/main/edit-topic/:id' component={editTopic}/>
               <Route path='/main/add-trend' component={addTrend}/>
+              <Route path='/main/edit-trend/:id' component={editTrend}/>
+              {/*文章相关 <=== */}
               <Route path='/main/account-list' component={AccountList} />
               <Route path='/main/account-create' component={AccountCreate} />
               <Route path='/main/account-edit' component={AccountEdit} />
@@ -204,11 +208,17 @@ const OrgEdit = asyncComponent(() => import ('components/client/edit'))
 const Topic = asyncComponent(() => import ('pages/topic/index'))
 const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
+const editTopic = asyncComponent(() => import ('pages/topic/edit-topic'))
 const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
+<<<<<<< HEAD
 const AccountList = asyncComponent(() => import ('pages/account/index'))
 const AccountCreate = asyncComponent(() => import ('pages/account/create'))
 const AccountEdit = asyncComponent(() => import ('pages/account/edit'))
 const Classes = asyncComponent(() => import ('pages/classes'))
 const Attributes = asyncComponent(() => import ('pages/attributes'))
 
+=======
+const editTrend = asyncComponent(() => import ('pages/trend/edit-trend'))
+// const What = asyncComponent(() => import ('components/what/index'))
+>>>>>>> :sparkles: add trend topic pages
 // const Ueditor = asyncComponent(() => import ('components/ueditor/index'))

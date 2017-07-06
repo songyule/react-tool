@@ -22,8 +22,6 @@ class LoginForm extends PureComponent {
   }
 
   clickCode = (e) => {
-    // console.log(this)
-    console.log(this)
     this.props.sendVerify({ mobile: this.state.mobile })
   }
 
@@ -41,6 +39,7 @@ class LoginForm extends PureComponent {
 
   handleLogin = () => {
     this.props.login({ mobile: this.state.mobile, code: this.state.code })
+    this.props.history.push('/main/topic')
   }
 
   render () {

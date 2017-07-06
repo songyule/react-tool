@@ -1,9 +1,14 @@
 import React, { PureComponent } from 'react'
 import Title from 'components/title'
-import { Input, Icon, Table, Button, Switch } from 'antd'
+import { Input, Table, Button, Switch, Select, Modal, message, Menu } from 'antd'
 import { Link } from 'react-router-dom'
-import { getArticles } from 'actions/article'
+import { getArticles, changeArticle, getEditors } from 'actions/article'
+
+import { format } from 'utils'
 const ButtonGroup = Button.Group
+const Option = Select.Option
+const Search = Input.Search
+const confirm = Modal.confirm
 
 // get /user/editor/list 获取所有编辑er列表
 // post /article/list 创建文章
@@ -21,6 +26,14 @@ export default class extends PureComponent {
     super(props)
 
     this.state = {
+      content: {},
+      editors: [],
+      specialEditor: '',
+      search: {
+        type: 'title',
+        content: '',
+        updator_id: ''
+      },
       pagination: {
         total: 0,
         current: 1,
@@ -28,6 +41,34 @@ export default class extends PureComponent {
         onChange: this.changePage
       }
     }
+  }
+
+  changeDisplay = async (val, e) => {
+    let spu = (val.spu && val.spu.map(item => item.id)) || []
+    let tag = (val.article_tag && val.article_tag.map(item => item.id)) || []
+    let data = {
+      ...val,
+      'article_type': 1,
+      'status': e ? 2 : 1,
+      spu: spu,
+      article_tag: tag
+    }
+
+    let what = await changeArticle (val.id, data)
+    if (what.code === 200) {
+      this.getArticleList()
+      message.success('修改成功')
+    }
+  }
+
+  // 修改搜索的类型
+  changeSearchType = (e) => {
+    this.setState({
+      search: {
+        ...this.state.search,
+        type: e
+      }
+    })
   }
 
   // 修改页码
@@ -43,11 +84,16 @@ export default class extends PureComponent {
   // 获取文章列表
   getArticleList = async () => {
     const { current, pageSize } = this.state.pagination
-    const { data } = await getArticles({
-      article_type: 1,
+    const { type, content, updator_id } = this.state.search
+    let params = {
+      article_type_arr: [1],
       limit: pageSize,
       offset: (current - 1) * pageSize
-    })
+    }
+    if (content) params[type] = content
+    if (updator_id) params.updator_id = updator_id
+
+    const { data } = await getArticles(params)
     data.article.forEach((item, index) => {
       item.no = (current - 1) * pageSize + index + 1
       item.key = item.id
@@ -61,8 +107,62 @@ export default class extends PureComponent {
     })
   }
 
+  // 搜索关键词
+  onSearch = (value) => {
+    this.setState({
+      search: {
+        ...this.state.search,
+        content: value
+      }
+    }, this.getArticleList)
+  }
+
+  // 删除
+  showConfirm = (val) => {
+    confirm({
+      content: '确定要删除这篇文章吗？',
+      onOk: async () => {
+        let spu = (val.spu && val.spu.map(item => item.id)) || []
+        let tag = (val.article_tag && val.article_tag.map(item => item.id)) || []
+        let data = {
+          'article_type': 1,
+          ...val,
+          spu: spu,
+          article_tag: tag,
+          status: -1
+        }
+
+        let what = await changeArticle (val.id, data)
+        if (what.code === 200) {
+          this.getArticleList()
+          message.success('删除成功')
+        }
+        console.log(val)
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    })
+  }
+
+  filterEditor = (e) => {
+    this.setState({
+      search: {
+        ...this.state.search,
+        updator_id: e.key
+      }
+    }, this.getArticleList)
+  }
+
   componentWillMount() {
     this.getArticleList()
+
+    // 获取编辑列表
+    getEditors().then(res => {
+      this.setState({
+        editors: res.data
+      })
+    })
   }
 
   render() {
@@ -87,26 +187,38 @@ export default class extends PureComponent {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'create',
-      width: 150,
+      width: 180,
+      render: text => <span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>,
     },
     {
       title: '作者',
       dataIndex: 'updator_name',
       key: 'author',
       width: 120,
+      filterDropdown: (
+        <div style={{width: '100px', padding: '5px', textAlign: 'center'}}>
+          <Menu onClick={(e) => this.filterEditor(e)}>
+            { this.state.editors.map(item => <Menu.Item key={item.id}>{item.name_cn}</Menu.Item>) }
+          </Menu>
+          <div><Button onClick={() => this.filterEditor({key: ''})}>清除</Button></div>
+        </div>
+      ),
     },
     {
       title: '标签',
-      dataIndex: 'label',
+      dataIndex: 'article_tag',
       key: 'label',
       width: 200,
+      render: text => {
+        return text ? (<span>{text.map(item => item.name).join(',')}</span>) : null
+      }
     },
-    {
-      title: '阅读量',
-      dataIndex: 'read',
-      key: 'read',
-      width: 100,
-    },
+    // {
+    //   title: '阅读量',
+    //   dataIndex: 'read',
+    //   key: 'read',
+    //   width: 100,
+    // },
     {
       title: '排序',
       dataIndex: 'weight',
@@ -118,17 +230,18 @@ export default class extends PureComponent {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (text) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'不显'} />
+      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'不显'} onChange={(e) => this.changeDisplay(record, e)}/>
     },
     {
       title: '操作',
       key: 'operation',
       width: 150,
+          // <Button type="primary" ghost >查看</Button>
       render: (text, record) => (
         <span>
           <ButtonGroup>
-            <Button type="primary" ghost>查看</Button>
-            <Button type="primary" onClick={() => this.props.history.push('/main/add-topic')}>编辑</Button>
+            <Button type="primary" onClick={() => this.props.history.push(`/main/edit-topic/${record.id}`)}>编辑</Button>
+            <Button type="danger" onClick={() => this.showConfirm(record)}>删除</Button>
           </ButtonGroup>
         </span>
       ),
@@ -149,11 +262,18 @@ export default class extends PureComponent {
     //   status: '显示',
     // }]
 
+    const selectBefore = (
+      <Select defaultValue="标题" style={{ width: 80 }} onChange={this.changeSearchType}>
+        <Option value="title">标题</Option>
+        <Option value="content">内容</Option>
+      </Select>
+    )
+
     return (
       <div>
         <Title title="专题文章列表">
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <Input addonAfter={<Icon type="search" />} placeholder='标题/内容' />
+          <Search addonBefore={selectBefore} placeholder='搜索' onSearch={value => this.onSearch(value)} />
           <Button type="primary"><Link to="/main/add-topic">创建文章</Link></Button>
         </div>
         </Title>

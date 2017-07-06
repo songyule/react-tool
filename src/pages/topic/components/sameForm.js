@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Form, Input, Switch } from 'antd'
 import PropTypes from 'prop-types'
 import MyUpload from './img-upload'
-
+import store from '@/redux/store'
 const FormItem = Form.Item
 
 /**
@@ -11,24 +11,63 @@ const FormItem = Form.Item
  * @component
  * @module 文章通用的 formItem
  */
-export default class extends Component {
+export default class SameForm extends PureComponent {
   constructor (props) {
     super(props)
 
     this.state = {
-      fileList: [],
+      fileList: props.fileList || '',
+      checked: false,
+      isFirst: true
     }
   }
 
-  static propTypes = {
-    getFieldDecorator: PropTypes.func.isRequired
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.id === this.props.id) return
+
+    this.setState({
+      checked: nextProps.status === 2,
+    })
+
+    if (nextProps.cover_image && this.state.isFirst) {
+      console.log(123)
+      this.setState({
+        fileList: [{
+          uid: -1,
+          name: 'sdhjkfhsyuiweyrnn222.png',
+          status: 'done',
+          url: nextProps.cover_image,
+          response: nextProps.cover_image,
+          thumbUrl: nextProps.cover_image,
+        }]
+      })
+    }
   }
 
-  handleChange = (fileList) => this.setState({ fileList })
+  changeE = (e) => {
+    this.setState({
+      checked: e
+    })
+  }
+
+  static defaultProps = {
+    title: '',
+    weight: '',
+    status: '',
+    fileList: []
+  }
+
+  static propTypes = {
+    getFieldDecorator: PropTypes.func.isRequired,
+  }
+
+  handleChange = (fileList) => {
+    this.setState({ fileList }, this.props.onChange(fileList))
+  }
 
   render() {
-    const { getFieldDecorator } = this.props
-
+    const { getFieldDecorator, status } = this.props
+    const name = store.getState().userLogin.name_cn
     const formItemLayout = {
       labelCol: {
         sm: { span: 2 },
@@ -37,57 +76,76 @@ export default class extends Component {
         sm: { span: 22 },
       },
     }
-
+    const forms = [
+      {
+        label: '专题标题',
+        hasFeedback: true,
+        name: 'title',
+        opts: {
+          initialValue: this.props.title,
+          rules: [{
+            required: true, message: '请输入专题标题',
+          }],
+        },
+        content: <Input />
+      },
+      {
+        label: '排序值',
+        hasFeedback: false,
+        name: 'weight',
+        opts: {
+          initialValue: this.props.weight,
+          rules: []
+        },
+        content: <Input />
+      },
+      {
+        label: '是否显示',
+        hasFeedback: false,
+        name: 'display',
+        opts: {
+          initialValue: status === 2,
+        },
+        content: <Switch checkedChildren={'显示'} unCheckedChildren={'不显'} checked={this.state.checked} onChange={this.changeE} />
+      },
+      {
+        label: '发布人',
+        hasFeedback: false,
+        name: 'name',
+        opts: {},
+        content: <span>{name}</span>
+      },
+      {
+        label: '封面图',
+        hasFeedback: true,
+        name: 'image',
+        opts: {
+          initialValue: this.state.fileList,
+          rules: [{
+            required: true, message: '请上传一张图片',
+          }],
+        },
+        content: <MyUpload onChange={this.handleChange} fileList={this.state.fileList}></MyUpload>
+      },
+    ]
     return (
       <div>
-        <FormItem
-          {...formItemLayout}
-          label="专题标题"
-          hasFeedback
-        >
-          {getFieldDecorator('title', {
-            rules: [{
-              required: true, message: '请输入专题标题',
-            }],
-          })(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="排序值"
-        >
-          {getFieldDecorator('weight')(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否显示"
-        >
-          {getFieldDecorator('display')(
-            <Switch checkedChildren={'显示'} unCheckedChildren={'不显'} />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="发布人"
-        >
-          <span>这个是占位的</span>
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="封面图"
-          hasFeedback
-        >
-          {getFieldDecorator('image', {
-            rules: [{
-              required: true, message: '请上传一张图片',
-            }],
-          })(
-            <MyUpload onChange={this.handleChange}></MyUpload>
-          )}
-        </FormItem>
+        {
+          forms.map(form => {
+            return (
+              <FormItem
+                {...formItemLayout}
+                label={form.label}
+                hasFeedback={form.hasFeedback}
+                key={form.name}
+              >
+                {getFieldDecorator(form.name, form.opts)(
+                  form.content
+                )}
+              </FormItem>
+            )
+          })
+        }
       </div>
     )
   }

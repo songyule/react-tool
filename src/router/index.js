@@ -6,6 +6,7 @@ import Goods from 'pages/commodity/index'
 
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom'
@@ -15,9 +16,18 @@ import store from '@/redux/store'
 
 const history = syncHistoryWithStore(createBrowserHistory(), store)
 
+function homeRedirect () {
+  return store.getState().userLogin.token ? (
+    <Redirect to="/main/topic"></Redirect>
+  ) : (
+    <Redirect to="/login"></Redirect>
+  )
+}
+
 const routes =  () => (
   <Router history={history}>
     <div>
+      <Route path='' exact component={homeRedirect} />
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/main' component={main} />
