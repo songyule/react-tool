@@ -36,14 +36,20 @@ class create extends PureComponent {
     })
   }
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  handleChange = (fileList) => {
+    this.setState({ fileList })
+  }
 
   what = async () => {
     await fetch.get('/district.json', { base_url: 'https://image.fuliaoyi.com' })
   }
 
   componentWillMount () {
-    if (this.props.location && this.props.location.pathname.substr(6) !== 'clientNew') {
+    if (this.props.location && (this.props.location.pathname.substr(6) === 'clientNew' || this.props.location.pathname.substr(6) === 'clientEdit')) {
+      this.setState({
+        isClientNew: true
+      })
+    } else {
       this.setState({
         isClientNew: false
       })
@@ -179,7 +185,7 @@ class create extends PureComponent {
               {getFieldDecorator('name_official', {
                 initialValue: (this.state.orgMes && this.state.orgMes.name_official) || '',
                 rules: [{
-                  required: true, message: 'Please input your E-mail!',
+                  required: true, message: '请输入名称',
                 }]
               })(
                 <Input className={style.input} />
@@ -192,7 +198,7 @@ class create extends PureComponent {
               {getFieldDecorator('status', {
                 initialValue: (this.state.orgMes && this.state.orgMes.statusS) || '',
                 rules: [{
-                  required: true, message: 'Please input your E-mail!',
+                  required: true, message: '请选择状态',
                 }]
               })(
                 <Select style={{ width: 300 }}>
@@ -230,7 +236,7 @@ class create extends PureComponent {
               {getFieldDecorator('phone', {
                 initialValue: (this.state.orgMes && this.state.orgMes.phone) || '',
                 rules: [{
-                  required: true, message: 'Please input your E-mail!',
+                  required: true, message: '请输入电话',
                 }]
               })(
                 <Input className={style.input}/>
@@ -255,7 +261,7 @@ class create extends PureComponent {
               {getFieldDecorator('name_cn', {
                 initialValue: this.state.orgMes && this.state.orgMes.name_cn,
                 rules: [{
-                  required: true, message: 'Please input your E-mail!',
+                  required: true, message: '请输入简称',
                 }]
               })(
                 <Input className={style.input} />

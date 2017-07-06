@@ -63,10 +63,6 @@ class linkman extends PureComponent {
     })
   }
 
-  // componentWillMount() { // 进入页面执行
-  //   console.log(this.props)
-  // }
-
   componentWillReceiveProps (nextProps) { // props 更新时候触发
     this.setState({
       visible: nextProps.visible,
