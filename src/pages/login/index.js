@@ -1,27 +1,23 @@
 import React, { PureComponent } from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
-
-// import { Input, Form, Button } from 'antd'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import style from './login.css'
 import * as userActions from 'actions/user';
 import logo from './logo-base64'
-import TweenOne from 'rc-tween-one';
-import ticker from 'rc-tween-one/lib/ticker';
-import { Input, Button, Form } from 'antd';
-// import enquire from 'enquire.js';
-
+import { Input, Button, Form, Row, Col } from 'antd';
+import LogoGather from './components/logoGather'
+import { countdown } from 'utils'
 
 @connect(
   state => state,
   dispatch => bindActionCreators(userActions, dispatch)
 )
-class LoginForm extends PureComponent {
+@Form.create()
+export default class LoginForm extends PureComponent {
   state = {
     mobile: '',
-    code: ''
+    code: '',
+    time: 0
   }
 
   constructor () {
@@ -32,6 +28,17 @@ class LoginForm extends PureComponent {
 
   clickCode = (e) => {
     this.props.sendVerify({ mobile: this.state.mobile })
+    this.setState({
+      time: 60
+    })
+    countdown({
+      sec: 60,
+      update: () => {
+        this.setState({time: this.state.time - 1})
+      }
+    }).then(res => {
+      console.log('倒计时结束')
+    })
   }
 
   changeMobile = (e) => {
@@ -47,12 +54,18 @@ class LoginForm extends PureComponent {
   }
 
   handleLogin = () => {
-    this.props.login({ mobile: this.state.mobile, code: this.state.code })
-    this.props.history.push('/main/topic')
+    this.props.form.validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      }
+      this.props.login({ mobile: this.state.mobile, code: this.state.code })
+      this.props.history.push('/main/topic')
+    })
   }
 
   render () {
     const { getFieldDecorator, getFieldError } = this.props.form
+    const { time } = this.state
     return (
       <div className={style.login}>
 
@@ -78,203 +91,28 @@ class LoginForm extends PureComponent {
               )}
 
             </Form.Item>
-            <Form.Item className={style['login__code-item']}>
+            <Form.Item>
               {getFieldDecorator('code', {
                 rules: [{ required: true, message: '请输入验证码' }]
               })(
-                <Input className={style['login__code-input']} onChange={this.changeCode} placeholder="验证码"></Input>
+                <Row type="flex" justify="space-between" style={{paddingRight: '23px'}}>
+                  <Col span={16}>
+                    <Input onChange={this.changeCode} placeholder="验证码"></Input>
+                  </Col>
+                  <Col span={6}>
+                    <Button type="primary" style={{width: '92px'}} ghost onClick={this.clickCode} disabled={ getFieldError('mobile') || time > 0 }>
+                      {
+                        time > 0 ? `${time}秒` : '获取验证码'
+                      }
+                    </Button>
+                  </Col>
+                </Row>
               )}
-              <Button className={style['login__code-btn']} type="primary" ghost onClick={this.clickCode} disabled={ getFieldError('mobile') }>获取验证码</Button>
             </Form.Item>
-            <Button type='primary' style={{width: '100%'}} onClick={this.handleLogin}>登录</Button>
+            <Button type='primary' style={{width: '100%', height: '36px'}} onClick={this.handleLogin}>登录</Button>
           </Form>
         </div>
       </div>
     )
-  }
-}
-
-export default Form.create()(LoginForm)
-
-
-
-
-class LogoGather extends React.Component {
-  static propTypes = {
-    image: PropTypes.string,
-    w: PropTypes.number,
-    h: PropTypes.number,
-    pixSize: PropTypes.number,
-    pointSizeMin: PropTypes.number,
-  };
-
-  static defaultProps = {
-    image: logo,
-    className: 'logo-gather-demo',
-    w: 300,
-    h: 300,
-    pixSize: 20,
-    pointSizeMin: 10,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.interval = null;
-    this.gather = true;
-    this.intervalTime = 9000;
-  }
-
-  componentDidMount() {
-    this.dom = ReactDOM.findDOMNode(this);
-    this.createPointData();
-  }
-
-  componentWillUnmount() {
-    ticker.clear(this.interval);
-    this.interval = null;
-  }
-
-  onMouseEnter = () => {
-    // !this.gather && this.updateTweenData();
-    if (!this.gather) {
-      this.updateTweenData();
-    }
-    this.componentWillUnmount();
-  };
-
-  onMouseLeave = () => {
-    // this.gather && this.updateTweenData();
-    if (this.gather) {
-      this.updateTweenData();
-    }
-    this.interval = ticker.interval(this.updateTweenData, this.intervalTime);
-  };
-
-  setDataToDom(data, w, h) {
-    this.pointArray = [];
-    const number = this.props.pixSize;
-    for (let i = 0; i < w; i += number) {
-      for (let j = 0; j < h; j += number) {
-        if (data[((i + j * w) * 4) + 3] > 150) {
-          this.pointArray.push({ x: i, y: j });
-        }
-      }
-    }
-    const children = [];
-    this.pointArray.forEach((item, i) => {
-      const r = Math.random() * this.props.pointSizeMin + this.props.pointSizeMin;
-      const b = Math.random() * 0.4 + 0.1;
-      children.push(
-        <TweenOne className="point-wrapper" key={i} style={{ left: item.x, top: item.y }}>
-          <TweenOne
-            className="point"
-            style={{
-              width: r,
-              height: r,
-              opacity: b,
-              backgroundColor: `rgb(${Math.round(Math.random() * 95 + 160)},255,255)`,
-            }}
-            animation={{
-              y: (Math.random() * 2 - 1) * 10 || 5,
-              x: (Math.random() * 2 - 1) * 5 || 2.5,
-              delay: Math.random() * 1000,
-              repeat: -1,
-              duration: 3000,
-              yoyo: true,
-              ease: 'easeInOutQuad',
-            }}
-          />
-        </TweenOne>
-      );
-    });
-    this.setState({
-      children,
-      boxAnim: { opacity: 0, type: 'from', duration: 800 },
-    }, () => {
-      this.interval = ticker.interval(this.updateTweenData, this.intervalTime);
-    });
-  }
-
-  createPointData = () => {
-    const { w, h } = this.props;
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, w, h);
-    canvas.width = this.props.w;
-    canvas.height = h;
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
-      const data = ctx.getImageData(0, 0, w, h).data;
-      this.setDataToDom(data, w, h);
-      this.dom.removeChild(canvas);
-    };
-    img.crossOrigin = 'anonymous';
-    img.src = this.props.image;
-  };
-
-  gatherData = () => {
-    const children = this.state.children.map(item =>
-      React.cloneElement(item, {
-        animation: {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          delay: Math.random() * 500,
-          duration: 800,
-          ease: 'easeInOutQuint',
-        },
-      })
-    );
-    this.setState({ children });
-  };
-
-  disperseData = () => {
-    const rect = this.dom.getBoundingClientRect();
-    const sideRect = this.sideBox.getBoundingClientRect();
-    const sideTop = sideRect.top - rect.top;
-    const sideLeft = sideRect.left - rect.left;
-    const children = this.state.children.map(item =>
-      React.cloneElement(item, {
-        animation: {
-          x: Math.random() * rect.width - sideLeft - item.props.style.left,
-          y: Math.random() * rect.height - sideTop - item.props.style.top,
-          opacity: Math.random() * 0.4 + 0.1,
-          scale: Math.random() * 2.4 + 0.1,
-          duration: Math.random() * 500 + 500,
-          ease: 'easeInOutQuint',
-        },
-      })
-    );
-
-    this.setState({
-      children,
-    });
-  };
-
-  updateTweenData = () => {
-    this.dom = ReactDOM.findDOMNode(this);
-    this.sideBox = ReactDOM.findDOMNode(this.sideBoxComp);
-    ((this.gather && this.disperseData) || this.gatherData)();
-    this.gather = !this.gather;
-  };
-
-  render() {
-    return (<div className="logo-gather-demo-wrapper">
-      <canvas id="canvas" />
-      <TweenOne
-        animation={this.state.boxAnim}
-        className="right-side blur"
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        ref={(c) => {
-          this.sideBoxComp = c;
-        }}
-      >
-        {this.state.children}
-      </TweenOne>
-    </div>);
   }
 }
