@@ -48,11 +48,21 @@ const orgList = (state = {}, action) => {
       return orgList || state
   }
 }
+const commodityAttributes = (state = {}, action) => {
+  switch (action.type) {
+    case constants.GET_COMMODITY_DEFAULT_ATTRIBUTE:
+      return action.attributes
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   resultNumber,
   userLogin,
   roleList,
   orgList,
+  commodityAttributes,
   // 路由
   routing: routerReducer
 })

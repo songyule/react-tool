@@ -1,0 +1,11 @@
+.select-area {
+  display: flex;
+
+
+  &__left {
+    width: 300px;
+  }
+  @__right {
+    width: 300px;
+  }
+}

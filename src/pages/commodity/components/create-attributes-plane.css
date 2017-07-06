@@ -1,0 +1,10 @@
+.attribute-row {
+  display: flex;
+
+  &__left {
+    width: 100px;
+  }
+  &__right {
+    width: 100px;
+  }
+}

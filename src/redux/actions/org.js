@@ -130,3 +130,21 @@ export const getGroupList = async () => {
   const response = await fetch.get('/org/fly/group')
   return response
 }
+
+export const getClients = (params) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get('/org/client', { params })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
+export const getLabels = (params) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get('/org/label/client', { params })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}

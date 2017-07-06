@@ -99,6 +99,18 @@ export function generateAttrTree (data, pid) {
   return result
 }
 
+export function cartesianProductOf () {
+  return Array.prototype.reduce.call(arguments, function(a, b) {
+    var ret = [];
+    a.forEach(function(a) {
+      b.forEach(function(b) {
+        ret.push(a.concat([b]));
+      });
+    });
+   return ret;
+  }, [[]]);
+}
+
 /**
  * 对象转成搜索参数
  * @param  {[type]} params [description]
@@ -159,4 +171,19 @@ export function isEmptyObject(e) {
   for (t in e)
       return !1
   return !0
+}
+
+export function toRemoteSpu (spu) {
+  return {
+    name_cn: spu.title,
+    image_url: spu.img ? [spu.img] : [],
+    attr_id: spu.attributes.map(item => item.id),
+    class_id: spu.classes.map(item => item.id),
+    // status: spu.status ? 1 : 2,
+    access_status: spu.accessStatus
+  }
+}
+
+export function toRemoteSku (sku) {
+
 }

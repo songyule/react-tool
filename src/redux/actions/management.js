@@ -25,3 +25,30 @@ export const deleteAttribute = async (id) => {
   const response = await fetch.delete(`/management/attribute/${id}`)
   return response
 }
+
+export const createCommodityAttribute = (data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.post(`/management/attribute`, { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const changeCommodityAttribute = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.patch(`/management/attribute/${id}`, { params: data })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const getCommodityAttributeList = (data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get('/management/attribute', { params: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}

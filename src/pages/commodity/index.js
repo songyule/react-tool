@@ -200,6 +200,7 @@ class CommodityList extends PureComponent {
       classes: arrayToTree(classes)[0].children
     })
     console.log(arrayToTree(classes)[0].children)
+    return res
   }
 
   pageChange = (value) => {
