@@ -1,0 +1,58 @@
+@component content {
+  width: 1000px;
+}
+
+.upload-list-inline{
+  :global {
+    .ant-upload-list-item {
+      float: left;
+      width: 200px;
+      height: auto;
+      margin-right: 8px;
+    }
+  }
+}
+
+.goods-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  width: 760px;
+  padding: 20px;
+  background: #eee;
+}
+
+.item {
+  background: #fff;
+  text-align: center;
+  width: 150px;
+  margin: 0 20px 20px 0;
+  padding: 5px 10px;
+  position: relative;
+
+  &__close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 18px;
+  }
+
+
+  &__name {
+    text-align: left;
+    line-height: 20px;
+    height: 40px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+
+  &__price {
+    text-align: left;
+  }
+
+  &__img {
+    height: 100px;
+    width: 100px;
+  }
+}

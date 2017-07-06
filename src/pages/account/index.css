@@ -1,0 +1,5 @@
+.account-list {
+  &__add-button {
+    text-align: right;
+  }
+}

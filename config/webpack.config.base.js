@@ -24,6 +24,7 @@ module.exports = {
       'public': path.resolve(__dirname, '../public'),
       'api': path.resolve(__dirname, '../src/api'),
       'lib': path.resolve(__dirname, '../src/lib'),
+      'assets': path.resolve(__dirname, '../src/assets'),
       'actions': path.resolve(__dirname, '../src/redux/actions'),
       'utils': path.resolve(__dirname, '../src/utils'),
       'router': path.resolve(__dirname, '../src/router'),
@@ -83,9 +84,6 @@ module.exports = {
         include: paths.appSrc,
         loader: require.resolve('babel-loader'),
         options: {
-          plugins: [
-            ['import', { libraryName: 'antd', style: 'css' }]
-          ],
           cacheDirectory: true,
         },
       },

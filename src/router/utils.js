@@ -7,7 +7,6 @@ import React, { PureComponent } from 'react'
  * @param {any} 组件引入的func
  * @returns 懒加载的组件
  */
-
 export const asyncComponent = loadComponent => (
   class AsyncComponent extends PureComponent {
     state = {

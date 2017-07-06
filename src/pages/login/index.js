@@ -1,18 +1,23 @@
 import React, { PureComponent } from 'react'
-import { Input, Form, Button } from 'antd'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import style from './login.css'
 import * as userActions from 'actions/user';
+import logo from './logo-base64'
+import { Input, Button, Form, Row, Col } from 'antd';
+import LogoGather from './components/logoGather'
+import { countdown } from 'utils'
 
 @connect(
   state => state,
   dispatch => bindActionCreators(userActions, dispatch)
 )
-class LoginForm extends PureComponent {
+@Form.create()
+export default class LoginForm extends PureComponent {
   state = {
     mobile: '',
-    code: ''
+    code: '',
+    time: 0
   }
 
   constructor () {
@@ -22,9 +27,18 @@ class LoginForm extends PureComponent {
   }
 
   clickCode = (e) => {
-    // console.log(this)
-    console.log(this)
     this.props.sendVerify({ mobile: this.state.mobile })
+    this.setState({
+      time: 60
+    })
+    countdown({
+      sec: 60,
+      update: () => {
+        this.setState({time: this.state.time - 1})
+      }
+    }).then(res => {
+      console.log('倒计时结束')
+    })
   }
 
   changeMobile = (e) => {
@@ -40,15 +54,31 @@ class LoginForm extends PureComponent {
   }
 
   handleLogin = () => {
-    this.props.login({ mobile: this.state.mobile, code: this.state.code })
+    this.props.form.validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      }
+      this.props.login({ mobile: this.state.mobile, code: this.state.code })
+      this.props.history.push('/main/topic')
+    })
   }
 
   render () {
     const { getFieldDecorator, getFieldError } = this.props.form
+    const { time } = this.state
     return (
-      <div className="page_login">
+      <div className={style.login}>
+
+        <LogoGather
+          image={logo}
+          w={400}
+          h={400}
+          pixSize={15}
+          pointSizeMin={14}
+        />
+
         <div className={style.login__box}>
-          <h3 className={style.login__title}>百一度管理系统</h3>
+          <h2 className={style.login__title}>百一度管理系统</h2>
           <Form>
             <Form.Item>
               {getFieldDecorator('mobile', {
@@ -61,20 +91,28 @@ class LoginForm extends PureComponent {
               )}
 
             </Form.Item>
-            <Form.Item className={style['login__code-item']}>
+            <Form.Item>
               {getFieldDecorator('code', {
                 rules: [{ required: true, message: '请输入验证码' }]
               })(
-                <Input className={style['login__code-input']} onChange={this.changeCode} placeholder="验证码"></Input>
+                <Row type="flex" justify="space-between" style={{paddingRight: '23px'}}>
+                  <Col span={16}>
+                    <Input onChange={this.changeCode} placeholder="验证码"></Input>
+                  </Col>
+                  <Col span={6}>
+                    <Button type="primary" style={{width: '92px'}} ghost onClick={this.clickCode} disabled={ getFieldError('mobile') || time > 0 }>
+                      {
+                        time > 0 ? `${time}秒` : '获取验证码'
+                      }
+                    </Button>
+                  </Col>
+                </Row>
               )}
-              <Button className={style['login__code-btn']} onClick={this.clickCode} disabled={ getFieldError('mobile') }>获取验证码</Button>
             </Form.Item>
-            <Button onClick={this.handleLogin}>登录</Button>
+            <Button type='primary' style={{width: '100%', height: '36px'}} onClick={this.handleLogin}>登录</Button>
           </Form>
         </div>
       </div>
     )
   }
 }
-
-export default Form.create()(LoginForm)

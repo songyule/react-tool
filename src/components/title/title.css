@@ -1,0 +1,21 @@
+.title {
+  display: flex;
+  padding: 12px 0px;
+  min-height: 70px;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 30px;
+
+  &__text {
+    line-height: 12px;
+    margin-right: 24px;
+    border-left: 2px solid #88B7E0;
+    text-indent: 8px;
+  }
+
+  &__content {
+    line-height: 20px;
+    flex: 1;
+  }
+
+}

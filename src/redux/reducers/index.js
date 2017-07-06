@@ -14,9 +14,11 @@ const resultNumber = (state = 1, action) => {
 const userLogin = (state = {}, action) => {
   switch (action.type) {
     case constants.LOGIN_SUCCESS:
+      window.localStorage.setItem('USER', JSON.stringify(action.user))
       return action.user
     default:
-      return state
+      const user = JSON.parse(window.localStorage.getItem('USER'))
+      return user || state
   }
 }
 

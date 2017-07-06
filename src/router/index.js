@@ -1,30 +1,36 @@
 import React from 'react'
-// import app from 'pages/App'
-import Header from 'components/header'
-import main from 'pages/main/index'
+import Main from 'pages/main/index'
 import notFound from 'pages/404/index'
 import Login from 'pages/login/index'
 import Goods from 'pages/commodity/index'
 
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { syncHistoryWithStore } from 'react-router-redux'
 import store from '@/redux/store'
-// import { asyncComponent } from './utils'
 
 const history = syncHistoryWithStore(createBrowserHistory(), store)
+
+function homeRedirect () {
+  return store.getState().userLogin.token ? (
+    <Redirect to="/main/topic"></Redirect>
+  ) : (
+    <Redirect to="/login"></Redirect>
+  )
+}
 
 const routes =  () => (
   <Router history={history}>
     <div>
-      <Header></Header>
+      <Route path='/' exact strict component={homeRedirect} />
       <Switch>
         <Route path='/login' component={Login} />
-        <Route path='/main' component={main} />
+        <Route path='/main' component={Main} />
         <Route path='/goods' component={Goods} />
         <Route path='*' component={notFound} />
       </Switch>

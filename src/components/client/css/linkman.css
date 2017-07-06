@@ -1,0 +1,9 @@
+.card {
+  p {
+    font-size: 14px;
+    margin: 5px 0 !important;
+  }
+  .cardDel {
+    cursor: pointer;
+  }
+}

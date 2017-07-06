@@ -1,15 +1,31 @@
 import fetch from 'isomorphic-fetch'
 import { API_ROOT } from './config'
-import {
-  message,
-  // Modal
-} from 'antd'
+import { message } from 'antd'
 import StandardError from 'standard-error'
 import store from '../redux/store/index'
+import progress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 require('es6-promise').polyfill()
+const queryString = require('query-string')
 
 const errorMessages = (res) => `${res.status} ${res.statusText}`
+
+export const apiConfig = {
+  count: 0
+}
+
+/**
+ * 清算加载进度条
+ *
+ * @param {any} res
+ * @returns promise
+ */
+function changeApiCount (res) {
+  apiConfig.count--
+  if (!apiConfig.count) progress.set(1 / (apiConfig.count + 1))
+  return res
+}
 
 /**
  * 请求401
@@ -78,82 +94,6 @@ function jsonParse(res) {
 }
 
 /**
- * 设置param
- *
- * @param {any} keys
- * @param {any} value
- * @param {any} keyPostfix
- * @returns
- */
-function setUriParam(keys, value, keyPostfix) {
-  let keyStr = keys[0]
-
-  keys.slice(1).forEach((key) => {
-    keyStr += `[${key}]`
-  })
-
-  if (keyPostfix) {
-    keyStr += keyPostfix
-  }
-
-  return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
-}
-
-/**
- *
- * 获取param
- *
- * @param {any} keys
- * @param {any} object
- * @returns
- */
-function getUriParam(keys, object) {
-  const array = []
-
-  if (object instanceof(Array)) {
-    object.forEach((value) => {
-      array.push(setUriParam(keys, value, '[]'))
-    })
-  } else if (object instanceof(Object)) {
-    for (const key in object) {
-      if (object.hasOwnProperty(key)) {
-        const value = object[key]
-
-        array.push(getUriParam(keys.concat(key), value))
-      }
-    }
-  } else {
-    if (object !== undefined) {
-      array.push(setUriParam(keys, object))
-    }
-  }
-
-  return array.join('&')
-}
-
-/**
- * params 转 String
- *
- * @param {object} params
- * @returns String
- */
-function toQueryString(object) {
-  const array = []
-
-  for (const key in object) {
-    if (object.hasOwnProperty(key)) {
-      const str = getUriParam([key], object[key])
-
-      if (str !== '') {
-        array.push(str)
-      }
-    }
-  }
-
-  return array.join('&')
-}
-
-/**
  * 获取数据 && 拦截
  *
  * @param {any} url
@@ -161,14 +101,32 @@ function toQueryString(object) {
  * @returns
  */
 function fetchData (url, opts) {
-  opts.headers = {
-    ...opts.headers,
-    'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImQyMDEzMTNiMWE3ZTQwMjY4NDBlNTVkMDUwYzhiZDIwIiwiZXhwIjoxNTAwNzE0ODExfQ.8QbK03MFByCTsUI0sHl-bJ2BqMCpj44HKRvzGVpnO48'
-    // 'Authorization': cookie.get('access_token') || ''
+  let baseUrl = opts.base_url ? opts.base_url : API_ROOT
+  let mergeUrl = baseUrl + url
+  // add query params to url when method is GET
+  if (opts && opts.method === "GET" && opts['params']) {
+    mergeUrl = mergeUrl + '?' + queryString.stringify(opts['params'])
   }
+  // add api body when method is not GET
+  if (opts && opts.method !== "GET" && opts['body']) {
+    opts['body'] = JSON.stringify(opts['body'])
+  }
+  // add headers
+    // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'},
+  opts.headers = Object.assign({
+      'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAxNjM5MjM5fQ.M0wUIGduWMoVgjJOrkWADazmHDCr-9rohiYymiLz5Qo',
+      'content-type': 'application/json'
+    },
+    opts.headers
+  )
+
   if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
-  return fetch(url, opts)
+  progress.start()
+  apiConfig.count++
+
+  return fetch(mergeUrl, opts)
+    .then(changeApiCount)
     .then(check401)
     .then(check404)
     .then(checkStatus)
@@ -183,58 +141,28 @@ function fetchData (url, opts) {
  *
  * @class cFetch
  */
-class cFetch {
 
-  /**
-   * get请求
-   *
-   * @static
-   * @param {any} url
-   * @param {any} options
-   * @returns promise
-   * @memberof cFetch
-   */
-  static get (url, options) {
-    let mergeUrl = API_ROOT + url
+const cFetch = {}
+const API_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'PATCH']
+
+/**
+ * 请求的构造函数
+ *
+ * @param {any} url
+ * @param {any} options
+ * @returns function
+ */
+API_METHODS.forEach(method => {
+  cFetch[method.toLowerCase()] = (url, options) => {
     const defaultOptions = {
-      method: 'GET'
+      method
     }
 
     const opts = Object.assign({}, defaultOptions, {...options})
 
-    // add query params to url when method is GET
-    if (opts && opts.method === "GET" && opts['params']) {
-      mergeUrl = mergeUrl + '?' + toQueryString(opts['params'])
-    }
-
-    return fetchData(mergeUrl, opts)
+    return fetchData(url, opts)
   }
-
-  /**
-   * post 请求
-   *
-   * @static
-   * @param {any} url
-   * @param {any} options
-   * @returns promise
-   * @memberof cFetch
-   */
-  static post (url, options) {
-    let mergeUrl = API_ROOT + url
-    const defaultOptions = {
-      method: 'POST'
-    }
-
-    const opts = Object.assign({}, defaultOptions, {...options})
-
-    // add query params to url when method is GET
-    if (opts && opts.method === "POST" && opts['body']) {
-      opts['body'] = JSON.stringify(opts['body'])
-    }
-
-    return fetchData(mergeUrl, opts)
-  }
-}
+})
 
 //catch all the unhandled exception
 window.addEventListener("unhandledrejection", function(err) {

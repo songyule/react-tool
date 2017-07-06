@@ -235,7 +235,7 @@ class CommodityList extends PureComponent {
     })
   }
 
-  onSelectChange (selectedRowKeys) {
+  onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys })
   }
 

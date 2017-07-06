@@ -8,7 +8,7 @@ export function showClasses (classes) {
 }
 
 export function showPrice (skus) {
-  if (skus.length === 0) {
+  if (!skus || skus.length === 0) {
     return '暂无价格'
   }
   let priceList = []
@@ -91,4 +91,48 @@ export function searchParams (params) {
   return Object.keys(params).map((key) => {
     return encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
   }).join('&')
+}
+
+export function getAttrTree (data, pid) { // 将属性分解成树形结构
+  let result = []
+  let temp = []
+  for (var i = 0; i < data.length; i++) {
+    if ((!data[i].parant_id && !pid) || data[i].parent_id === pid) {
+      const obj = { name_cn: data[i].name_cn, id: data[i].id, rgb: data[i].value_str, parent_id: data[i].parent_id, level: data[i].level }
+      temp = getAttrTree(data, data[i].id)
+
+      if (temp.length > 0) {
+        obj.children = temp
+      }
+      result.push(obj)
+    }
+  }
+  return result
+}
+
+export const has = Object.prototype.hasOwnProperty
+
+/**
+ * 倒计时
+ *
+ * @export
+ * @param {any}
+ * @returns promise
+ */
+export function countdown ({
+  sec = 60,
+  update = () => {}
+}) {
+  let seconds = sec
+  return new Promise(function (resolve, reject) {
+    let timer = setInterval(() => {
+      if (seconds <= 0) {
+        clearInterval(timer)
+        resolve(this)
+        return
+      }
+      seconds--
+      update && update(seconds)
+    }, 1000)
+  })
 }

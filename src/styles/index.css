@@ -1,6 +1,10 @@
 /*$blue: #056ef0;*/
-:global body {
-  background: #ececec!important;
+:global {
+  body {
+    background: #ececec!important;
+    min-width: 1000px;
+  }
+  #root, [data-reactroot] {
+    height: 100%;
+  }
 }
-/*@import '~antd/dist/antd.css'*/
-/*@import './App.css'*/
