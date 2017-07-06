@@ -42,7 +42,6 @@ export default class RichEditor extends PureComponent {
     const style = require('./editor.css')
     var contentState = ''
     contentState = this.state.contentState && EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(this.state.contentState)))
-    console.log(contentState, this.state.contentState)
     return (
       <div>
         {

@@ -36,7 +36,6 @@ class linkman extends PureComponent {
         data.org_id = this.props.org_id
         if (this.state.isNew) {
           postContact(data).then(res => {
-            console.log(res)
             if (res.code !== 200) return
             this.setState({
               visible: false
@@ -47,7 +46,6 @@ class linkman extends PureComponent {
         } else {
           data.id = this.state.contactObj.id
           patchContact(data).then(res => {
-            console.log(res)
             if (res.code !== 200) return
             this.setState({
               visible: false
@@ -64,7 +62,6 @@ class linkman extends PureComponent {
 
   getContactFun () {
     getContact({org_id: this.props.org_id}).then(res => {
-      console.log(res)
       res.data.contact.map(item => {
         if(item.classification === 0) {
           item.classificationText = '联系人'
@@ -100,11 +97,9 @@ class linkman extends PureComponent {
     data.id = this.state.contactArr[index].id
     data.deleted = 1
     patchContact(data).then(res => {
-      console.log(res)
       if (res.code !== 200) return
       this.getContactFun()
     })
-    console.log(index, e)
   }
 
   createLinkMan () {
@@ -119,7 +114,6 @@ class linkman extends PureComponent {
   }
 
   editLinkMan (index) {
-    console.log(this.state.contactArr[index])
     let data = this.state.contactArr[index]
     data.classificationS = data.classification.toString()
     data.genderS = data.gender.toString()

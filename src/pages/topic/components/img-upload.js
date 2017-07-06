@@ -23,7 +23,6 @@ export default class extends PureComponent {
       uploadProps: {},
       isChanged: false
     }
-    console.log(this.state)
   }
 
   static defaultProps = {
@@ -66,7 +65,6 @@ export default class extends PureComponent {
   render() {
 
     const { previewVisible, previewImage, fileList } = this.state
-    console.log(fileList, 9999)
     let uploadProps = {
       listType: 'picture-card',
       fileList: fileList,

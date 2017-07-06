@@ -43,7 +43,6 @@ class create extends PureComponent {
   }
 
   componentWillMount () {
-    console.log(this.props)
     if (this.props.location && this.props.location.pathname.substr(6) !== 'clientNew') {
       this.setState({
         isClientNew: false
@@ -53,7 +52,7 @@ class create extends PureComponent {
 
   componentWillReceiveProps (nextProps) { // props 更新时候触发
     let data = nextProps.orgMes
-    console.log(nextProps.isClientEdit)
+    console.log(data)
     if (nextProps.isClientEdit === false) {
       this.setState({
         isClientNew: false
@@ -63,9 +62,23 @@ class create extends PureComponent {
     data.statusS = data.status && data.status.toString()
     data.levelS = data.client_level && data.client_level.id.toString()
     data.sourceS = data.client_source && data.client_source.id.toString()
-    this.setState({
-      orgMes: data
-    })
+    if (data.icon) {
+      this.setState({
+        orgMes: data,
+        fileList: [{
+            uid: -1,
+            name: '233',
+            status: 'done',
+            url: data.icon || '',
+            response: data.icon || '',
+            thumbUrl: data.icon || '',
+          }]
+      })
+    } else {
+      this.setState({
+        orgMes: data,
+      })
+    }
   }
 
   componentDidMount() { // 相当于window.onload
@@ -93,7 +106,6 @@ class create extends PureComponent {
         data.adcode = values.residence[values.residence.length - 1]
         data.status = Number(values.status)
         data.org_type = this.state.isClientNew ? 2 : 3
-        console.log(109)
         if (this.state.orgMes && this.state.orgMes.from === 'clientEdit') { // 这个是来自client 的编辑组织
           data.id = this.state.orgMes.orgId
           editOrgMes(data).then(res => {
@@ -153,9 +165,10 @@ class create extends PureComponent {
             hasFeedback
           >
             {getFieldDecorator('icon', {
+              initialValue: (this.state.orgMes && this.state.orgMes.icon) || '',
               rules: [],
             })(
-              <MyUpload onChange={this.handleChange}></MyUpload>
+              <MyUpload fileList={this.state.fileList} onChange={this.handleChange}></MyUpload>
             )}
           </FormItem>
           <div className={style.fromTopCenter}>

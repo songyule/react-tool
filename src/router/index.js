@@ -18,7 +18,8 @@ const history = syncHistoryWithStore(createBrowserHistory(), store)
 
 function homeRedirect () {
   return store.getState().userLogin.token ? (
-    <Redirect to="/main/topic"></Redirect>
+    // <Redirect to="/main/topic"></Redirect>
+    null
   ) : (
     <Redirect to="/login"></Redirect>
   )

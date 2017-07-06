@@ -10,7 +10,6 @@ class linkman extends PureComponent {
     visible: this.props.visible
   }
   changeRadio (e) { // 点击单选按钮
-    console.log(e.target.value)
     this.setState({
       radioDefalut: e.target.value
     })
