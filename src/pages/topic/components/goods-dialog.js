@@ -20,7 +20,12 @@ const shelvesList = [
     text: '未上架'
   }
 ]
-
+/**
+ *
+ * @export
+ * @component
+ * @module 商品列表 组件
+ */
 @connect(
   state => state,
   dispatch => bindActionCreators(commodityActions, dispatch),

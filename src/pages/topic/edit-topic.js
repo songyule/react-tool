@@ -9,7 +9,7 @@ import { getArticleDetail, changeArticle } from 'actions/article'
  *
  * @export
  * @page
- * @module 新增专题文章页面
+ * @module 修改专题文章页面
  */
 @Form.create()
 export default class extends PureComponent {
