@@ -56,7 +56,7 @@ export default class extends PureComponent {
   }
 
   handleChange = ({ fileList }) => {
-    // this.props.onChange(fileList)
+    this.props.onChange(fileList)
     this.setState({
       fileList
     })

@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react'
-import { Input, Button, Row, Col, Pagination, Card } from 'antd'
+import { Input, Button, Row, Col, Pagination, Card, Select } from 'antd'
 import { Link } from 'react-router-dom'
 import { searchOrg } from 'actions/org'
+import Title from 'components/title'
 import style from './css/list.css'
 
 const Search = Input.Search
+const Option = Select.Option
 
 export default class extends PureComponent {
 
@@ -66,9 +68,22 @@ export default class extends PureComponent {
   }
 
   render () {
+    const selectBefore = (
+      <Select defaultValue="公司名称" style={{ width: 80 }} onChange={this.changeSearchType}>
+        <Option value="title">公司名称</Option>
+      </Select>
+    )
     return (
       <div className={style.box}>
-        <div className={style.boxTop}>
+
+        <Title title={this.state.isClientList ? '客户列表' : '供应商列表'}>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <Search
+              addonBefore={selectBefore}
+              placeholder="input search text"
+              style={{ width: 300 }}
+              onSearch={value => this.getOrgMess(value, 1)}
+            />
             <Button type="primary">
               {
                 this.state.isClientList ?
@@ -76,12 +91,9 @@ export default class extends PureComponent {
                 (<Link to="/main/supplierNew">新建供应商</Link>)
               }
             </Button>
-            <Search
-              placeholder="input search text"
-              style={{ width: 200 }}
-              onSearch={value => this.getOrgMess(value, 1)}
-            />
-        </div>
+          </div>
+        </Title>
+
         <div>
         {
           this.state.total > 0 ? (

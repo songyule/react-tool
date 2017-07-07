@@ -65,7 +65,8 @@ export default class extends Component {
           {
             key: '/main/clientList',
             title: '客户列表',
-            router: '/main/clientList'
+            router: '/main/clientList',
+            icon: 'exception'
           }
         ]
       },
@@ -76,7 +77,8 @@ export default class extends Component {
           {
             key: '/main/supplierList',
             title: '供应商列表',
-            router: '/main/supplierList'
+            router: '/main/supplierList',
+            icon: 'bars'
           }
         ]
       },
