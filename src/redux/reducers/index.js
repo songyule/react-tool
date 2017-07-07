@@ -23,9 +23,21 @@ const userLogin = (state = {}, action) => {
   }
 }
 
+const roleList = (state = {}, action) => {
+  switch (action.type) {
+    case constants.ROLE_LIST: 
+      window.localStorage.setItem('ROLE', JSON.stringify(action.role))
+      return action.role
+    default:
+      const role = JSON.parse(window.localStorage.getItem('ROLE'))
+      return role || state
+  }
+}
+
 const rootReducer = combineReducers({
   resultNumber,
   userLogin,
+  roleList,
   // 路由
   routing: routerReducer
 })
