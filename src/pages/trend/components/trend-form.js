@@ -85,6 +85,7 @@ export default class extends PureComponent {
         'cover_image': fieldsValue.image[0].response,
         'weight': fieldsValue.weight || 0,
         'status': fieldsValue.display ? 2 : 1,
+        'article_tag': this.refs.common.state.tags,
         'trend_image': trend
       }
 
@@ -172,6 +173,7 @@ export default class extends PureComponent {
               {/* 通用的 formItem 内容 */}
               <SameForm
                 onChange={this.handleChange}
+                ref="common"
                 fileList={fileList}
                 getFieldDecorator={getFieldDecorator}
                 {...this.props}
