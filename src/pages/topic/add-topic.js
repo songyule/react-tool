@@ -21,7 +21,10 @@ export default class extends PureComponent {
   }
 
   handleSubmit = (e) => {
-    createArticle(e).then(res => message.success('创建成功'))
+    createArticle(e).then(res => {
+      this.props.history.push('/main/topic')
+      message.success('创建成功')
+    })
   }
 
   render() {

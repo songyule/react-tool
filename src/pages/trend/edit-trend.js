@@ -29,7 +29,10 @@ export default class extends PureComponent {
   }
 
   handleSubmit = (e) => {
-    changeArticle(this.props.match.params.id, e).then(res => message.success('修改成功'))
+    changeArticle(this.props.match.params.id, e).then(res => {
+      this.props.history.push('/main/trend')
+      message.success('修改成功')
+    })
   }
 
   componentWillMount() {

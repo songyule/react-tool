@@ -31,6 +31,7 @@ export default class extends PureComponent {
   handleSubmit = async (obj) => {
     // console.log(obj)
     await changeArticle(this.props.match.params.id, obj)
+    this.props.history.push('/main/topic')
     message.success('修改成功')
   }
 
