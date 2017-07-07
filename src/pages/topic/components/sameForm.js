@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react'
-import { Form, Input, Switch } from 'antd'
+import { Form, Input, Switch, TreeSelect } from 'antd'
 import PropTypes from 'prop-types'
 import MyUpload from './img-upload'
 import store from '@/redux/store'
-const FormItem = Form.Item
+import { getTags } from 'actions/article'
+import arrayToTree from 'array-to-tree'
 
+const FormItem = Form.Item
+const SHOW_PARENT = TreeSelect.SHOW_PARENT
+
+// import { showPrice } from 'utils'
 /**
  *
  * @export
@@ -18,8 +23,26 @@ export default class SameForm extends PureComponent {
     this.state = {
       fileList: props.fileList || '',
       checked: false,
-      isFirst: true
+      isFirst: true,
+      TreeData: [],
+      tags: []
     }
+  }
+
+  static defaultProps = {
+    title: '',
+    weight: '',
+    status: '',
+    fileList: [],
+    tags: []
+  }
+
+  static propTypes = {
+    getFieldDecorator: PropTypes.func.isRequired,
+  }
+
+  componentWillMount () {
+    this.getCustomTags()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,9 +61,39 @@ export default class SameForm extends PureComponent {
           url: nextProps.cover_image,
           response: nextProps.cover_image,
           thumbUrl: nextProps.cover_image,
-        }]
+        }],
+        tags: nextProps.article_tag && nextProps.article_tag.map(item => item.id),
       })
     }
+  }
+
+  // 获取标签
+  getCustomTags = async () => {
+    try {
+      const { data } = await getTags()
+      let TreeData = arrayToTree(data, {
+        parentProperty: 'parent_id',
+        customID: 'id'
+      })
+      TreeData.map(item => {
+        item.label = item.name
+        item.key = item.id
+        item.value = item.id
+        item.children.map(res => {
+          res.label = res.name
+          res.key = res.id
+          res.value = res.id
+          return res
+        })
+        return item
+      })
+      this.setState({
+        TreeData: TreeData
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   changeE = (e) => {
@@ -49,15 +102,16 @@ export default class SameForm extends PureComponent {
     })
   }
 
-  static defaultProps = {
-    title: '',
-    weight: '',
-    status: '',
-    fileList: []
-  }
-
-  static propTypes = {
-    getFieldDecorator: PropTypes.func.isRequired,
+  onChangeTree = (value) => {
+    let data = this.state.TreeData
+    let allClass = data.map(item => item.id)
+    let twoClass = []
+    let left = value.filter(item => allClass.indexOf(item) === -1)
+    let existed = value.filter(item => allClass.indexOf(item) > -1)
+    existed.forEach(item => {
+      data.filter(val => (val.id === item)).map(val => val.children.map(val => twoClass.push(val.id)))
+    })
+    this.setState({ tags: [...twoClass, ...left] })
   }
 
   handleChange = (fileList) => {
@@ -75,6 +129,22 @@ export default class SameForm extends PureComponent {
         sm: { span: 22 },
       },
     }
+
+    const tProps = {
+      treeData: this.state.TreeData,
+      value: this.state.tags,
+      onChange: this.onChangeTree,
+      multiple: true,
+      treeCheckable: true,
+      showCheckedStrategy: SHOW_PARENT,
+      searchPlaceholder: '选择标签',
+      // treeCheckStrictly: true,
+      // labelInValue: true,
+      style: {
+        width: 300,
+      },
+    };
+
     const forms = [
       {
         label: '专题标题',
@@ -126,6 +196,13 @@ export default class SameForm extends PureComponent {
         },
         content: <MyUpload onChange={this.handleChange} fileList={this.state.fileList}></MyUpload>
       },
+      {
+        label: '标签',
+        name: 'tags',
+        opts: {},
+        notDecorator:true,
+        content: <TreeSelect {...tProps} />
+      },
     ]
     return (
       <div>
@@ -138,8 +215,11 @@ export default class SameForm extends PureComponent {
                 hasFeedback={form.hasFeedback}
                 key={form.name}
               >
-                {getFieldDecorator(form.name, form.opts)(
-                  form.content
+                {form.notDecorator ?
+                  (form.content) : (
+                  getFieldDecorator(form.name, form.opts)(
+                    form.content
+                  )
                 )}
               </FormItem>
             )
