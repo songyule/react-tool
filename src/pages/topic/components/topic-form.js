@@ -1,19 +1,12 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Button, TreeSelect } from 'antd'
-
-// import Goods from './goods-dialog'
+import { Form, Button } from 'antd'
 import AddGoods from './add-goods'
 import style from './topic-form.css'
 import Editor from 'components/richEditor'
 import SameForm from './sameForm'
-import arrayToTree from 'array-to-tree'
-
-// import { showPrice } from 'utils'
-import { getTags } from 'actions/article'
 
 const FormItem = Form.Item
-const SHOW_PARENT = TreeSelect.SHOW_PARENT
 
 /**
  *
@@ -30,47 +23,12 @@ export default class TopicForm extends PureComponent {
       isFirst: true,
       contentState: props.content,
       fileList: '',
-      TreeData: [],
-      value: ['123123'],
       selectedRowObjs: []
     }
   }
 
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-  }
-
-  // 获取标签
-  getCustomTags = async () => {
-    try {
-      const { data } = await getTags()
-      let TreeData = arrayToTree(data, {
-        parentProperty: 'parent_id',
-        customID: 'id'
-      })
-      TreeData.map(item => {
-        item.label = item.name
-        item.key = item.id
-        item.value = item.id
-        item.children.map(res => {
-          res.label = res.name
-          res.key = res.id
-          res.value = res.id
-          return res
-        })
-        return item
-      })
-      this.setState({
-        TreeData: TreeData
-      })
-    } catch (error) {
-      console.log(error)
-    }
-
-  }
-
-  componentWillMount () {
-    this.getCustomTags()
   }
 
   componentWillReceiveProps (e) {
@@ -80,7 +38,7 @@ export default class TopicForm extends PureComponent {
       isFirst: false,
       fileList: [],
       contentState: e.content,
-      value: e.article_tag && e.article_tag.map(item => item.id),
+      // value: e.article_tag && e.article_tag.map(item => item.id),
       display: e.status === 2,
       selectedRowObjs: e.spu || []
     })
@@ -101,7 +59,7 @@ export default class TopicForm extends PureComponent {
         'content': this.state.contentState,
         'weight': fieldsValue.weight,
         'status': this.refs.common.state.checked ? 2 : 1,
-        'article_tag': this.state.value,
+        'article_tag': this.refs.common.state.tags,
         'spu': this.state.selectedRowObjs.map(item => item.id),
       }
       this.props.handleSubmit(obj)
@@ -112,17 +70,6 @@ export default class TopicForm extends PureComponent {
     this.setState({contentState: e})
   }
 
-  onChangeTree = (value) => {
-    let data = this.state.TreeData
-    let allClass = data.map(item => item.id)
-    let twoClass = []
-    let left = value.filter(item => allClass.indexOf(item) === -1)
-    let existed = value.filter(item => allClass.indexOf(item) > -1)
-    existed.forEach(item => {
-      data.filter(val => (val.id === item)).map(val => val.children.map(val => twoClass.push(val.id)))
-    })
-    this.setState({ value: [...twoClass, ...left] })
-  }
   onContentStateChange = (contentState) => {
     this.setState({
       contentState
@@ -159,21 +106,6 @@ export default class TopicForm extends PureComponent {
       },
     }
 
-    const tProps = {
-      treeData: this.state.TreeData,
-      // defaultValue: this.state.value,
-      value: this.state.value,
-      onChange: this.onChangeTree,
-      multiple: true,
-      treeCheckable: true,
-      showCheckedStrategy: SHOW_PARENT,
-      searchPlaceholder: '选择标签',
-      // treeCheckStrictly: true,
-      // labelInValue: true,
-      style: {
-        width: 300,
-      },
-    };
     return (
       <div>
         <div className={style.content}>
@@ -186,13 +118,6 @@ export default class TopicForm extends PureComponent {
               {...this.props}
               fileList={this.state.fileList}
             ></SameForm>
-            <FormItem
-              {...formItemLayout}
-              label="标签">
-              <div>
-                <TreeSelect {...tProps} />
-              </div>
-            </FormItem>
             <FormItem
               {...formItemLayout}
               label="内容"
