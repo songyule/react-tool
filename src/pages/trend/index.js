@@ -44,6 +44,7 @@ export default class extends PureComponent {
   }
 
   changeDisplay = async (val, e) => {
+    let tag = (val.article_tag && val.article_tag.map(item => item.id)) || []
     let trend = val.trend_image && val.trend_image.map(item => {
       return ({
         trend_image: item.trend_image,
@@ -54,6 +55,7 @@ export default class extends PureComponent {
     let data = {
       ...val,
       trend_image: trend,
+      article_tag: tag,
       'article_type': 2,
       'status': e ? 2 : 1,
     }
