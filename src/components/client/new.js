@@ -25,7 +25,8 @@ class create extends PureComponent {
       client_source: {}
     },
     isClientNew: true,
-    visible: false
+    visible: false,
+    isFirst: true
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -69,7 +70,9 @@ class create extends PureComponent {
     data.levelS = data.client_level && data.client_level.id.toString()
     data.sourceS = data.client_source && data.client_source.id.toString()
     if (data.icon) {
+      if (!this.state.isFirst) return
       this.setState({
+        isFirst: false,
         orgMes: data,
         fileList: [{
             uid: -1,
@@ -108,7 +111,7 @@ class create extends PureComponent {
       if (!err) {
         let data = {}
         Object.assign(data, values)
-        data.icon = values.icon && values.icon[0].response
+        data.icon = values.icon && values.icon[0] && values.icon[0].response
         data.adcode = values.residence[values.residence.length - 1]
         data.status = Number(values.status)
         data.org_type = this.state.isClientNew ? 2 : 3
