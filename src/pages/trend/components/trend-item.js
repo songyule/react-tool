@@ -45,7 +45,7 @@ export default class extends PureComponent {
 
   goodsChange = (selectedRowObjs) => this.setState({ selectedRowObjs })
   handleChange = (fileList) => {
-    this.setState({ fileList })
+    this.setState({ fileList: [...fileList] })
   }
 
   showModal = () => this.setState({pageVisible: true})
