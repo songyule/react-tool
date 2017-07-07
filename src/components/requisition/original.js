@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
-import { Input, Icon, Row, Col, Table } from 'antd'
+import { Input, Row, Col, Table, Button } from 'antd'
+import { Link } from 'react-router-dom'
 import style from './css/original.css'
+import Title from 'components/title'
 const InputGroup = Input.Group
 class original extends PureComponent {
   state = {
@@ -42,7 +44,7 @@ class original extends PureComponent {
       }],
       [{
         label: '质检内容',
-        dataIndex: 'test',
+        dataIndex: 'test2',
       }, {
         label: '合计',
         dataIndex: 'test',
@@ -75,11 +77,16 @@ class original extends PureComponent {
     }]
     return (
       <div className={style.original_box}>
-        <div className={style.title}>
-          <Icon type="exception" style={{ fontSize: 16, color: '#08c', marginTop: 3, marginRight:5 }} />
-          <span>需求单号: </span>
-          <span>21032321421312312</span>
-        </div>
+
+        <Title title='需求单号：'>
+          <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: -15}}>
+            <p style={{display: 'flex', alignItems: 'center'}}>670bd8afb6a749d1885ec563d624302a</p>
+            <Button type="primary">
+              <Link to="/main/clientNew">返回</Link>
+            </Button>
+          </div>
+        </Title>
+
         <div>
           {
             this.state.initData.map((item, index) => {
@@ -96,15 +103,33 @@ class original extends PureComponent {
             })
           }
           <Row className={style.flex}>
-            <span className={style.inputTitle}>交期:</span>
-            <InputGroup compact>
-              <Input style={{ width: 100, textAlign: 'center' }} placeholder="Minimum" />
+            <span style={{width:60, textAlign: 'right', marginRight: 5}}>交期:</span>
+            <InputGroup compact style={{display: 'block', width: 300}}>
+              <Input disabled style={{ width: 138, textAlign: 'center' }} placeholder="Minimum" />
               <Input style={{ width: 24, borderLeft: 0, pointerEvents: 'none' }} placeholder="~" />
-              <Input style={{ width: 100, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum" />
+              <Input disabled style={{ width: 138, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum" />
             </InputGroup>
           </Row>
           <Row>
             <Table pagination={false} columns={columns} dataSource={dataSource}></Table>
+          </Row>
+          <Row className={style.flex}>
+            <span style={{width:60, textAlign: 'right', marginRight: 5}}>备注:</span>
+            <Input 
+            type="textarea" 
+            disabled 
+            autosize
+            style={{width: '80%'}}
+            defaultValue="这是一大段话这是一大段话这是一大段话这是一大段话这是一大段话"/>
+          </Row>
+          <Row className={style.flex}>
+            <span style={{width:60, textAlign: 'right', marginRight: 5}}>图片展示:</span>
+            <div>
+              <img src="" alt="img" className={style.originImg}/>
+              <img src="" alt="img" className={style.originImg}/>
+              <img src="" alt="img" className={style.originImg}/>
+              <img src="" alt="img" className={style.originImg}/>
+            </div>
           </Row>
         </div>
       </div>

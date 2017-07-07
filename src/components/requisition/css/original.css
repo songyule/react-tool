@@ -1,5 +1,5 @@
 .original_box {
-  padding: 20px 10px;
+  padding: 0 10px;
   .title {
     font-size: 16px;
     border-bottom: 1px solid #ccc;
@@ -13,9 +13,16 @@
     text-align: right;
     display: inline-block;
     margin-right: 5px;
+
   }
   .flex {
     display: flex;
+  }
+  .originImg {
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    border-radius: 5px;
   }
   :global {
     .ant-row {
