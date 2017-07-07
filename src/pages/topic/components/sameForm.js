@@ -66,7 +66,7 @@ export default class SameForm extends PureComponent {
 
   render() {
     const { getFieldDecorator, status } = this.props
-    const name = store.getState().userLogin.name_cn
+    // const name = store.getState().userLogin.name_cn
     const formItemLayout = {
       labelCol: {
         sm: { span: 2 },
@@ -107,13 +107,13 @@ export default class SameForm extends PureComponent {
         },
         content: <Switch checkedChildren={'显示'} unCheckedChildren={'隐藏'} checked={this.state.checked} onChange={this.changeE} />
       },
-      {
-        label: '发布人',
-        hasFeedback: false,
-        name: 'name',
-        opts: {},
-        content: <span>{name}</span>
-      },
+      // {
+      //   label: '发布人',
+      //   hasFeedback: false,
+      //   name: 'name',
+      //   opts: {},
+      //   content: <span>{name}</span>
+      // },
       {
         label: '封面图',
         hasFeedback: true,
