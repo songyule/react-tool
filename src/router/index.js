@@ -10,11 +10,7 @@ import {
   Route,
   Switch
 } from 'react-router-dom'
-import { createBrowserHistory } from 'history'
-import { syncHistoryWithStore } from 'react-router-redux'
 import store from '@/redux/store'
-
-const history = syncHistoryWithStore(createBrowserHistory(), store)
 
 function homeRedirect () {
   return store.getState().userLogin.token ? (
@@ -24,8 +20,8 @@ function homeRedirect () {
   )
 }
 
-const routes =  () => (
-  <Router history={history}>
+const routes =  ({history}) => (
+  <Router history={{...history}}>
     <div>
       <Route path='/' exact strict component={homeRedirect} />
       <Switch>

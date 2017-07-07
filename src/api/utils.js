@@ -2,13 +2,11 @@ import fetch from 'isomorphic-fetch'
 import { API_ROOT } from './config'
 import { message } from 'antd'
 import StandardError from 'standard-error'
-import store from '../redux/store/index'
+import store from '@/redux/store'
 import progress from 'nprogress'
 import 'nprogress/nprogress.css'
-
 require('es6-promise').polyfill()
 const queryString = require('query-string')
-
 const errorMessages = (res) => `${res.status} ${res.statusText}`
 
 export const apiConfig = {
@@ -27,6 +25,21 @@ function changeApiCount (res) {
   return res
 }
 
+function catchError (err) {
+  console.log('%c' + errorMessages(err), 'color: red')
+
+  if (err.data) {
+    switch (err.data.code) {
+      case 1040038:
+        message.error('权限不足，请联系管理员')
+        break
+
+      default: break
+    }
+  }
+  return err
+}
+
 /**
  * 请求401
  *
@@ -36,16 +49,10 @@ function changeApiCount (res) {
 function check401(res) {
   // 登陆界面不需要做401校验
   if (res.status === 401) {
-    // Modal.error({
-    //   title: "登陆验证过期",
-    //   content: "您的登陆验证已过期，请重新登陆",
-    //   onOk: () => {
-        // cookie.remove('access_token')
-        // location.href = '/'
-      // }
-    // })
-
-    return Promise.reject(errorMessages(res))
+    message.error('请重新登录')
+    // window.localStorage.removeItem('USER')
+    window.location.href = '/login'
+    return Promise.reject(res)
   }
   return res
 }
@@ -58,7 +65,7 @@ function check401(res) {
  */
 function check404(res) {
   if (res.status === 404) {
-    return Promise.reject(errorMessages(res))
+    return Promise.reject(res)
   }
   return res
 }
@@ -69,14 +76,14 @@ function check404(res) {
  * @param {any} response
  * @returns promise
  */
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response
+function checkStatus(res) {
+  if (res.status >= 200 && res.status < 300) {
+    return res
   } else {
     // 这里补充更多错误参数
-    return response.text().then(errorMsg => {
+    return res.text().then(errorMsg => {
       return new StandardError({
-        statusCode: response.status,
+        statusCode: res.status,
         msg: errorMsg
       })
     }).then(err => { throw err })
@@ -112,10 +119,9 @@ function fetchData (url, opts) {
     opts['body'] = JSON.stringify(opts['body'])
   }
   // add headers
-    // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'},
   opts.headers = Object.assign({
-      'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAxNjM5MjM5fQ.M0wUIGduWMoVgjJOrkWADazmHDCr-9rohiYymiLz5Qo',
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'
     },
     opts.headers
   )
@@ -131,9 +137,7 @@ function fetchData (url, opts) {
     .then(check404)
     .then(checkStatus)
     .then(jsonParse)
-    .catch(err => {
-      console.log('%c' + err, 'color: red');
-    })
+    .catch(catchError)
 }
 
 /**
