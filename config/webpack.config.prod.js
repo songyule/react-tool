@@ -9,9 +9,11 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 // // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
+const os = require('os')
 
-var merge = require('webpack-merge')
-var baseWebpackConfig = require('./webpack.config.base')
+const merge = require('webpack-merge')
+const baseWebpackConfig = require('./webpack.config.base')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -100,7 +102,7 @@ module.exports = merge(baseWebpackConfig, {
                     modules: true,
                     localIdentName: '[path][name]--[local]--[hash:base64:5]',
                     minimize: true,
-                    sourceMap: true,
+                    sourceMap: false,
                   },
                 },
                 'postcss-loader',
@@ -128,7 +130,7 @@ module.exports = merge(baseWebpackConfig, {
                     importLoaders: 1,
                     localIdentName: '[path][name]--[local]--[hash:base64:5]',
                     minimize: true,
-                    sourceMap: true,
+                    sourceMap: false,
                   },
                 },
                 'postcss-loader',
@@ -173,20 +175,31 @@ module.exports = merge(baseWebpackConfig, {
     // Otherwise React will be compiled in the very slow development mode.
     // new webpack.DefinePlugin(env.stringified),
     // Minify the code.
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false,
-      },
-      output: {
-        comments: false,
-      },
-      sourceMap: true,
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false,
+    //     // Disabled because of an issue with Uglify breaking seemingly valid code:
+    //     // https://github.com/facebookincubator/create-react-app/issues/2376
+    //     // Pending further investigation:
+    //     // https://github.com/mishoo/UglifyJS2/issues/2011
+    //     comparisons: false,
+    //   },
+    //   output: {
+    //     comments: false,
+    //   },
+    //   sourceMap: false,
+    // }),
+    new ParallelUglifyPlugin({
+      cacheDir: path.join(__dirname, '../.cache'),
+      workerCount: os.cpus().length,
+      uglifyJS: {
+        compress: {
+          warnings: false
+        },
+        sourceMap: false
+      }
     }),
+
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
       filename: cssFilename,

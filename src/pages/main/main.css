@@ -12,11 +12,24 @@
     .ant-menu-item {
       transition: none!important;
       padding: 0!important;
+      /*background: #333;*/
+      cursor: pointer;
+
+      & i.anticon {
+        width: 40px;
+      }
+
+      &:hover {
+        background: #555;
+      }
     }
-    .ant-menu-item i.anticon {
-      width: 40px;
+    .ant-menu-item-selected {
+      background-color: #108ee9!important;
     }
     .ant-menu-submenu-title {
+      &:hover {
+        background-color: #108ee9;
+      }
       padding: 0!important;
 
       &[aria-expanded="true"] {

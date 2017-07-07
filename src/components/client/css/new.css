@@ -1,5 +1,5 @@
 .newContent {
-  padding: 20px 15px;
+  padding: 0 15px;
   .input {
     width: 300px;
   }
@@ -28,15 +28,17 @@
   .fromBottom {
     display: flex;
   }
-
+  .isHide {
+    display: flex;
+  }
+  .imgBox {
+    display: flex;
+  }
   :global{
     .ant-form-item-label {
       /*background: pink;*/
       width: 80px;
       text-align: right;
-    }
-    .ant-form-item {
-      display: flex;
     }
   }
 }

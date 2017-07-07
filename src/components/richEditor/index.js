@@ -38,6 +38,7 @@ export default class RichEditor extends PureComponent {
   }
 
   render() {
+    const { then } = this.state
     require('../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css')
     const style = require('./editor.css')
     var contentState = ''
@@ -45,7 +46,7 @@ export default class RichEditor extends PureComponent {
     return (
       <div>
         {
-          this.state.then ? ( <Editor
+          (then && contentState) ? ( <Editor
           defaultEditorState={contentState}
           wrapperClassName={style.wrapper}
           editorClassName={style.editor}

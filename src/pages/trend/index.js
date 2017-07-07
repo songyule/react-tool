@@ -44,7 +44,7 @@ export default class extends PureComponent {
   }
 
   changeDisplay = async (val, e) => {
-    let trend = val.trend_image.map(item => {
+    let trend = val.trend_image && val.trend_image.map(item => {
       return ({
         trend_image: item.trend_image,
         spu_id: item.spu.map(val => val.id)
@@ -236,7 +236,7 @@ export default class extends PureComponent {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'不显'} onChange={(e) => this.changeDisplay(record, e)}/>
+      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'隐藏'} onChange={(e) => this.changeDisplay(record, e)}/>
     },
     {
       title: '操作',

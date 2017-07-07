@@ -9,7 +9,7 @@ import { getArticleDetail, changeArticle } from 'actions/article'
  *
  * @export
  * @page
- * @module 新增专题文章页面
+ * @module 修改专题文章页面
  */
 @Form.create()
 export default class extends PureComponent {
@@ -31,6 +31,7 @@ export default class extends PureComponent {
   handleSubmit = async (obj) => {
     // console.log(obj)
     await changeArticle(this.props.match.params.id, obj)
+    this.props.history.push('/main/topic')
     message.success('修改成功')
   }
 

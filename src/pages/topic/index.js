@@ -93,18 +93,22 @@ export default class extends PureComponent {
     if (content) params[type] = content
     if (updator_id) params.updator_id = updator_id
 
-    const { data } = await getArticles(params)
-    data.article.forEach((item, index) => {
-      item.no = (current - 1) * pageSize + index + 1
-      item.key = item.id
-    })
-    this.setState({
-      data: data.article,
-      pagination: {
-        ...this.state.pagination,
-        total: data.total,
-      }
-    })
+    try {
+      const { data } = await getArticles(params)
+      data.article.forEach((item, index) => {
+        item.no = (current - 1) * pageSize + index + 1
+        item.key = item.id
+      })
+      this.setState({
+        data: data.article,
+        pagination: {
+          ...this.state.pagination,
+          total: data.total,
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // 搜索关键词
@@ -160,7 +164,7 @@ export default class extends PureComponent {
     // 获取编辑列表
     getEditors().then(res => {
       this.setState({
-        editors: res.data
+        editors: res.data || []
       })
     })
   }
@@ -230,7 +234,7 @@ export default class extends PureComponent {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'不显'} onChange={(e) => this.changeDisplay(record, e)}/>
+      render: (text, record, i) => <Switch defaultChecked={text === 2} checkedChildren={'显示'} unCheckedChildren={'隐藏'} onChange={(e) => this.changeDisplay(record, e)}/>
     },
     {
       title: '操作',

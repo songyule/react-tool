@@ -14,7 +14,7 @@ export default class extends Component {
     super(props)
 
     this.state = {
-      current: 'clientlist',
+      current: props.location.pathname || '',
       isFold: false
     }
   }
@@ -38,36 +38,23 @@ export default class extends Component {
       [style.container__menu]: true,
       [style.container__menu__fold]: this.state.isFold
     })
-
+    // key跟router需要一样, 不然刷新的时候menu高亮的值会不正确
     const menuArr = [
       {
-        key: 'key01',
+        key: 'front-management',
         title: '前台管理',
         children: [
           {
-            key: 'topic',
+            key: '/main/topic',
             title: '专题文章',
-            router: '/main/topic'
+            router: '/main/topic',
+            icon: 'book'
           },
           {
-            key: 'trend',
+            key: '/main/trend',
             title: '趋势文章',
-            router: '/main/trend'
-          },
-          {
-            key: 'chil02',
-            title: 'Option2',
-            router: '/main/tacos'
-          },
-          {
-            key: 'chil03',
-            title: 'Option3',
-            router: '/main/option3'
-          },
-          {
-            key: 'chil04',
-            title: 'Option4',
-            router: '/main/option4'
+            router: '/main/trend',
+            icon: 'area-chart'
           }
         ]
       },
@@ -76,9 +63,10 @@ export default class extends Component {
         title: '客户档案',
         children: [
           {
-            key: 'clientlist',
+            key: '/main/clientList',
             title: '客户列表',
-            router: '/main/clientList'
+            router: '/main/clientList',
+            icon: 'exception'
           }
         ]
       },
@@ -87,9 +75,10 @@ export default class extends Component {
         title: '供应商档案',
         children: [
           {
-            key: 'supplierlist',
+            key: '/main/supplierList',
             title: '供应商列表',
-            router: '/main/supplierList'
+            router: '/main/supplierList',
+            icon: 'bars'
           }
         ]
       },
@@ -109,12 +98,12 @@ export default class extends Component {
         title: '类目与商品管理',
         children: [
           {
-            key: 'classes',
+            key: '/main/classes',
             title: '商城通用类目',
             router: '/main/classes'
           },
           {
-            key: 'attributes',
+            key: '/main/attributes',
             title: '属性管理',
             router: '/main/attributes'
           }
@@ -125,7 +114,7 @@ export default class extends Component {
         title: '账户与权限管理',
         children: [
           {
-            key: 'account-list',
+            key: '/main/account-list',
             title: '账户列表',
             router: '/main/account-list'
           }
@@ -166,11 +155,11 @@ export default class extends Component {
                                 (
                                   <Tooltip placement="right" title={<span>{item.title}</span>}>
                                     <Link to={item.router}>
-                                      <Icon type="minus-square" /><span>{item.title}</span>
+                                      <Icon type={item.icon || 'minus-square'} /><span>{item.title}</span>
                                     </Link>
                                   </Tooltip>
                                 ) :
-                                (<Link to={item.router}><div><Icon type="minus-square" /> <span>{item.title}</span></div></Link>)
+                                (<Link to={item.router}><div><Icon type={item.icon || 'minus-square'} /> <span>{item.title}</span></div></Link>)
                               }
                             </Menu.Item>
                           ))

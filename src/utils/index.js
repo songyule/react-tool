@@ -111,3 +111,28 @@ export function getAttrTree (data, pid) { // 将属性分解成树形结构
 }
 
 export const has = Object.prototype.hasOwnProperty
+
+/**
+ * 倒计时
+ *
+ * @export
+ * @param {any}
+ * @returns promise
+ */
+export function countdown ({
+  sec = 60,
+  update = () => {}
+}) {
+  let seconds = sec
+  return new Promise(function (resolve, reject) {
+    let timer = setInterval(() => {
+      if (seconds <= 0) {
+        clearInterval(timer)
+        resolve(this)
+        return
+      }
+      seconds--
+      update && update(seconds)
+    }, 1000)
+  })
+}

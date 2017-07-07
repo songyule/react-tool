@@ -3,12 +3,13 @@ import { render } from 'react-dom'
 import registerServiceWorker from './utils/registerServiceWorker'
 import { Provider } from 'react-redux'
 import store from '@/redux/store'
+import history from 'router/history'
 import './styles/index.css'
 import CustomRoute from 'router'
 
 render(
   <Provider store={store}>
-    <CustomRoute />
+    <CustomRoute history={history}/>
   </Provider>,
   document.getElementById('root'))
 

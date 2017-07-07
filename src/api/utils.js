@@ -1,16 +1,44 @@
 import fetch from 'isomorphic-fetch'
 import { API_ROOT } from './config'
-import {
-  message,
-  // Modal
-} from 'antd'
+import { message } from 'antd'
 import StandardError from 'standard-error'
-import store from '../redux/store/index'
-
+import store from '@/redux/store'
+import progress from 'nprogress'
+import 'nprogress/nprogress.css'
 require('es6-promise').polyfill()
 const queryString = require('query-string')
-
 const errorMessages = (res) => `${res.status} ${res.statusText}`
+
+export const apiConfig = {
+  count: 0
+}
+
+/**
+ * 清算加载进度条
+ *
+ * @param {any} res
+ * @returns promise
+ */
+function changeApiCount (res) {
+  apiConfig.count--
+  if (!apiConfig.count) progress.set(1 / (apiConfig.count + 1))
+  return res
+}
+
+function catchError (err) {
+  console.log('%c' + errorMessages(err), 'color: red')
+
+  if (err.data) {
+    switch (err.data.code) {
+      case 1040038:
+        message.error('权限不足，请联系管理员')
+        break
+
+      default: break
+    }
+  }
+  return err
+}
 
 /**
  * 请求401
@@ -21,16 +49,10 @@ const errorMessages = (res) => `${res.status} ${res.statusText}`
 function check401(res) {
   // 登陆界面不需要做401校验
   if (res.status === 401) {
-    // Modal.error({
-    //   title: "登陆验证过期",
-    //   content: "您的登陆验证已过期，请重新登陆",
-    //   onOk: () => {
-        // cookie.remove('access_token')
-        // location.href = '/'
-      // }
-    // })
-
-    return Promise.reject(errorMessages(res))
+    message.error('请重新登录')
+    // window.localStorage.removeItem('USER')
+    window.location.href = '/login'
+    return Promise.reject(res)
   }
   return res
 }
@@ -43,7 +65,7 @@ function check401(res) {
  */
 function check404(res) {
   if (res.status === 404) {
-    return Promise.reject(errorMessages(res))
+    return Promise.reject(res)
   }
   return res
 }
@@ -54,14 +76,14 @@ function check404(res) {
  * @param {any} response
  * @returns promise
  */
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response
+function checkStatus(res) {
+  if (res.status >= 200 && res.status < 300) {
+    return res
   } else {
     // 这里补充更多错误参数
-    return response.text().then(errorMsg => {
+    return res.text().then(errorMsg => {
       return new StandardError({
-        statusCode: response.status,
+        statusCode: res.status,
         msg: errorMsg
       })
     }).then(err => { throw err })
@@ -77,60 +99,6 @@ function checkStatus(response) {
 function jsonParse(res) {
   return res.json()
 }
-
-/**
- * 设置param
- *
- * @param {any} keys
- * @param {any} value
- * @param {any} keyPostfix
- * @returns
- */
-// function setUriParam(keys, value, keyPostfix) {
-//   let keyStr = keys[0]
-
-//   keys.slice(1).forEach((key) => {
-//     keyStr += `[${key}]`
-//   })
-
-//   if (keyPostfix) {
-//     keyStr += keyPostfix
-//   }
-
-//   return `${encodeURIComponent(keyStr)}=${encodeURIComponent(value)}`
-// }
-
-/**
- *
- * 获取param
- *
- * @param {any} keys
- * @param {any} object
- * @returns
- */
-// function getUriParam(keys, object) {
-//   const array = []
-
-//   if (object instanceof(Array)) {
-//     object.forEach((value) => {
-//       array.push(setUriParam(keys, value, '[]'))
-//     })
-//   } else if (object instanceof(Object)) {
-//     for (const key in object) {
-//       if (object.hasOwnProperty(key)) {
-//         const value = object[key]
-
-//         array.push(getUriParam(keys.concat(key), value))
-//       }
-//     }
-//   } else {
-//     if (object !== undefined) {
-//       array.push(setUriParam(keys, object))
-//     }
-//   }
-
-//   return array.join('&')
-// }
 
 /**
  * 获取数据 && 拦截
@@ -151,24 +119,25 @@ function fetchData (url, opts) {
     opts['body'] = JSON.stringify(opts['body'])
   }
   // add headers
-    // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'},
   opts.headers = Object.assign({
-      'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6IjkwYmI4YjI5MjliNDQ2YjQ4OGU2ZGRmMDA5Nzc1MzQ2IiwiZXhwIjoxNTAxNjM5MjM5fQ.M0wUIGduWMoVgjJOrkWADazmHDCr-9rohiYymiLz5Qo',
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      // 'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOiI5ZTc2MWEwMmY1ZDc0ZDM0OTQzOTVhM2U0NmM4MjRlNyIsInVpZCI6ImUxMTVkMzQ5MTFhNTRhYjBiYWQ3ZTliODMzODlhYzcxIiwiZXhwIjoxNTAxNDAxMDUxfQ.lFJxExZvzARQu-TUnD5tt6P1ktARYqB99EKPMdAt744'
     },
     opts.headers
   )
 
   if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
+  progress.start()
+  apiConfig.count++
+
   return fetch(mergeUrl, opts)
+    .then(changeApiCount)
     .then(check401)
     .then(check404)
     .then(checkStatus)
     .then(jsonParse)
-    .catch(err => {
-      console.log('%c' + err, 'color: red');
-    })
+    .catch(catchError)
 }
 
 /**

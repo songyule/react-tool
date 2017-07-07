@@ -34,15 +34,16 @@ export default class extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ fileList: nextProps.fileList })
+    this.setState({ fileList: nextProps.fileList || '' })
   }
 
   customRequest = (config) =>{
     wrapperUploadQiniu(config.file, config.onProgress).then(res => {
       config.onSuccess(res)
-      this.setState({
-        fileList: this.state.fileList
-      }, () => this.props.onChange(this.state.fileList))
+      this.props.onChange(this.state.fileList)
+      // this.setState({
+      //   fileList: this.state.fileList
+      // }, () => this.props.onChange(this.state.fileList))
     })
   }
 
@@ -56,10 +57,10 @@ export default class extends PureComponent {
   }
 
   handleChange = ({ fileList }) => {
-    // this.props.onChange(fileList)
-    this.setState({
-      fileList
-    })
+    this.props.onChange((fileList && fileList.length) ? fileList : '')
+    // this.setState({
+    //   fileList: (fileList && fileList.length) ? fileList : ''
+    // })
   }
 
   render() {
@@ -77,11 +78,12 @@ export default class extends PureComponent {
         [this.props.className]: true
       })
     }
+    console.log(fileList)
 
     return (
       <div>
           <Upload {...uploadProps}>
-            {fileList && fileList.length < this.props.length
+            {!fileList || fileList.length < this.props.length
               ? (<div>
                   <Icon type="plus" />
                   <div className="ant-upload-text">上传图片</div>

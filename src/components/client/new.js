@@ -5,6 +5,7 @@ import fetch from 'api/utils'
 import { Link } from 'react-router-dom'
 import { getDistrict, creatOrg, getTag, editOrgMes } from 'actions/org'
 import MyUpload from '../../pages/topic/components/img-upload'
+import Title from 'components/title'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -24,7 +25,8 @@ class create extends PureComponent {
       client_source: {}
     },
     isClientNew: true,
-    visible: false
+    visible: false,
+    isFirst: true
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -58,7 +60,6 @@ class create extends PureComponent {
 
   componentWillReceiveProps (nextProps) { // props 更新时候触发
     let data = nextProps.orgMes
-    console.log(data)
     if (nextProps.isClientEdit === false) {
       this.setState({
         isClientNew: false
@@ -69,7 +70,9 @@ class create extends PureComponent {
     data.levelS = data.client_level && data.client_level.id.toString()
     data.sourceS = data.client_source && data.client_source.id.toString()
     if (data.icon) {
+      if (!this.state.isFirst) return
       this.setState({
+        isFirst: false,
         orgMes: data,
         fileList: [{
             uid: -1,
@@ -108,7 +111,7 @@ class create extends PureComponent {
       if (!err) {
         let data = {}
         Object.assign(data, values)
-        data.icon = values.icon && values.icon[0].response
+        data.icon = values.icon && values.icon[0] && values.icon[0].response
         data.adcode = values.residence[values.residence.length - 1]
         data.status = Number(values.status)
         data.org_type = this.state.isClientNew ? 2 : 3
@@ -163,9 +166,22 @@ class create extends PureComponent {
   }
   return (
     <div className={style.newContent}>
+      <Title title={this.state.isClientNew ? '客户编辑' : '供应商编辑'}>
+        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <div style={{width: 200}}>
+            <Button style={{marginRight: 10}} type="primary" onClick={e => this.handleSubmit(e)}>保存</Button>
+            <Button type="primary">
+              <Link to="/main/clientList">
+                取消
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </Title>
       <Form>
         <div className={style.formTop}>
           <FormItem
+            className={style.imgBox}
             {...formItemLayout}
             label="用户头像"
             hasFeedback
@@ -208,14 +224,6 @@ class create extends PureComponent {
               )}
             </FormItem>
           </div>
-          <div className={style.fromTopRight}>
-            <Button type="primary" onClick={e => this.handleSubmit(e)}>保存</Button>
-            <Button type="primary">
-              <Link to="/main/clientList">
-                取消
-              </Link>
-            </Button>
-          </div>
         </div>
 
         <div className={style.fromMiddleA}>
@@ -229,31 +237,69 @@ class create extends PureComponent {
                 <Input className={style.input} disabled/>
               )}
           </FormItem>
-          <FormItem
-            label="公司电话"
+          {
+            this.state.isClientNew &&
+            <div className={style.isHide}>
+              <FormItem
+              label="客户级别"
+              className={style.formitme}
+              >
+                {getFieldDecorator('client_level', {
+                  initialValue: (this.state.orgMes && this.state.orgMes.levelS) || '',
+                  rules: [{
+                    required: true, message: '请填写客户级别',
+                  }]
+                })(
+                  <Select style={{ width: 300 }} placeholder="请选择">
+                    {
+                      this.state.level.map((item, index) => {
+                        return <Option value={item.id} key={index}>{item.name}</Option>
+                      })
+                    }
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem
+              label="客户来源"
+              className={style.formitme}
+              >
+                {getFieldDecorator('client_source', {
+                  initialValue: (this.state.orgMes && this.state.orgMes.sourceS) || '',
+                  rules: [{
+                    required: true, message: '请选择客户来源',
+                  }]
+                })(
+                  <Select style={{ width: 300 }} placeholder="请选择">
+                    {
+                      this.state.source.map((item, index) => {
+                        return <Option value={item.id} key={index}>{item.name}</Option>
+                      })
+                    }
+                  </Select>
+                )}
+              </FormItem>
+            </div>
+          }
+          {
+            !this.state.isClientNew &&
+            <FormItem
+            label="简称"
             className={style.formitme}
             >
-              {getFieldDecorator('phone', {
-                initialValue: (this.state.orgMes && this.state.orgMes.phone) || '',
+              {getFieldDecorator('name_cn', {
+                initialValue: this.state.orgMes && this.state.orgMes.name_cn,
                 rules: [{
-                  required: true, message: '请输入电话',
+                  required: true, message: '请输入简称',
                 }]
               })(
-                <Input className={style.input}/>
+                <Input className={style.input} />
               )}
-          </FormItem>
-          <FormItem
-            label="公司网站"
-            className={style.formitme}
-            >
-              {getFieldDecorator('website', {
-                initialValue: (this.state.orgMes && this.state.orgMes.website) || '',
-              })(
-                <Input className={style.input}/>
-              )}
-          </FormItem>
+            </FormItem>
+          }
         </div>
         <div className={style.fromMiddleB}>
+        {
+          this.state.isClientNew &&
           <FormItem
             label="简称"
             className={style.formitme}
@@ -267,6 +313,7 @@ class create extends PureComponent {
                 <Input className={style.input} />
               )}
           </FormItem>
+        }
           <FormItem
             {...formItemLayout}
             label="城市选择"
@@ -292,49 +339,31 @@ class create extends PureComponent {
             )}
           </FormItem>
         </div>
-        {
-          this.state.isClientNew &&
-          <div className={style.fromBottom}>
-            <FormItem
-            label="客户级别"
+        <div className={style.fromBottom}>
+          <FormItem
+            label="公司电话"
             className={style.formitme}
             >
-              {getFieldDecorator('client_level', {
-                initialValue: (this.state.orgMes && this.state.orgMes.levelS) || '',
+              {getFieldDecorator('phone', {
+                initialValue: (this.state.orgMes && this.state.orgMes.phone) || '',
                 rules: [{
-                  required: true, message: '请填写客户级别',
+                  required: true, message: '请输入电话',
                 }]
               })(
-                <Select style={{ width: 300 }} placeholder="请选择">
-                  {
-                    this.state.level.map((item, index) => {
-                      return <Option value={item.id} key={index}>{item.name}</Option>
-                    })
-                  }
-                </Select>
+                <Input className={style.input}/>
               )}
-            </FormItem>
-            <FormItem
-            label="客户来源"
+          </FormItem>
+          <FormItem
+            label="公司网站"
             className={style.formitme}
             >
-              {getFieldDecorator('client_source', {
-                initialValue: (this.state.orgMes && this.state.orgMes.sourceS) || '',
-                rules: [{
-                  required: true, message: '请选择客户来源',
-                }]
+              {getFieldDecorator('website', {
+                initialValue: (this.state.orgMes && this.state.orgMes.website) || '',
               })(
-                <Select style={{ width: 300 }} placeholder="请选择">
-                  {
-                    this.state.source.map((item, index) => {
-                      return <Option value={item.id} key={index}>{item.name}</Option>
-                    })
-                  }
-                </Select>
+                <Input className={style.input}/>
               )}
-            </FormItem>
-          </div>
-        }
+          </FormItem>
+        </div>
       </Form>
       <Modal
         title="提示"

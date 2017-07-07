@@ -20,7 +20,12 @@ const shelvesList = [
     text: '未上架'
   }
 ]
-
+/**
+ *
+ * @export
+ * @component
+ * @module 商品列表 组件
+ */
 @connect(
   state => state,
   dispatch => bindActionCreators(commodityActions, dispatch),
@@ -94,7 +99,7 @@ export default class extends PureComponent {
 
   getGoodsData = async () => {
     const params = {}
-    params.offset = this.state.spu.currentPage * this.state.spu.pageSize
+    params.offset = (this.state.spu.currentPage - 1) * this.state.spu.pageSize
     params.limit = this.state.spu.pageSize
     params.as_supplier = 1
     if (this.state.spu.check_status) params.check_status = this.state.spu.check_status
