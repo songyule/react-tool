@@ -17,7 +17,8 @@ const userLogin = (state = {}, action) => {
       window.localStorage.setItem('USER', JSON.stringify(action.user))
       return action.user
     default:
-      const user = JSON.parse(window.localStorage.getItem('USER'))
+      let userLocal = window.localStorage.getItem('USER')
+      const user = (userLocal && JSON.parse(userLocal)) || {}
       return user || state
   }
 }

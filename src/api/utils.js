@@ -81,6 +81,8 @@ function checkStatus(res) {
     return res
   } else {
     // 这里补充更多错误参数
+    res.json().then(res => message.error(res.descr))
+
     return res.text().then(errorMsg => {
       return new StandardError({
         statusCode: res.status,

@@ -58,8 +58,7 @@ export default class LoginForm extends PureComponent {
       if (err) {
         return;
       }
-      this.props.login({ mobile: this.state.mobile, code: this.state.code })
-      this.props.history.push('/main/topic')
+      this.props.login({ mobile: this.state.mobile, code: this.state.code }).then(res => this.props.history.push('/main/topic'))
     })
   }
 
