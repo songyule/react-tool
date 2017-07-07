@@ -56,7 +56,7 @@ export const editOrgMes = async body => { // 修改组织信息
 
 export const getAccountNumber = async params => { // 获取组织下的账号
   try {
-    let response = await fetch.get('/management/user', { params })
+    let response = await fetch.get('/user/list', { params })
     return response
   } catch (error) {
     console.log('error: ', error)
