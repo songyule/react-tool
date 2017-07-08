@@ -18,8 +18,12 @@ const userLogin = (state = {}, action) => {
       return action.user
     default:
       let userLocal = window.localStorage.getItem('USER')
-      const user = (userLocal && JSON.parse(userLocal)) || {}
-      return user || state
+      try {
+        const user = (userLocal && JSON.parse(userLocal)) || {}
+        return user || state
+      } catch (error) {
+        return {}
+      }
   }
 }
 
