@@ -135,6 +135,7 @@ export function countdown ({
       update && update(seconds)
     }, 1000)
   })
+}
 
 export function isEmptyObject(e) {
   var t
