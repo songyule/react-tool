@@ -1,75 +1,75 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Tabs, Table } from 'antd'
-const TabPane = Tabs.TabPane
+import { isEmptyObject } from 'utils/index'
+import { Tabs, Table, Radio } from 'antd'
+import { connect } from 'react-redux'
+import { getLogs } from 'actions/user'
+const [TabPane, RadioGroup] = [Tabs.TabPane, Radio.Group]
+
+@connect (
+  state => state
+)
 
 export default class AccountTabs extends PureComponent {
-  static propTypes = {
-    text: PropTypes.string
-  }
 
   constructor () {
     super()
+
     this.state = {
-      list: [
-        {
-          time: '2017-6-30 17:30',
-          ip: '127.0.0.1',
-          browser: 'safari',
-          system: 'macOS X'
-        },
-        {
-          time: '2017-6-30 17:30',
-          ip: '127.0.0.1',
-          browser: 'chrome',
-          system: 'Linux'
-        },
-        {
-          time: '2017-6-30 17:30',
-          ip: '127.0.0.1',
-          browser: 'IE',
-          system: 'windows'
-        }
-      ]
+      pagination: {
+        total: 0,
+        current: 1,
+        pageSize: 10,
+        onChange: this.changePage
+      }
     }
   }
 
-  callback (v) {
-    console.log(v)
+  componentWillMount () {
+    this.getLogsList()
+  }
+
+  async getLogsList () {
+    const { current, pageSize } = this.state.pagination
+    const { id } = this.props.userLogin
+
+    const { data } = await getLogs({
+      uid: id,
+      limit: pageSize,
+      offset: (current - 1) * pageSize
+    })
+    this.setState({ list: data.access_log })
+  }
+
+  changePage = (e) => {
+    this.setState(
+      {
+        pagination: {
+          ...this.state.pagination,
+          current: e,
+        }
+      },
+      this.getList
+    )
   }
 
   render () {
+    const { list, pagination } = this.state
 
     const columns = [
-      {
-        title: '时间',
-        dataIndex: 'time'
-      },
-      {
-        title: 'IP',
-        dataIndex: 'ip'
-      },
-      {
-        title: '浏览器',
-        dataIndex: 'browser'
-      },
-      {
-        title: '操作系统',
-        dataIndex: 'system'
-      },
+      { title: '时间', dataIndex: 'created_at' },
+      { title: 'IP', dataIndex: 'ipv4' },
+      { title: '浏览器', dataIndex: 'browser' },
+      { title: '操作系统', dataIndex: 'os' },
     ]
 
     return (
-      <Tabs defaultActiveKey="1" onChange={this.callback}>
-        <TabPane tab="权限角色" key="1">Content of Tab Pane 1</TabPane>
-        <TabPane tab="登录历史" key="2">
-          <Table
-            rowKey="dataIndex"
-            dataSource={this.state.list}
-            columns={columns}
-          />
-        </TabPane>
-      </Tabs>
+      <Table
+        rowKey="dataIndex"
+        dataSource={list}
+        columns={columns}
+        pagination={pagination}
+      />
     )
   }
 }

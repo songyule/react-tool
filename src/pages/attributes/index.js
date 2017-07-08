@@ -3,7 +3,8 @@ import style from './index.css'
 import treeData from './attr'
 import arrayToTree from 'array-to-tree'
 import Title from 'components/title'
-import { Tree, Button } from 'antd'
+import AttributesForm from './form'
+import { Tree, Button, Icon, Modal } from 'antd'
 const [ TreeNode, ButtonGroup ] = [ Tree.TreeNode, Button.Group ]
 
 export default class Attributes extends PureComponent {
@@ -11,19 +12,33 @@ export default class Attributes extends PureComponent {
     super()
 
     this.state = {
-      expandedKeys: []
+      expandedKeys: [],
+      visible: true,
+      confirmLoading: false
     }
   }
   onSelect = (expandedKeys, info) => {
     this.setState({ expandedKeys })
   }
-  
+
   handelAdd (e) {
     e.stopPropagation()
   }
 
+  handleAddRoot (e) {
+    this.setState({ visible: true })
+  }
+
+  handleOk () {
+
+  }
+
+  handleCancel () {
+    this.setState({ visible: false })
+  }
+
   render() {
-    const { expandedKeys } = this.state
+    const { expandedKeys, visible, confirmLoading } = this.state
 
     const titleItem = (title, canDelete) => {
       return (
@@ -54,7 +69,14 @@ export default class Attributes extends PureComponent {
 
     return (
       <div>
-        <Title title="属性管理" />
+        <Title title="属性管理">
+          <div className={style['attributes__add-button']}>
+            <Button type="primary" onClick={::this.handleAddRoot}>
+              <Icon type="plus" />
+              添加属性
+            </Button>
+          </div>
+        </Title>
         <Tree
           autoExpandParent
           expandedKeys={expandedKeys}
@@ -62,6 +84,16 @@ export default class Attributes extends PureComponent {
         >
           {loop(arrayToTree(treeData.data.attribute))}
         </Tree>
+        <Modal
+          title="添加属性"
+          wrapClassName="vertical-center-modal"
+          visible={visible}
+          onOk={this.handleOk}
+          confirmLoading={confirmLoading}
+          onCancel={::this.handleCancel}
+        >
+          <AttributesForm name="asd" checked ref="attributesForm"/>
+        </Modal>
       </div>
     )
   }
