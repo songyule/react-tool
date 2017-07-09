@@ -1,7 +1,7 @@
 import  React, { PureComponent } from 'react'
 import Title from 'components/title'
 import style from './index.css'
-import { Table, Button, Switch, Input, Icon, Select } from 'antd'
+import { Table, Button, Switch, Input, Select, Modal, message } from 'antd'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as userActions from 'actions/user'
@@ -73,14 +73,17 @@ export default class AccountList extends PureComponent {
   }
 
   async handleSwitch (text, idx) {
+    debugger
     const { data } = this.state
-    const res = await userActions.userEdit(
+    const res = await userActions.editUser(
       { status: data[idx].status === 2 ? 1 : 2 },
       data[idx].id
     )
 
-    data[idx].status = !data[idx].status
-    this.setState({ data: [...data] })
+    if (res.code === 200) {
+      data[idx].status = !data[idx].status
+      this.setState({ data: [...data] })
+    }
   }
 
   handleDetail (data) {
@@ -89,7 +92,18 @@ export default class AccountList extends PureComponent {
   }
 
   async handleDelete (id) {
-    const { data } = await userActions.deleteUser(id)
+    Modal.confirm({
+      title: 'Confirm',
+      content: '确定要删除这个账号吗？',
+      onOk: async () => {
+        const res = await userActions.deleteUser(id)
+        if (res.code === 200) {
+          message.success('删除成功')
+          this.getList()
+        }
+      }
+    })
+
   }
 
   handleCreate () {
@@ -155,8 +169,8 @@ export default class AccountList extends PureComponent {
         title: '操作',
         render: (text, record) => (
           <ButtonGroup>
-            <Button onClick={() => this.handleDetail(record)}>查看</Button>
-            <Button type="primary" onClick={() => this.handleDelete(record.id)}>删除</Button>
+            <Button type="primary" onClick={() => this.handleDetail(record)}>查看</Button>
+            <Button type="danger" onClick={() => this.handleDelete(record.id)}>删除</Button>
           </ButtonGroup>
         )
       }

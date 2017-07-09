@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import style from './form.css'
 import { connect } from 'react-redux'
 import { Form, Input, Row, Col, Radio, Switch, Select } from 'antd'
 import { getOrgList } from 'actions/management'
@@ -43,7 +44,6 @@ export default class AccountForm extends PureComponent {
   }
 
   onRadioChange = (e) => {
-    console.log(e.target.value)
     this.setState({ showOrgList: e.target.value === 'b' })
   }
 
@@ -56,7 +56,7 @@ export default class AccountForm extends PureComponent {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
       labelCol: { span: 5 },
-      wrapperCol: { span: 16 }
+      wrapperCol: { span: 19 }
     }
 
     const formItemArr = [
@@ -84,12 +84,12 @@ export default class AccountForm extends PureComponent {
     const { showOrgList, orgList } = this.state
 
     return (
-      <div className="account-form">
+      <div className={style['account-form']}>
         <Form>
           <Row>
             {
               id && (
-                <Col span={9}>
+                <Col span={12}>
                   <FormItem {...formItemLayout} label="ID">
                     {getFieldDecorator('id', { initialValue: id })(
                         <Input disabled/>
@@ -98,7 +98,7 @@ export default class AccountForm extends PureComponent {
                 </Col>
               )
             }
-            <Col span={9}>
+            <Col span={12}>
               <FormItem {...formItemLayout} label="账号类型">
                 {getFieldDecorator('type', { initialValue: 'a' })(
                   <RadioGroup disabled={disabled} onChange={this.onRadioChange}>
@@ -108,7 +108,7 @@ export default class AccountForm extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={9}>
+            <Col span={12}>
               <FormItem {...formItemLayout} label="状态">
                 {getFieldDecorator('status',{ initialValue: status, valuePropName: 'checked' })(
                   <Switch disabled={disabled}/>
@@ -117,7 +117,7 @@ export default class AccountForm extends PureComponent {
             </Col>
             {
               formItemArr.map(item => (
-                <Col key={item.key} span={9}>
+                <Col key={item.key} span={12}>
                   <FormItem {...formItemLayout} label={item.label}>
                     {getFieldDecorator(item.valid, { initialValue: this.props[item.valid], rules: item.rules })(
                       <Input disabled={disabled} placeholder={item.placeholder} />
@@ -126,7 +126,7 @@ export default class AccountForm extends PureComponent {
                 </Col>
               ))
             }
-            <Col span={9}>
+            <Col span={12}>
               <FormItem {...formItemLayout} label="权限角色">
                 {
                   isPersonal
@@ -150,7 +150,7 @@ export default class AccountForm extends PureComponent {
             {
               showOrgList
                 ? (
-                  <Col span={9}>
+                  <Col span={12}>
                     <FormItem {...formItemLayout} label="选择组织">
                       {getFieldDecorator('org', { rules: [{ required: true, message: '请选择组织'}] })(
                         <Select onChange={this.handleSelectChange}>

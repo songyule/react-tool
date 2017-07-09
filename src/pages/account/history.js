@@ -1,16 +1,11 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import { isEmptyObject } from 'utils/index'
-import { Tabs, Table, Radio } from 'antd'
+import { Table } from 'antd'
 import { connect } from 'react-redux'
 import { getLogs } from 'actions/user'
-const [TabPane, RadioGroup] = [Tabs.TabPane, Radio.Group]
 
-@connect (
-  state => state
-)
+@connect (state => state)
 
-export default class AccountTabs extends PureComponent {
+export default class History extends PureComponent {
 
   constructor () {
     super()
