@@ -203,7 +203,7 @@ export default class Attributes extends PureComponent {
                <AttributesForm
                  ref={(ref) => {this.attributesForm = ref}}
                  isCreate={isCreate}
-                 item={!isCreate && item}
+                 item={!isCreate ? item : {}}
                />
              )
              : null
