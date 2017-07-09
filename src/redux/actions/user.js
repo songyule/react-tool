@@ -49,7 +49,7 @@ export const getLogs = async (params) => {
   return response
 }
 
-export const userEdit = async (body, id) => {
+export const editUser = async (body, id) => {
   const response = await fetch.patch(`/user/u/${id}`, { body })
   return response
 }
