@@ -1,11 +1,17 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import { Table } from 'antd'
 import { connect } from 'react-redux'
 import { getLogs } from 'actions/user'
+import { format } from 'utils/index'
 
 @connect (state => state)
 
 export default class History extends PureComponent {
+
+  static propTypes = {
+    id: PropTypes.string
+  }
 
   constructor () {
     super()
@@ -26,7 +32,7 @@ export default class History extends PureComponent {
 
   async getLogsList () {
     const { current, pageSize } = this.state.pagination
-    const { id } = this.props.userLogin
+    const { id } = this.props
 
     const { data } = await getLogs({
       uid: id,
@@ -52,7 +58,7 @@ export default class History extends PureComponent {
     const { list, pagination } = this.state
 
     const columns = [
-      { title: '时间', dataIndex: 'created_at' },
+      { title: '时间', dataIndex: 'created_at', render: (text) => (<span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>) },
       { title: 'IP', dataIndex: 'ipv4' },
       { title: '浏览器', dataIndex: 'browser' },
       { title: '操作系统', dataIndex: 'os' },
