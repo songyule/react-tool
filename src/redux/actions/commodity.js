@@ -17,3 +17,8 @@ export const getClasses = (params) => async (dispatch, getState) => {
     console.log('error: ', error)
   }
 }
+
+export const getAttributesList = async (params) => {
+  const response = await fetch.get('commodity/opt/attribute')
+  return response
+}
