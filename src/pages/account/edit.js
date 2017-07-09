@@ -87,7 +87,7 @@ export default class EditAccount extends PureComponent {
         />
         <Title title="登录历史">
         </Title>
-        <History />
+        <History id={id}/>
       </div>
     )
   }
