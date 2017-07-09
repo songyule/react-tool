@@ -5,6 +5,7 @@ import { Table, Button, Switch, Input, Select, Modal, message } from 'antd'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as userActions from 'actions/user'
+import * as managementActions from 'actions/management'
 import { isEmptyObject } from 'utils/index'
 const [Option, Search, ButtonGroup] = [Select.Option, Input.Search, Button.Group]
 
@@ -12,7 +13,10 @@ const [Option, Search, ButtonGroup] = [Select.Option, Input.Search, Button.Group
 
 @connect(
   state => state,
-  dispatch => bindActionCreators({ getRoleList: userActions.getRoleList }, dispatch)
+  dispatch => bindActionCreators({
+    getRoleList: userActions.getRoleList,
+    ...managementActions
+  }, dispatch)
 )
 
 export default class AccountList extends PureComponent {
@@ -36,6 +40,8 @@ export default class AccountList extends PureComponent {
 
   componentWillMount () {
     this.getList()
+    this.props.getRoleList()
+    this.props.getOrgList({ limit: 10000 })
   }
 
   changePage = (e) => {
@@ -73,7 +79,6 @@ export default class AccountList extends PureComponent {
   }
 
   async handleSwitch (text, idx) {
-    debugger
     const { data } = this.state
     const res = await userActions.editUser(
       { status: data[idx].status === 2 ? 1 : 2 },
@@ -88,7 +93,6 @@ export default class AccountList extends PureComponent {
 
   handleDetail (data) {
     this.props.history.push('/main/account-edit', data)
-    this.getList()
   }
 
   async handleDelete (id) {
@@ -103,7 +107,6 @@ export default class AccountList extends PureComponent {
         }
       }
     })
-
   }
 
   handleCreate () {

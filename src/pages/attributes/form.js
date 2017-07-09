@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { getOrgList } from 'actions/management'
+import { getOrgListOnce } from 'actions/management'
 import { Form, Input, Radio, Select, Switch } from 'antd'
 const [FormItem, RadioGroup, Option] = [Form.Item, Radio.Group, Select.Option]
 
@@ -46,7 +46,8 @@ export default class AttributesForm extends PureComponent {
   }
 
   async getList () {
-    const { data } = await getOrgList({ limit: 10000 })
+    const { data } = await getOrgListOnce({ limit: 10000 })
+    console.log(data)
     this.setState({ orgList: data.org })
   }
 

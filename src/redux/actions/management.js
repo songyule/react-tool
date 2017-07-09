@@ -1,6 +1,12 @@
 import fetch from 'api/utils'
 
-export const getOrgList = async (params) => {
+export const getOrgList = (params) => async (dispatch, getState) => {
+  const response = await fetch.get('/management/org', { params })
+  if (response) dispatch({ type: 'ORG_LIST', orgList: response.data.org })
+  return response
+}
+
+export const getOrgListOnce = async (params) => {
   const response = await fetch.get('/management/org', { params })
   return response
 }

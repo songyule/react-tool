@@ -56,7 +56,7 @@ export default class EditAccount extends PureComponent {
   render () {
     const { id, name_cn, mobile, mail, status, role, org } = this.props.location.state
     const { disabled } = this.state
-    console.log(status, typeof status)
+    
     return (
       <div>
 

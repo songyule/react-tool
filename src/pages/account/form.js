@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import style from './form.css'
 import { connect } from 'react-redux'
 import { Form, Input, Row, Col, Radio, Switch, Select } from 'antd'
-import { getOrgList } from 'actions/management'
 const [FormItem, RadioGroup, Option] = [Form.Item, Radio.Group, Select.Option]
 
 @Form.create()
@@ -35,21 +34,8 @@ export default class AccountForm extends PureComponent {
     }
   }
 
-  componentWillMount () {
-    this.getList()
-  }
-
-  handleSelectChange (v) {
-    console.log(v)
-  }
-
   onRadioChange = (e) => {
     this.setState({ showOrgList: e.target.value === 'b' })
-  }
-
-  async getList () {
-    const { data } = await getOrgList({ limit: 10000 })
-    this.setState({ orgList: data.org })
   }
 
   render () {
@@ -80,8 +66,9 @@ export default class AccountForm extends PureComponent {
     ]
 
     formItemArr.forEach((item, idx) => item.key = idx)
-    const { id, status, disabled, roleList, role = null, isPersonal } = this.props
-    const { showOrgList, orgList } = this.state
+    const { id, status, disabled, roleList, role = null, isPersonal, orgList } = this.props
+    const { showOrgList } = this.state
+    console.log(this.props)
 
     return (
       <div className={style['account-form']}>
@@ -139,7 +126,7 @@ export default class AccountForm extends PureComponent {
                       <Select disabled={disabled} onChange={this.handleSelectChange}>
                         {
                           roleList.map(item => (
-                            <Option key={item.id} value={item.id}> {item.name} </Option>
+                            <Option key={item.id} value={item.id.toString()}> {item.name} </Option>
                           ))
                         }
                       </Select>
