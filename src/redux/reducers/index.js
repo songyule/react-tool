@@ -29,7 +29,7 @@ const userLogin = (state = {}, action) => {
 
 const roleList = (state = {}, action) => {
   switch (action.type) {
-    case constants.ROLE_LIST: 
+    case constants.ROLE_LIST:
       window.localStorage.setItem('ROLE', JSON.stringify(action.role))
       return action.role
     default:
@@ -38,10 +38,21 @@ const roleList = (state = {}, action) => {
   }
 }
 
+const orgList = (state = {}, action) => {
+  switch (action.type) {
+    case constants.ORG_LIST:
+      window.localStorage.setItem('ORG_LIST', JSON.stringify(action.orgList))
+      return action.orgList
+    default:
+      const orgList = JSON.parse(window.localStorage.getItem('ORG_LIST'))
+      return orgList || state
+  }
+}
 const rootReducer = combineReducers({
   resultNumber,
   userLogin,
   roleList,
+  orgList,
   // 路由
   routing: routerReducer
 })
