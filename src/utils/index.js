@@ -185,7 +185,6 @@ export function toRemoteSpu (spu) {
 }
 
 export function toRemoteSku (sku) {
-  console.log(sku.attributes)
   return {
     attr_id: sku.attributes.map(attribute => attribute.id),
     price: Number(sku.price),

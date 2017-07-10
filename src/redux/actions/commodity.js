@@ -82,3 +82,12 @@ export const saveAccess = (data) => async (dispatch, getState) => {
     console.log('error：', error)
   }
 }
+
+export const createSpuText = (data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.post('/commodity/spu/text', { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}

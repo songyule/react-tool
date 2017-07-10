@@ -102,10 +102,8 @@ class SpuPlane extends PureComponent {
   }
 
   handleUpload = (fileList) => {
-    console.log(fileList)
-    this.setState({
-      fileList
-    })
+    this.setState({ fileList })
+    this.props.changeSpu({ ...this.props.spu, imgList: fileList.map(item => item.response) })
   }
 
   handleAddClass = () => {
@@ -118,7 +116,7 @@ class SpuPlane extends PureComponent {
   changeClass = (value, index) => {
     const classesSelected = this.props.spu.classesSelected
     classesSelected[index] = value
-    const matchClass = find(this.props.originClasses, { id: value.slice(-1)[0] })
+    const matchClass = find(this.props.commodityClasses.originClasses, { id: value.slice(-1)[0] })
     this.props.form.setFieldsValue({ classesSelected: classesSelected })
     this.props.changeClass({classesSelected, matchClass}, index)
     this.calcAttributes()
@@ -263,7 +261,7 @@ class SpuPlane extends PureComponent {
           <FormItem
             {...formItemLayout}
             label="上传图片">
-            <MyUpload onChange={this.handleUpload} fileList={this.state.fileList} length={5}></MyUpload>
+            <MyUpload onChange={this.handleUpload} fileList={[...this.state.fileList]}></MyUpload>
           </FormItem>
           <FormItem
             {...formItemLayout}

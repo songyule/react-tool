@@ -12,6 +12,7 @@ import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
 import LzEditor from 'react-lz-editor'
 import style from './create.css'
+import { browserHistory } from 'react-router'
 // const FormItem = Form.Item
 
 @connect(
@@ -24,6 +25,9 @@ class CommodityCreate extends Component {
     this.state = {
       spu: {...emptySpu},
       skuAttributes: [{ name: '', value: [''] }],
+      contentObj: {
+        content: ''
+      },
       skuTypes: [],
       skus: [],
       customAttributes: [],
@@ -268,7 +272,6 @@ class CommodityCreate extends Component {
 
   handleRemove = (e, index) => {
     const skus = [...this.state.skus]
-    console.log(skus)
     skus.splice(index, 1)
     this.setState({
       skus
@@ -278,12 +281,15 @@ class CommodityCreate extends Component {
   handleFinish = async () => {
     const promiseList = []
     const spuRes = await this.props.createSpu(toRemoteSpu(this.state.spu))
-    if (this.props.spu.accessStatus === 3) {
+    if (this.state.spu.accessStatus === 3) {
       const data = { spu_id: spuRes.data.id, client_list: [] }
       this.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
       promiseList.push(this.props.saveAccess(data))
     }
-    await this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku)))
+
+    await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
+    browserHistory('main/goods')
+
     // console.log(Object.keys(attributesObj).map(key => ({ key: key, value: attributesObj[key] })))
   }
 
@@ -319,7 +325,7 @@ class CommodityCreate extends Component {
 
   receiveHtml = (content) => {
     this.setState({
-      spu: { ...this.state.spu, content: content }
+      contentObj: { ...this.state.contentObj, content: content }
     })
   }
 
@@ -355,7 +361,7 @@ class CommodityCreate extends Component {
           <div className={style['commodity-create__input-row']}>
             <Input className={style['commodity-create__third-input']} value={this.state.spu.title}></Input>
           </div>
-          <LzEditor active={true} importContent={this.state.spu.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
+          <LzEditor active={true} importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.handleFinish}>保存并关闭</Button>
             <Button>保存并新建</Button>
