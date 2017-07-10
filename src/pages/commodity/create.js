@@ -12,7 +12,7 @@ import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
 import LzEditor from 'react-lz-editor'
 import style from './create.css'
-import { browserHistory } from 'react-router'
+import history from 'router/history'
 // const FormItem = Form.Item
 
 @connect(
@@ -87,8 +87,16 @@ class CommodityCreate extends Component {
     return bool
   }
 
+  createAttributesPlaneValid = () => {
+    let bool = false
+    this.refs.createAttributesPlane.validateFields(e => {
+      bool = !e
+    })
+    return bool
+  }
+
   finishFirst = async () => {
-    if (!this.spuPlaneValid()) return
+    if (!this.createAttributesPlaneValid() || !this.spuPlaneValid()) return
     // const attributesObj = groupBy(this.state.skuAttributes, 'name')
     const skuAttributes = [...this.state.skuAttributes]
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name, parent_id: 1942, weight: 1 })) })
@@ -287,8 +295,9 @@ class CommodityCreate extends Component {
       promiseList.push(this.props.saveAccess(data))
     }
 
-    await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
-    browserHistory('main/goods')
+    await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
+    // browserHistory('main/gbrowserHistoryoods')
+    this.props.history.push('/main/goods')
 
     // console.log(Object.keys(attributesObj).map(key => ({ key: key, value: attributesObj[key] })))
   }
@@ -337,7 +346,7 @@ class CommodityCreate extends Component {
         </div>
         { this.state.step === 1 && <div className="commodity-create__first">
           <SpuPlane spu={this.state.spu} selecteds={this.state.selecteds} changeName={this.changeName} changeClass={this.changeClass} changeSpu={this.changeSpu} changeSelecteds={this.changeSelecteds} ref="spuPlane"></SpuPlane>
-          <CreateAttributesPlane skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
+          <CreateAttributesPlane ref="createAttributesPlane" skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.finishFirst}>下一步</Button>
           </div>

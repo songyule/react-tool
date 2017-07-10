@@ -104,7 +104,7 @@ class CommodityList extends PureComponent {
 
   handleSearch = (value) => {
     this.setState({
-      spu: { ...this.state.spu, kw: value }
+      spu: { ...this.state.spu, kw: value, currentPage: 1 }
     }, () => {
       this.getGoodsData()
     })

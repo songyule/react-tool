@@ -1,5 +1,6 @@
 .attribute-row {
   display: flex;
+  margin-bottom: 8px;
 
   :global(input) {
     width: 100px;

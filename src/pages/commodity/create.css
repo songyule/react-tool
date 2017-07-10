@@ -9,3 +9,9 @@
 .commodity-create__input-row {
   margin: 8px 0;
 }
+.commodity-create__btn-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clear: both;
+}

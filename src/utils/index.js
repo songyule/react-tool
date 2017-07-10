@@ -176,7 +176,7 @@ export function isEmptyObject(e) {
 export function toRemoteSpu (spu) {
   return {
     name_cn: spu.title,
-    image_url: spu.img ? [spu.img] : [],
+    image_url: spu.imgList,
     attr_id: spu.attributes.map(item => item.id),
     class_id: spu.classes.map(item => item.id),
     // status: spu.status ? 1 : 2,
