@@ -60,6 +60,7 @@ export const multiCreateCommodityAttribute = (data) => async (dispatch, getState
   } catch (error) {
     console.log('error：', error)
   }
+}
 
 export const classesBindAttributes = async (body) => {
   const response = await fetch.post('/management/commodity_class/bind/attribute', { body })

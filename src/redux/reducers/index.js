@@ -63,6 +63,10 @@ const commodityClasses = (state = { originClasses: [], sortClasses: [] }, action
   switch (action.type) {
     case constants.GET_COMMODITY_CLASSES:
       return handleClasses(action.classes)
+    default:
+      return state
+  }
+}
 
 const currentAttributeDetail = (state = {}, action) => {
   switch (action.type) {
