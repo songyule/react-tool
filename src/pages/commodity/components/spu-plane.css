@@ -1,0 +1,20 @@
+.spu-plane {
+    
+    &__form-class {
+        display: flex;
+        margin-top: 10px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+    &__form-class-btn {
+        display: flex;
+        align-items: center;
+        width: 80px;
+        margin-left: 30px;
+        color: #03A9F4;
+        line-height: 1;
+        cursor: pointer;
+    }
+}

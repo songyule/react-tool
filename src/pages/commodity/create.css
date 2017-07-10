@@ -1,0 +1,11 @@
+.page_commodity-create {
+  padding-top: 20px;
+}
+.commodity-create {
+  &__btn-box {
+    margin-top: 8px;
+  }
+}
+.commodity-create__input-row {
+  margin: 8px 0;
+}
