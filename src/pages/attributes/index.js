@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import style from './index.css'
-import treeData from './attr'
 import arrayToTree from 'array-to-tree'
 import Title from 'components/title'
 import AttributesForm from './form'

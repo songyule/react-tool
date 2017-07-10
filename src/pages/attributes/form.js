@@ -25,10 +25,6 @@ export default class AttributesForm extends PureComponent {
     this.getList()
   }
 
-  componentWillReceiveProps (nextProps) {
-    this.getProps(nextProps)
-  }
-
   getProps (props) {
     const { item } = props
     this.setState({
@@ -87,7 +83,7 @@ export default class AttributesForm extends PureComponent {
             isExclusive
              ? (
                <FormItem {...formItemLayout} label="选择组织">
-                 {getFieldDecorator('org', { initialValue: !!org_id && org_id, rules: [{ required: true, message: '请选择组织'}] })(
+                 {getFieldDecorator('org', { initialValue: org_id || '', rules: [{ required: true, message: '请选择组织'}] })(
                    <Select onChange={this.handleSelectChange}>
                      {
                        orgList.map(item => (
