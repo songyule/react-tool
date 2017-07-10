@@ -60,4 +60,23 @@ export const multiCreateCommodityAttribute = (data) => async (dispatch, getState
   } catch (error) {
     console.log('error：', error)
   }
+
+export const classesBindAttributes = async (body) => {
+  const response = await fetch.post('/management/commodity_class/bind/attribute', { body })
+  return response
+}
+
+export const createClass = async (body) => {
+  const response = await fetch.post('/management/commodity_class', { body })
+  return response
+}
+
+export const deleteClass = async (id) => {
+  const response = await fetch.delete(`/management/commodity_class/${id}`)
+  return response
+}
+
+export const editClass = async (body, id) => {
+  const response = await fetch.patch(`/management/commodity_class/${id}`, { body })
+  return response
 }
