@@ -54,9 +54,6 @@ class SpuPlane extends PureComponent {
   // }
 
   componentWillMount = () => {
-    // this.props.getClasses().then(res => {
-    //   console.log(this.props.commodityClasses.sortClasses)
-    // })
     this.props.getClasses()
     this.calcAttributes()
   }
@@ -97,15 +94,13 @@ class SpuPlane extends PureComponent {
     })
 
     this.props.changeSpu({ ...this.props.spu, attributes: existAttrs })
-    // this.spu.attributes = existAttrs
-    // this.attributes = attributes
   }
 
   handleUpload = (fileList) => {
-    console.log(fileList)
-    this.setState({
-      fileList
-    })
+    fileList = fileList || []
+    this.setState({ fileList })
+    this.props.form.setFieldsValue({ imgList: fileList.map(item => item.response) })
+    this.props.changeSpu({ ...this.props.spu, imgList: fileList.map(item => item.response) })
   }
 
   handleAddClass = () => {
@@ -118,7 +113,7 @@ class SpuPlane extends PureComponent {
   changeClass = (value, index) => {
     const classesSelected = this.props.spu.classesSelected
     classesSelected[index] = value
-    const matchClass = find(this.props.originClasses, { id: value.slice(-1)[0] })
+    const matchClass = find(this.props.commodityClasses.originClasses, { id: value.slice(-1)[0] })
     this.props.form.setFieldsValue({ classesSelected: classesSelected })
     this.props.changeClass({classesSelected, matchClass}, index)
     this.calcAttributes()
@@ -234,7 +229,7 @@ class SpuPlane extends PureComponent {
             })(
               <div>
                 { this.props.spu.classesSelected.map((selected, index) => (
-                  <div className={style['spu-plane__form-class']}>
+                  <div key={index} className={style['spu-plane__form-class']}>
                     <Cascader value={this.props.spu.classesSelected[index]} options={this.props.commodityClasses.sortClasses} onChange={(value) => this.changeClass(value, index)} placeholder="请选择商品分类"></Cascader>
                     { this.renderClassBtn(index) }
                   </div>)) }
@@ -246,24 +241,33 @@ class SpuPlane extends PureComponent {
             label="属性">
             <div className="spu-plane__attributes-button-row">
               {getFieldDecorator('attributes', {
-                  rules: [{
-                    type: 'array',
-                    required: true,
-                    message: '属性为必选项'
-                  }]
-                })(
-                  <div className="spu-plane__show-attributes-row">
-                    { this.props.spu.attributes.map(item => { return <Tag color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
-                    <Button onClick={this.showAttributesModal}>{this.props.spu.attributes.length === 0 ? '添加属性' : '修改属性'}</Button>
-                  </div>
-                )
-              }
+                initialValue: this.props.spu.classesSelected,
+                rules: [{
+                  type: 'array',
+                  required: true,
+                  message: '属性为必选项'
+                }]
+              })(
+                <div className="spu-plane__show-attributes-row">
+                  { this.props.spu.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
+                  <Button onClick={this.showAttributesModal}>{this.props.spu.attributes.length === 0 ? '添加属性' : '修改属性'}</Button>
+                </div>
+              )}
             </div>
           </FormItem>
           <FormItem
             {...formItemLayout}
             label="上传图片">
-            <MyUpload onChange={this.handleUpload} fileList={this.state.fileList} length={5}></MyUpload>
+              {getFieldDecorator('imgList', {
+                initialValue: this.props.spu.imgList,
+                rules: [{
+                  type: 'array',
+                  required: true,
+                  message: '至少上传一张图片'
+                }]
+              })(
+                <MyUpload onChange={this.handleUpload} fileList={[...this.state.fileList]}></MyUpload>
+              )}
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -275,7 +279,7 @@ class SpuPlane extends PureComponent {
         <Modal visible={this.state.attributesVisible} title="添加属性" width={800} onCancel={this.handleAttributesCancel} onOk={this.confirmAttributes}>
           <Form>
             {this.state.attrOptions.map((attrOption, index) =>
-              <FormItem label={attrOption.name_cn}>
+              <FormItem label={attrOption.name_cn} key={index}>
                 <CheckboxGroup options={attrOption.children.map(attr => ({ label: attr.name_cn, value: attr.id }))} onChange={value => this.changeAttributes(value, attrOption.id)} value={this.state.attributes[attrOption.id]}/>
               </FormItem>
             )}

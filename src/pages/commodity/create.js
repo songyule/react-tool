@@ -12,6 +12,7 @@ import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
 import LzEditor from 'react-lz-editor'
 import style from './create.css'
+import history from 'router/history'
 // const FormItem = Form.Item
 
 @connect(
@@ -24,6 +25,9 @@ class CommodityCreate extends Component {
     this.state = {
       spu: {...emptySpu},
       skuAttributes: [{ name: '', value: [''] }],
+      contentObj: {
+        content: ''
+      },
       skuTypes: [],
       skus: [],
       customAttributes: [],
@@ -83,8 +87,16 @@ class CommodityCreate extends Component {
     return bool
   }
 
+  createAttributesPlaneValid = () => {
+    let bool = false
+    this.refs.createAttributesPlane.validateFields(e => {
+      bool = !e
+    })
+    return bool
+  }
+
   finishFirst = async () => {
-    if (!this.spuPlaneValid()) return
+    if (!this.createAttributesPlaneValid() || !this.spuPlaneValid()) return
     // const attributesObj = groupBy(this.state.skuAttributes, 'name')
     const skuAttributes = [...this.state.skuAttributes]
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name, parent_id: 1942, weight: 1 })) })
@@ -268,7 +280,6 @@ class CommodityCreate extends Component {
 
   handleRemove = (e, index) => {
     const skus = [...this.state.skus]
-    console.log(skus)
     skus.splice(index, 1)
     this.setState({
       skus
@@ -278,12 +289,16 @@ class CommodityCreate extends Component {
   handleFinish = async () => {
     const promiseList = []
     const spuRes = await this.props.createSpu(toRemoteSpu(this.state.spu))
-    if (this.props.spu.accessStatus === 3) {
+    if (this.state.spu.accessStatus === 3) {
       const data = { spu_id: spuRes.data.id, client_list: [] }
       this.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
       promiseList.push(this.props.saveAccess(data))
     }
-    await this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku)))
+
+    await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
+    // browserHistory('main/gbrowserHistoryoods')
+    this.props.history.push('/main/goods')
+
     // console.log(Object.keys(attributesObj).map(key => ({ key: key, value: attributesObj[key] })))
   }
 
@@ -319,7 +334,7 @@ class CommodityCreate extends Component {
 
   receiveHtml = (content) => {
     this.setState({
-      spu: { ...this.state.spu, content: content }
+      contentObj: { ...this.state.contentObj, content: content }
     })
   }
 
@@ -331,7 +346,7 @@ class CommodityCreate extends Component {
         </div>
         { this.state.step === 1 && <div className="commodity-create__first">
           <SpuPlane spu={this.state.spu} selecteds={this.state.selecteds} changeName={this.changeName} changeClass={this.changeClass} changeSpu={this.changeSpu} changeSelecteds={this.changeSelecteds} ref="spuPlane"></SpuPlane>
-          <CreateAttributesPlane skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
+          <CreateAttributesPlane ref="createAttributesPlane" skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.finishFirst}>下一步</Button>
           </div>
@@ -355,7 +370,7 @@ class CommodityCreate extends Component {
           <div className={style['commodity-create__input-row']}>
             <Input className={style['commodity-create__third-input']} value={this.state.spu.title}></Input>
           </div>
-          <LzEditor active={true} importContent={this.state.spu.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
+          <LzEditor active={true} importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.handleFinish}>保存并关闭</Button>
             <Button>保存并新建</Button>
