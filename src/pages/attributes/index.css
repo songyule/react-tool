@@ -35,8 +35,6 @@
   }
 }
 
-.attributes {
-  &__add-button {
-    text-align: right;
-  }
+.title-single-button {
+  text-align: right;
 }

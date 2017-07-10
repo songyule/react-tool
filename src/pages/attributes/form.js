@@ -60,7 +60,7 @@ export default class AttributesForm extends PureComponent {
 
     return (
       <div>
-        <Form onSubmit={this.handleSubmit}>
+        <Form>
           <FormItem {...formItemLayout} label="属性名称">
             {getFieldDecorator('name', { initialValue: name_cn, rules: [{ required: true, message: '请输入名称'}] })(
                 <Input />
