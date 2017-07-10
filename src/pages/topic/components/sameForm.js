@@ -115,6 +115,7 @@ export default class SameForm extends PureComponent {
   }
 
   handleChange = (fileList) => {
+    console.log(fileList)
     this.setState({ fileList }, this.props.onChange(fileList))
   }
 

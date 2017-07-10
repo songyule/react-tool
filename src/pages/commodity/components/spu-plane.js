@@ -3,13 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
 import ScopePlane from './scope-plane';
-import { Form, Input, Cascader, Button, Modal, Checkbox, Upload } from 'antd'
+import { Form, Input, Cascader, Button, Modal, Checkbox, Tag } from 'antd'
+import MyUpload from 'components/img-upload'
 import arrayToTree from 'array-to-tree'
 import { uniqBy } from 'lodash'
 import { generateAttrTree } from 'utils'
 import PropTypes from 'prop-types'
 import style from './spu-plane.css'
-import { find } from 'lodash'
+import { find, flatten } from 'lodash'
 const FormItem = Form.Item
 const CheckboxGroup = Checkbox.Group
 
@@ -19,41 +20,44 @@ const CheckboxGroup = Checkbox.Group
 )
 class SpuPlane extends PureComponent {
   static propTypes = {
-    spu: PropTypes.object
+    spu: PropTypes.object,
+    selecteds: PropTypes.array
   }
 
   constructor (props) {
     super(props)
     this.state = {
-      originClasses: [],
-      classes: [],
       attributesVisible: false,
       attributes: {},
+      fileList: [],
       attributeList: [],
       attrOptions: []
     }
   }
 
-  getClasses = async () => {
-    const res = await this.props.getClasses()
-    let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
-    classes = classes.map(item => {
-    item = { ...item, value: item.id, label: item.name_cn }
-    return item
-    })
-    classes.forEach(item => {
-      item.disabled = item.status !== 1
-    })
-    const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
-    matchClass.parent_id = null
-    this.setState({
-      originClasses: classes,
-      classes: arrayToTree(classes)[0].children
-    })
-  }
+  // getClasses = async () => {
+  //   const res = await this.props.getClasses()
+  //   let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
+  //   classes = classes.map(item => {
+  //   item = { ...item, value: item.id, label: item.name_cn }
+  //   return item
+  //   })
+  //   classes.forEach(item => {
+  //     item.disabled = item.status !== 1
+  //   })
+  //   const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
+  //   matchClass.parent_id = null
+  //   this.setState({
+  //     originClasses: classes,
+  //     classes: arrayToTree(classes)[0].children
+  //   })
+  // }
 
   componentWillMount = () => {
-    this.getClasses()
+    // this.props.getClasses().then(res => {
+    //   console.log(this.props.commodityClasses.sortClasses)
+    // })
+    this.props.getClasses()
     this.calcAttributes()
   }
 
@@ -62,12 +66,12 @@ class SpuPlane extends PureComponent {
   }
 
   getSpuAttributes = async () => {
-    let list = await this.props.getGoodsAttributes()
-    return list.data
+    await this.props.getGoodsAttributes()
+    return this.props.commodityAttributeObj.spuAttributes
   }
 
   getLinkageAttributes = async () => {
-    let list = await this.props.getAttributeList()
+    let list = await this.props.getAttributeList({ class_id: flatten(this.props.spu.classesSelected) })
     return list.data
   }
 
@@ -97,19 +101,25 @@ class SpuPlane extends PureComponent {
     // this.attributes = attributes
   }
 
-  handleUpload () {}
+  handleUpload = (fileList) => {
+    this.setState({
+      fileList
+    })
+  }
 
   handleAddClass = () => {
     const classesSelected = this.props.spu.classesSelected
     classesSelected.push([])
-    this.props.changeClass(classesSelected)
+    this.props.changeClass({classesSelected})
   }
 
   changeClass = (value, index) => {
     const classesSelected = this.props.spu.classesSelected
     classesSelected[index] = value
-    const matchClass = find(this.state.originClasses, { id: value.slice(-1)[0] })
+    const matchClass = find(this.props.originClasses, { id: value.slice(-1)[0] })
+    this.props.form.setFieldsValue({ classesSelected: classesSelected })
     this.props.changeClass({classesSelected, matchClass}, index)
+    this.calcAttributes()
   }
 
   renderClassBtn (index) {
@@ -145,19 +155,25 @@ class SpuPlane extends PureComponent {
     this.setState({
       attributes
     })
-    // const attributes = [...this.props.spu.attributes]
-    // this.props.changeSpu({ ...this.props.spu, attributes: attributes.map(id => find(this.state.attributes, { id })) })
   }
 
   confirmAttributes = () => {
     const list = []
-    console.log(this.state.attributes)
     Object.keys(this.state.attributes).forEach(item => list.push(...this.state.attributes[item]))
     this.setState({
       attributesVisible: false
     })
+    this.props.form.setFieldsValue({ attributes: list.map(id => find([...this.state.attributeList], { id })) })
     this.props.changeSpu({ ...this.props.spu, attributes: list.map(id => find([...this.state.attributeList], { id })) })
   }
+
+  // renderClasses () {
+  //   return this.props.spu.classesSelected.map((selected, index) => (
+  //     <div className={style['spu-plane__form-class']}>
+  //       <Cascader value={this.props.spu.classesSelected[index]} options={this.props.commodityClasses.sortClasses} onChange={(value) => this.changeClass(value, index)}></Cascader>
+  //       { this.renderClassBtn(index) }
+  //     </div>))
+  // }
 
   render () {
     const { getFieldDecorator } = this.props.form
@@ -179,46 +195,70 @@ class SpuPlane extends PureComponent {
             {...formItemLayout}
             label="名称">
             {getFieldDecorator('title', {
+              initialValue: this.props.spu.title,
               rules: [{
-                required: true, message: '名称为必填项',
-              }],
+                required: true,
+                message: '名称为必填项'
+              }]
             })(
-              <Input onChange={this.changeName}></Input>
+              <Input onChange={this.changeName} placeholder="请输入商品名称"></Input>
             )}
           </FormItem>
 
           <FormItem
             {...formItemLayout}
             label="分类">
-            {
-              this.props.spu.classesSelected.map((selected, index) => getFieldDecorator('classesSelected', {
-                rules: [{
-                    required: true, message: '分类为必选项',
-                }]
-              })(
-                <div className={style['spu-plane__form-class']}>
-                  <Cascader value={this.props.spu.classesSelected[index]} options={this.state.classes} onChange={(value) => this.changeClass(value, index)}></Cascader>
-                  { this.renderClassBtn(index) }
-                </div>
-              ))
-            }
+            {getFieldDecorator('classesSelected', {
+              initialValue: this.props.spu.classesSelected,
+              rules: [{
+                type: 'array',
+                required: true,
+                message: '分类为必选项',
+                validator: (rule, value, callback) => {
+                  if (value.length === 0 || value[0].length === 0) {
+                    callback('请选择分类')
+                  }
+                  callback()
+                }
+              }]
+            })(
+              <div>
+                { this.props.spu.classesSelected.map((selected, index) => (
+                  <div className={style['spu-plane__form-class']}>
+                    <Cascader value={this.props.spu.classesSelected[index]} options={this.props.commodityClasses.sortClasses} onChange={(value) => this.changeClass(value, index)} placeholder="请选择商品分类"></Cascader>
+                    { this.renderClassBtn(index) }
+                  </div>)) }
+              </div>
+            )}
           </FormItem>
           <FormItem
             {...formItemLayout}
             label="属性">
-            <Button onClick={this.showAttributesModal}>添加属性</Button>
+            <div className="spu-plane__attributes-button-row">
+              {getFieldDecorator('attributes', {
+                  rules: [{
+                    type: 'array',
+                    required: true,
+                    message: '属性为必选项'
+                  }]
+                })(
+                  <div className="spu-plane__show-attributes-row">
+                    { this.props.spu.attributes.map(item => { return <Tag color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
+                    <Button onClick={this.showAttributesModal}>{this.props.spu.attributes.length === 0 ? '添加属性' : '修改属性'}</Button>
+                  </div>
+                )
+              }
+            </div>
           </FormItem>
           <FormItem
             {...formItemLayout}
             label="上传图片">
-            <Upload onChange={this.handleUpload}>
-              <Button>点击上传</Button>
-            </Upload>
+            <MyUpload onChange={this.handleUpload} fileList={this.state.fileList} length={5}></MyUpload>
           </FormItem>
           <FormItem
             {...formItemLayout}
             label="可见范围">
-            <ScopePlane spu={this.props.spu} changeSpu={this.props.changeSpu}></ScopePlane>
+            <ScopePlane selecteds={this.props.selecteds} spu={this.props.spu} changeSpu={this.props.changeSpu} changeSelecteds={this.props.changeSelecteds}></ScopePlane>
           </FormItem>
         </Form>
 
@@ -226,7 +266,7 @@ class SpuPlane extends PureComponent {
           <Form>
             {this.state.attrOptions.map((attrOption, index) =>
               <FormItem label={attrOption.name_cn}>
-                <CheckboxGroup options={attrOption.children.map(attr => ({ label: attr.name_cn, value: attr.id }))} onChange={value => this.changeAttributes(value, attrOption.id)} />
+                <CheckboxGroup options={attrOption.children.map(attr => ({ label: attr.name_cn, value: attr.id }))} onChange={value => this.changeAttributes(value, attrOption.id)} value={this.state.attributes[attrOption.id]}/>
               </FormItem>
             )}
           </Form>

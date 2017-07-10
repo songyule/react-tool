@@ -10,8 +10,9 @@ export const emptySpu = {
   title: '',
   classes: [],
   classesSelected: [[]],
-  img: '',
+  imgList: [],
   attributes: [],
   accessStatus: 2,
-  backupAccessStatus: 2
+  backupAccessStatus: 2,
+  content: ''
 }

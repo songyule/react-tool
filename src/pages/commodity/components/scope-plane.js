@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Radio, Button, Modal } from 'antd'
+import { Radio, Button, Modal, Tag } from 'antd'
 import SelectArea from './select-area'
 const RadioGroup = Radio.Group
 
@@ -8,14 +8,18 @@ class ScopePlane extends Component {
     super(props)
 
     this.state = {
+      preSelecteds: [],
       visible: false
     }
   }
 
   changeStatus = (e) => {
-    this.setState({
-      visible: false
-    })
+    // this.setState({
+    //   visible: false
+    // })
+    if (e.target.value === 3 && this.state.preSelecteds.length === 0) {
+      this.showModal()
+    }
     this.props.changeSpu({...this.props.spu, accessStatus: e.target.value})
   }
 
@@ -31,6 +35,17 @@ class ScopePlane extends Component {
     })
   }
 
+  handlePreSelecteds = (value) => {
+    this.setState({
+      preSelecteds: value
+    })
+  }
+
+  handleSelecteds = () => {
+    this.props.changeSelecteds(this.state.preSelecteds)
+    this.closeModal()
+  }
+
   render () {
     return (
       <div className="scope-plane">
@@ -42,9 +57,11 @@ class ScopePlane extends Component {
             { this.props.spu.accessStatus === 3 ? <Button onClick={this.showModal}>修改</Button> : '' }
           </Radio>
         </RadioGroup>
-        { this.props.spu.accessStatus === 3 ? <div className="tag-list"></div> : '' }
-        <Modal title="选择商品可见范围" visible={this.state.visible} width={800} onCancel={this.closeModal}>
-          <SelectArea></SelectArea>
+        { this.props.spu.accessStatus === 3 ? <div className="tag-list">
+          { this.props.selecteds.map(item => <Tag>{item.label}</Tag>) }
+          </div> : '' }
+        <Modal title="选择商品可见范围" visible={this.state.visible} width={800} onCancel={this.closeModal} onOk={this.handleSelecteds}>
+          <SelectArea selecteds={this.state.preSelecteds} onChange={this.handlePreSelecteds}></SelectArea>
         </Modal>
       </div>
     )

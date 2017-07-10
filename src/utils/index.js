@@ -185,5 +185,24 @@ export function toRemoteSpu (spu) {
 }
 
 export function toRemoteSku (sku) {
+  console.log(sku.attributes)
+  return {
+    attr_id: sku.attributes.map(attribute => attribute.id),
+    price: Number(sku.price),
+    moq: Number(sku.miniQuantity),
+    min_delay_day: Number(sku.earlyDate),
+    max_delay_day: Number(sku.latestDate)
+  }
+}
 
+// 包装函数，保证函数只执行一次
+export function onceWrapper (func) {
+  let executed = false
+  let promiseObj = null
+  return (...arg) => {
+    if (executed) return promiseObj
+    executed = true
+    promiseObj = func(...arg)
+    return promiseObj
+  }
 }

@@ -12,8 +12,8 @@ const TabPane = Tabs.TabPane
   dispatch => bindActionCreators(orgActions, dispatch)
 )
 class SelectArea extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
 
     this.state = {
       selecteds: [],
@@ -63,7 +63,7 @@ class SelectArea extends Component {
           ...this.state[scrollType],
           total: res.data.total,
           list: list.map(item => {
-            item.selected = findIndex(state.selecteds, { id: item.id, type }) > -1
+            item.selected = findIndex(this.props.selecteds, { id: item.id, type }) > -1
             return item
           })
         }
@@ -85,12 +85,13 @@ class SelectArea extends Component {
   }
 
   commonChangeHandle (item) {
-    const index = findIndex(this.state.selecteds, { id: item.id, type: item.type })
-    const selecteds = [...this.state.selecteds]
+    const index = findIndex(this.props.selecteds, { id: item.id, type: item.type })
+    const selecteds = [...this.props.selecteds]
     ~index ? selecteds.splice(index, 1) : selecteds.push(item)
-    this.setState({
-      selecteds
-    })
+    this.props.onChange(selecteds)
+    // this.setState({
+    //   selecteds
+    // })
   }
 
   componentWillMount () {
@@ -106,7 +107,7 @@ class SelectArea extends Component {
           <Tabs defaultActiveKey="1">
             <TabPane tab="标签" key="1">
               <Input placeholder="请输入客户标签名" onChange={this.searchLabel}></Input>
-              <div className="select-area__checkbox-scroll">
+              <div className={style['select-area__checkbox-scroll']}>
                 {this.state.labelScroll.list.map(item =>
                   <div className="select-area__checkbox-box">
                     <Checkbox onChange={ () => this.changeLabel(item) }>{ item.name_cn }（{ item.client_count }）</Checkbox>
@@ -117,14 +118,14 @@ class SelectArea extends Component {
             </TabPane>
             <TabPane tab="客户" key="2">
               <Input placeholder="请输入客户简称或全称"></Input>
-              <div className="select-area__checkbox-scroll">
+              <div className={style['select-area__checkbox-scroll']}>
                 {this.state.clientScroll.list.map(item =>
                   <div className="select-area__checkbox-box">
                     <Checkbox onChange={ () => this.changeClient(item) }>{ item.name_official }</Checkbox>
                   </div>
                 )}
-                <Pagination defaultCurrent={this.state.clientScroll.currentPage} total={this.state.clientScroll.total} onChange={this.searchClient}></Pagination>
               </div>
+              <Pagination defaultCurrent={this.state.clientScroll.currentPage} total={this.state.clientScroll.total} onChange={this.searchClient}></Pagination>
             </TabPane>
           </Tabs>
         </div>
@@ -133,7 +134,7 @@ class SelectArea extends Component {
         </div>
         <div className={style['select-area__right']}>
           <p>已选择的客户：</p>
-          {this.state.selecteds.map(item =>
+          {this.props.selecteds.map(item =>
             <div className="select-area__checkbox-box">
               { item.label }
             </div>

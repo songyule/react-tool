@@ -52,3 +52,12 @@ export const getCommodityAttributeList = (data) => async (dispatch, getState) =>
     console.log('error：', error)
   }
 }
+
+export const multiCreateCommodityAttribute = (data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.post('/commodity/multi/attribute', { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}

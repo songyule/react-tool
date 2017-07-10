@@ -5,7 +5,17 @@
   &__left {
     width: 300px;
   }
-  @__right {
+  &__right {
     width: 300px;
+  }
+  &__arrow {
+    display: flex;
+    align-items: center;
+  }
+
+  &__checkbox-scroll {
+    margin-top: 8px;
+    height: 300px;
+    overflow-y: auto;
   }
 }
