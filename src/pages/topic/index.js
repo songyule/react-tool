@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import Title from 'components/title'
-import { Input, Table, Button, Switch, Select, Modal, message, Menu } from 'antd'
+import { Input, Table, Button, Switch, Select, Modal, message, Menu, Tag } from 'antd'
 import { Link } from 'react-router-dom'
 import { getArticles, changeArticle, getUpdator } from 'actions/article'
 
@@ -214,7 +214,7 @@ export default class extends PureComponent {
       key: 'label',
       width: 200,
       render: text => {
-        return text ? (<span>{text.map(item => item.name).join(',')}</span>) : null
+        return text ? (<div>{text.map(item => <Tag key={item.id}>{item.name}</Tag>)}</div>) : null
       }
     },
     // {

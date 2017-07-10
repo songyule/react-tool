@@ -57,7 +57,7 @@ export default class TopicForm extends PureComponent {
         'title': fieldsValue.title,
         'cover_image': fieldsValue.image[0].response,
         'content': this.state.contentState,
-        'weight': fieldsValue.weight,
+        'weight': fieldsValue.weight || 0,
         'status': this.refs.common.state.checked ? 2 : 1,
         'article_tag': this.refs.common.state.tags,
         'spu': this.state.selectedRowObjs.map(item => item.id),
