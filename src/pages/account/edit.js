@@ -4,7 +4,7 @@ import { isEmptyObject } from 'utils/index'
 import AccountForm from './form'
 import History from './history'
 import { connect } from 'react-redux'
-import { Button, message } from 'antd'
+import { Button } from 'antd'
 import { editUser } from 'actions/user'
 import './edit.css'
 const ButtonGrop = Button.Group

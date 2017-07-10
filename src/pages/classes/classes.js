@@ -7,8 +7,6 @@ import * as attributesActions from 'actions/attributes'
 import PropTypes from 'prop-types'
 import style from './classes.css'
 import { isEmptyObject, format } from 'utils/index'
-import { Button } from 'antd'
-const ButtonGroup = Button.Group
 
 @connect(
   state => state,
@@ -100,7 +98,7 @@ export default class ClassesTree extends PureComponent {
                         attr.image_url
                           ? (
                             <div className={style['attr__image']}>
-                              <img src={attr.image_url} />
+                              <img src={attr.image_url} alt={attr.name_cn} />
                             </div>
                           )
                           : null

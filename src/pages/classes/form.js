@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import Upload from 'pages/topic/components/img-upload'
 import arrayToTree from 'array-to-tree'
 import style from './form.css'
-import { Form, Input, Radio, Select, Switch, Tree } from 'antd'
-const [FormItem, RadioGroup, Option, TreeNode] = [Form.Item, Radio.Group, Select.Option, Tree.TreeNode]
+import { Form, Input, Radio, Tree } from 'antd'
+const [FormItem, RadioGroup, TreeNode] = [Form.Item, Radio.Group, Tree.TreeNode]
 
 @Form.create()
 
@@ -25,7 +25,7 @@ export default class ClassesForm extends PureComponent {
   componentWillMount () {
     if (this.props.rewrite.image_url) {
       this.setImgBack(this.props.rewrite.image_url)
-    }  
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,8 +58,8 @@ export default class ClassesForm extends PureComponent {
   render () {
     const { getFieldDecorator } = this.props.form
     const { attributesList, isRoot, seletedData } = this.props
-    const { name_cn, weight, status, image_url } = this.props.rewrite
-    console.log(this.props)
+    const { name_cn, weight, status } = this.props.rewrite
+
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 }

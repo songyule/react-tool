@@ -49,9 +49,7 @@ export default class AttributesForm extends PureComponent {
 
   render () {
     const { getFieldDecorator } = this.props.form
-    const { isCreate } = this.props
     const { name_cn, attr_type, org_id, weight, value_str } = this.props.item
-    console.log(this.props.item)
     const { isScalar, isExclusive, orgList } = this.state
     const formItemLayout = {
       labelCol: { span: 4 },

@@ -169,7 +169,7 @@ export default class ClassesList extends PureComponent {
 
   getParams (fieldsValue) {
     const { isRoot, id } = this.state
-    const { name, isShow, weight, status, img, selectedAttributes } = fieldsValue
+    const { name, isShow, weight, img } = fieldsValue
     console.log(fieldsValue)
 
     const params = {
@@ -253,7 +253,6 @@ export default class ClassesList extends PureComponent {
           title={isCreate ? '添加分类' : '编辑分类'}
           wrapClassName="vertical-center-modal"
           visible={visible}
-          onOk={this.handleOk}
           onCancel={this.handleCancel}
           onOk={isCreate ? this.handleOk : this.handleEditOk}
         >

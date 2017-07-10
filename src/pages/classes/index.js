@@ -9,7 +9,6 @@ import style from './index.css'
 import Title from 'components/title'
 import arrayToTree from 'array-to-tree'
 import { Button } from 'antd'
-const ButtonGroup = Button.Group
 
 @connect(
   state => state,
