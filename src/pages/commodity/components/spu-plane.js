@@ -54,9 +54,6 @@ class SpuPlane extends PureComponent {
   // }
 
   componentWillMount = () => {
-    // this.props.getClasses().then(res => {
-    //   console.log(this.props.commodityClasses.sortClasses)
-    // })
     this.props.getClasses()
     this.calcAttributes()
   }
@@ -97,13 +94,11 @@ class SpuPlane extends PureComponent {
     })
 
     this.props.changeSpu({ ...this.props.spu, attributes: existAttrs })
-    // this.spu.attributes = existAttrs
-    // this.attributes = attributes
   }
 
   handleUpload = (fileList) => {
-    this.setState({ fileList })
-    this.props.changeSpu({ ...this.props.spu, imgList: fileList.map(item => item.response) })
+    this.setState({ fileList: fileList || [] })
+    this.props.changeSpu({ ...this.props.spu, imgList: fileList.map(item => item.response) || [] })
   }
 
   handleAddClass = () => {
