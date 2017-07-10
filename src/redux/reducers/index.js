@@ -28,7 +28,6 @@ const userLogin = (state = {}, action) => {
   }
 }
 
-<<<<<<< HEAD
 const roleList = (state = {}, action) => {
   switch (action.type) {
     case constants.ROLE_LIST:

@@ -102,6 +102,7 @@ class SpuPlane extends PureComponent {
   }
 
   handleUpload = (fileList) => {
+    console.log(fileList)
     this.setState({
       fileList
     })
