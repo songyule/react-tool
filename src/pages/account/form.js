@@ -122,7 +122,7 @@ export default class AccountForm extends PureComponent {
                         <Option  value="个人"> 个人 </Option>
                       </Select>
                     )
-                    : getFieldDecorator('role', { initialValue: role, rules: [{ required: true, message: '请选择角色'}] })(
+                    : getFieldDecorator('role', { initialValue: role.toString(), rules: [{ required: true, message: '请选择角色'}] })(
                       <Select disabled={disabled} onChange={this.handleSelectChange}>
                         {
                           roleList.map(item => (

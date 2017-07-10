@@ -32,7 +32,7 @@ export default class EditAccount extends PureComponent {
       if (err) return
 
       const { type, userName, phone, email, org, status, role, id } = fieldsValue
-
+      console.log(type ,typeof type)
       const params = {
         name_cn: userName,
         status: status ? 1 : 2,
@@ -42,11 +42,13 @@ export default class EditAccount extends PureComponent {
         role: role
       }
 
-      const res = await editUser(id, params)
+      const res = await editUser(params, id)
 
-      if (res.code === 200) message.success('修改成功')
+      if (res.code === 200) {
+        this.setState({ disabled: true })
+      }
     })
-    this.setState({ disabled: true })
+
   }
 
   handleCancel () {
@@ -56,7 +58,7 @@ export default class EditAccount extends PureComponent {
   render () {
     const { id, name_cn, mobile, mail, status, role, org } = this.props.location.state
     const { disabled } = this.state
-    
+
     return (
       <div>
 
