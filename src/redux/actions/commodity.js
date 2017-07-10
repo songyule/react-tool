@@ -35,6 +35,7 @@ export const getAttributesList = async (params) => {
   const response = await fetch.get('commodity/opt/attribute')
   return response
 }
+
 export const getGoodsAttributes = onceWrapper(originGetGoodsAttributes)
 
 export const getAttributeList = (params) => async (dispatch, getState) => {
