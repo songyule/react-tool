@@ -108,6 +108,17 @@ export default class extends Component {
             router: '/main/account-list'
           }
         ]
+      },
+      {
+        key: 'key07',
+        title: '商品管理',
+        children: [
+          {
+            key: '/main/goods',
+            title: '商品列表',
+            router: '/main/goods'
+          }
+        ]
       }
     ]
 
@@ -179,6 +190,10 @@ export default class extends Component {
               <Route path='/main/account-edit' component={AccountEdit} />
               <Route path='/main/classes' component={Classes} />
               <Route path='/main/attributes' component={Attributes} />
+              {/*商品相关 ==== */}
+              <Route path='/main/goods' component={Goods} />
+              <Route path='/main/goods-edit' component={GoodsEdit} />
+              <Route path='/main/goods-create' component={GoodsCreate} />
             </div>
         </div>
       </div>
@@ -205,4 +220,6 @@ const AccountEdit = asyncComponent(() => import ('pages/account/edit'))
 const Classes = asyncComponent(() => import ('pages/classes'))
 const Attributes = asyncComponent(() => import ('pages/attributes'))
 const editTrend = asyncComponent(() => import ('pages/trend/edit-trend'))
-
+const Goods = asyncComponent(() => import('pages/commodity/index'))
+const GoodsEdit = asyncComponent(() => import('pages/commodity/edit'))
+const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
