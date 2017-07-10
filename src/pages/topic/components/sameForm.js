@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { Form, Input, Switch, TreeSelect } from 'antd'
 import PropTypes from 'prop-types'
 import MyUpload from './img-upload'
-import store from '@/redux/store'
+// import store from '@/redux/store'
 import { getTags } from 'actions/article'
 import arrayToTree from 'array-to-tree'
 

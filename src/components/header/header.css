@@ -4,6 +4,7 @@
   height: 50px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   &__logo {
     width: 40px;
@@ -15,6 +16,25 @@
 
     img {
       height: 30px;
+    }
+  }
+
+
+  &__right {
+    margin-right: 35px;
+  }
+
+
+}
+
+.popover {
+  text-align: center;
+
+  & > p {
+    padding: 5px 0;
+
+    &:first-child {
+      border-bottom: 1px solid #eee;
     }
   }
 }
