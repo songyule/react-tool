@@ -102,8 +102,8 @@ class CommodityCreate extends Component {
       })
     })
 
-    // const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
-    const childRes = await Promise.all(attributes.map(attribute => this.props.createCommodityAttribute(attribute)))
+    const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
+    // const childRes = await Promise.all(attributes.map(attribute => this.props.createCommodityAttribute(attribute)))
     // const childRes = {
     //   data: [
     //     {
@@ -159,7 +159,8 @@ class CommodityCreate extends Component {
     //     }
     //   ]
     // }
-    const classifyAttributes = groupBy(childRes.map(item => item.data), 'lv2_id')
+    // const classifyAttributes = groupBy(childRes.map(item => item.data), 'lv2_id')
+    const classifyAttributes = groupBy(childRes.data, 'lv2_id')
     const demo = []
     Object.keys(classifyAttributes).map(key => {
       const attributes = []

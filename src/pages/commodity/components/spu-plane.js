@@ -5,9 +5,9 @@ import * as commodityActions from 'actions/commodity';
 import ScopePlane from './scope-plane';
 import { Form, Input, Cascader, Button, Modal, Checkbox, Tag } from 'antd'
 import MyUpload from 'components/img-upload'
-import arrayToTree from 'array-to-tree'
+// import arrayToTree from 'array-to-tree'
 import { uniqBy } from 'lodash'
-import { generateAttrTree } from 'utils'
+import { generateAttrTree, isRepeat } from 'utils'
 import PropTypes from 'prop-types'
 import style from './spu-plane.css'
 import { find, flatten } from 'lodash'
@@ -110,6 +110,7 @@ class SpuPlane extends PureComponent {
   handleAddClass = () => {
     const classesSelected = this.props.spu.classesSelected
     classesSelected.push([])
+    this.props.form.setFieldsValue({ classesSelected: classesSelected })
     this.props.changeClass({classesSelected})
   }
 
@@ -133,7 +134,7 @@ class SpuPlane extends PureComponent {
   handleDeleteClass (index) {
     const classesSelected = this.props.spu.classesSelected
     classesSelected.splice(index, 1)
-
+    this.props.form.setFieldsValue({ classesSelected: classesSelected })
     this.props.changeSpu({...this.props.spu, classesSelected})
   }
 
@@ -217,6 +218,14 @@ class SpuPlane extends PureComponent {
                 validator: (rule, value, callback) => {
                   if (value.length === 0 || value[0].length === 0) {
                     callback('请选择分类')
+                  }
+                  callback()
+                }
+              }, {
+                message: '每个分类只可选择一次',
+                validator: (rule, value, callback) => {
+                  if (isRepeat(value.map(item => JSON.stringify(item)))) {
+                    callback('每个分类只可选择一次')
                   }
                   callback()
                 }
