@@ -49,6 +49,7 @@ const orgList = (state = {}, action) => {
       return orgList || state
   }
 }
+
 const commodityAttributeObj = (state = { originSkuAttributes: [], skuAttributes: [], spuAttributes: [] }, action) => {
   switch (action.type) {
     case constants.GET_COMMODITY_DEFAULT_ATTRIBUTE:
@@ -62,6 +63,11 @@ const commodityClasses = (state = { originClasses: [], sortClasses: [] }, action
   switch (action.type) {
     case constants.GET_COMMODITY_CLASSES:
       return handleClasses(action.classes)
+
+const currentAttributeDetail = (state = {}, action) => {
+  switch (action.type) {
+    case constants.ATTRIBUTE_DETAIL:
+      return action.detail
     default:
       return state
   }
@@ -123,7 +129,6 @@ function filterSkuAttributes (attributes) {
 function filterSpuAttributes (attributes) {
   return attributes.filter(attr => attr.lv1_name_cn !== '商品类型' && attr.lv1_name_cn !== '颜色' && attr.lv1_name_cn !== '单位')
 }
-
 const rootReducer = combineReducers({
   resultNumber,
   userLogin,
@@ -131,6 +136,7 @@ const rootReducer = combineReducers({
   orgList,
   commodityAttributeObj,
   commodityClasses,
+  currentAttributeDetail,
   // 路由
   routing: routerReducer
 })
