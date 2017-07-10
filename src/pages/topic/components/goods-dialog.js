@@ -48,7 +48,8 @@ export default class extends PureComponent {
       list: [],
       classes: [],
       selectedRowKeys: [],
-      selectedRowObjs: []
+      selectedRowObjs: [],
+      beforeChangePageSelectedRowObjs: []
     }
 
     this.changeClass = this.changeClass.bind(this)
@@ -170,6 +171,7 @@ export default class extends PureComponent {
 
   pageChange = (value) => {
     this.setState({
+      beforeChangePageSelectedRowObjs: this.state.selectedRowObjs,
       spu: {...this.state.spu, currentPage: value }
     }, () => {
       this.getGoodsData()
@@ -202,7 +204,10 @@ export default class extends PureComponent {
   }
 
   onSelectChange = (selectedRowKeys, selectedRowObjs) => {
-    this.setState({ selectedRowKeys, selectedRowObjs })
+    const { beforeChangePageSelectedRowObjs } = this.state
+    // console.log(selectedRowKeys, selectedRowObjs)
+    let obj = beforeChangePageSelectedRowObjs.length ? [...beforeChangePageSelectedRowObjs, ...selectedRowObjs] : selectedRowObjs
+    this.setState({ selectedRowKeys, selectedRowObjs: obj })
   }
 
   componentWillMount () {
