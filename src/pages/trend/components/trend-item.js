@@ -29,7 +29,6 @@ export default class extends PureComponent {
   }
 
   componentWillReceiveProps (e) {
-    console.log(e.selectedRowObjs)
     this.setState({
       fileList: e.fileList || '',
       selectedRowObjs: e.selectedRowObjs || []
@@ -63,17 +62,20 @@ export default class extends PureComponent {
 
 
   render () {
-    const { isDragging, isAdd } = this.props
+    const { isDragging, isAdd, index } = this.props
     const { selectedRowObjs, fileList } = this.state
     const opacity = isDragging ? 0 : 1
-    console.log(selectedRowObjs)
+
     return (
       <div>
         {
           (fileList && !isAdd && fileList.length) ? (
-            <div  className={styles.box} style={{ opacity }} onClick={this.showModal}>
-              <Icon className={styles.box__close} type="close-square" onClick={this.props.delPage} />
-              <img src={fileList[0].response} alt="" style={{width: '100%'}} />
+            <div className={styles.wrapper}>
+              <div  className={styles.box} style={{ opacity }} onClick={this.showModal}>
+                <Icon className={styles.box__close} type="close-square" onClick={this.props.delPage} />
+                <div className={styles.img} style={{'backgroundImage': `url(${fileList[0].response})`}}></div>
+              </div>
+              <p className={styles.page}>第{index + 1}页</p>
             </div>
           ) : null
         }

@@ -28,7 +28,7 @@ export default class extends PureComponent {
     const content = (
       <div className={style.popover}>
         <p>{name}</p>
-        <p><a onClick={this.logout} >登出</a></p>
+        <p><a onClick={this.logout} >退出</a></p>
       </div>
     )
     return (

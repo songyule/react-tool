@@ -32,3 +32,9 @@ export const getEditors = async () => {
   return response
 }
 
+// 获得所有编辑
+export const getUpdator = async (params) => {
+  let response = await fetch.get(`/article/updator`, { params })
+  return response
+}
+
