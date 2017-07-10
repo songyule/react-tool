@@ -228,7 +228,7 @@ class SpuPlane extends PureComponent {
               <div>
                 { this.props.spu.classesSelected.map((selected, index) => (
                   <div className={style['spu-plane__form-class']}>
-                    <Cascader value={this.props.spu.classesSelected[index]} options={this.props.commodityClasses.sortClasses} onChange={(value) => this.changeClass(value, index)} placeholder="请选择商品分类"></Cascader>
+                    <Cascader key={index} value={this.props.spu.classesSelected[index]} options={this.props.commodityClasses.sortClasses} onChange={(value) => this.changeClass(value, index)} placeholder="请选择商品分类"></Cascader>
                     { this.renderClassBtn(index) }
                   </div>)) }
               </div>
@@ -246,7 +246,7 @@ class SpuPlane extends PureComponent {
                   }]
                 })(
                   <div className="spu-plane__show-attributes-row">
-                    { this.props.spu.attributes.map(item => { return <Tag color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
+                    { this.props.spu.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
                     <Button onClick={this.showAttributesModal}>{this.props.spu.attributes.length === 0 ? '添加属性' : '修改属性'}</Button>
                   </div>
                 )
@@ -268,7 +268,7 @@ class SpuPlane extends PureComponent {
         <Modal visible={this.state.attributesVisible} title="添加属性" width={800} onCancel={this.handleAttributesCancel} onOk={this.confirmAttributes}>
           <Form>
             {this.state.attrOptions.map((attrOption, index) =>
-              <FormItem label={attrOption.name_cn}>
+              <FormItem label={attrOption.name_cn} key={index}>
                 <CheckboxGroup options={attrOption.children.map(attr => ({ label: attr.name_cn, value: attr.id }))} onChange={value => this.changeAttributes(value, attrOption.id)} value={this.state.attributes[attrOption.id]}/>
               </FormItem>
             )}
