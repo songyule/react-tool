@@ -1,8 +1,7 @@
-.list {
-  &__item {
-    &--active {
-      background-color: blue;
-      color: #fff;
-    }
-  }
+.view {
+  display: flex;
+}
+
+.title-single-button {
+  text-align: right;
 }

@@ -49,9 +49,7 @@ export default class AttributesForm extends PureComponent {
 
   render () {
     const { getFieldDecorator } = this.props.form
-    const { isCreate } = this.props
     const { name_cn, attr_type, org_id, weight, value_str } = this.props.item
-    console.log(this.props.item)
     const { isScalar, isExclusive, orgList } = this.state
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -60,7 +58,7 @@ export default class AttributesForm extends PureComponent {
 
     return (
       <div>
-        <Form onSubmit={this.handleSubmit}>
+        <Form>
           <FormItem {...formItemLayout} label="属性名称">
             {getFieldDecorator('name', { initialValue: name_cn, rules: [{ required: true, message: '请输入名称'}] })(
                 <Input />

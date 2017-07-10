@@ -174,7 +174,7 @@ export default class Attributes extends PureComponent {
     return (
       <div>
         <Title title="属性管理">
-          <div className={style['attributes__add-button']}>
+          <div className={style['title-single-button']}>
             <Button type="primary" onClick={::this.handleAddRoot}>
               <Icon type="plus" />
               添加属性
