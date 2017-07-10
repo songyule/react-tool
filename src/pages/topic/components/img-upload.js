@@ -78,7 +78,6 @@ export default class extends PureComponent {
         [this.props.className]: true
       })
     }
-    console.log(fileList)
 
     return (
       <div>

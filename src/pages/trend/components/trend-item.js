@@ -20,7 +20,7 @@ export default class extends PureComponent {
       pageVisible: false,
       goodsVisible: false,
       fileList: props.fileList || '',
-      selectedRowObjs: props.fileList || []
+      selectedRowObjs: props.selectedRowObjs || []
     }
   }
 
@@ -29,6 +29,7 @@ export default class extends PureComponent {
   }
 
   componentWillReceiveProps (e) {
+    console.log(e.selectedRowObjs)
     this.setState({
       fileList: e.fileList || '',
       selectedRowObjs: e.selectedRowObjs || []
@@ -65,7 +66,7 @@ export default class extends PureComponent {
     const { isDragging, isAdd } = this.props
     const { selectedRowObjs, fileList } = this.state
     const opacity = isDragging ? 0 : 1
-
+    console.log(selectedRowObjs)
     return (
       <div>
         {
@@ -90,7 +91,7 @@ export default class extends PureComponent {
             className={styles.upload}
             onChange={ this.handleChange }
           ></MyUpload>
-          <AddGoods selectedRowObjs={selectedRowObjs} onChange={this.goodsChange}></AddGoods>
+          <AddGoods selectedRowObjs={[...selectedRowObjs]} onChange={this.goodsChange}>{selectedRowObjs}</AddGoods>
         </Modal>
       </div>
     )

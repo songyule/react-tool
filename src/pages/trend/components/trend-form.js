@@ -104,7 +104,7 @@ export default class extends PureComponent {
           [hoverIndex, 0, dragCard],
         ],
       },
-    }));
+    }))
   }
 
   changeItem = (fileList, selectedRowObjs, index) => {
@@ -120,9 +120,12 @@ export default class extends PureComponent {
     temp.fileList = fileList
     temp.selectedRowObjs = selectedRowObjs
     this.refs.addItem.clear()
-    this.setState({
-      pages: [...pages, temp]
-    }, console.log(this.state.pages, 22))
+
+    if (fileList && fileList.length) {
+      this.setState({
+        pages: [...pages, temp]
+      })
+    }
   }
 
   showModal = () => {
@@ -195,7 +198,7 @@ export default class extends PureComponent {
                       onChange={(...arg) => this.changeItem(...arg, i)}
                       delPage={(e) => this.delPage(i, e)}
                       fileList={page.fileList}
-                      selectedRowObjs={page.selectedRowObjs}
+                      selectedRowObjs={[...page.selectedRowObjs]}
                     ></TrendItem>
                   </DragItem>
                 ))}

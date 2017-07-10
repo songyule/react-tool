@@ -18,6 +18,7 @@
   height: 100px;
   overflow: hiddem;
   position: relative;
+  overflow: hidden;
 
   &__close {
     position: absolute;
