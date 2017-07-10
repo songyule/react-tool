@@ -1,9 +1,19 @@
 import React, { PureComponent } from 'react'
 import ClassesList from './classes-list'
+import Card from './card'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as attributesActions from 'actions/attributes'
 import PropTypes from 'prop-types'
 import style from './classes.css'
+import { isEmptyObject, format } from 'utils/index'
 import { Button } from 'antd'
 const ButtonGroup = Button.Group
+
+@connect(
+  state => state,
+  dispatch => bindActionCreators(attributesActions, dispatch)
+)
 
 export default class ClassesTree extends PureComponent {
   constructor () {
@@ -11,7 +21,7 @@ export default class ClassesTree extends PureComponent {
 
     this.state = {
       tree: [],
-      editable: false
+      attr: {}
     }
   }
 
@@ -19,32 +29,18 @@ export default class ClassesTree extends PureComponent {
     treeData: PropTypes.array
   }
 
-  componentWillMount () {
-    this.firstRender()
+  componentWillReceiveProps (nextProps) {
+    this.firstRender(nextProps)
   }
 
-  handleEdit () {
-    const { editable } = this.state
-    this.setState({ editable: !editable })
-  }
-
-  handleSave () {
-    const { editable } = this.state
-    this.setState({ editable: !editable })
-  }
-
-  handleCancel () {
-    const { editable } = this.state
-    this.setState({ editable: !editable })
-  }
-
-  firstRender () {
-    const { treeData } = this.props
+  firstRender (props) {
+    if (!props.reRender) return
+    const { treeData } = props
     treeData.forEach(item => item.active = false)
-    this.setState({ tree: treeData })
+    this.setState({ tree: [...treeData] })
   }
 
-  treeRender (receiveTree, idx) {
+  treeRender (attr, receiveTree, idx) {
     let { tree } = this.state
     const isArray = Array.isArray(receiveTree)
     const { level } = receiveTree[0] || receiveTree
@@ -59,44 +55,74 @@ export default class ClassesTree extends PureComponent {
         : tree = [...tree, receiveTree]
 
     } else {
-      tree.splice(index, length, [])
+      if (index < 3) tree.splice(index, length, [])
+      else tree.splice(index, length)
     }
 
     tree[index - 1].forEach(each => each.active = false)
     tree[index - 1][idx].active = true
 
-    this.setState({ tree: [...tree] })
+    this.setState({ tree: [...tree], attr: {...attr} })
   }
 
   render () {
-    const { tree, editable } = this.state
+    const { tree, attr } = this.state
+    const { editable, attributesList, refreshList } = this.props
+
     return (
       <div>
-        <div>
-        {
-          editable
-           ? (
-             <ButtonGroup>
-               <Button onClick={::this.handleSave}> 保存 </Button>
-               <Button onClick={::this.handleCancel}> 取消 </Button>
-             </ButtonGroup>
-           )
-           : (<Button onClick={::this.handleEdit}> 编辑 </Button>)
-        }
-        </div>
-        <div className={style['tree']}>
-        {
-          tree.map((item, idx) => (
-            <div key={idx} className={style['tree__list']}>
-              <ClassesList
-                level={idx}
-                editable={editable}
-                treeItemData={item}
-                treeRender={(next, idx) => this.treeRender(next, idx)}
-              />
-            </div>
-          ))
-        }
+        <div className={style['view']}>
+          <div className={style['tree']}>
+          {
+            tree.map((item, idx) => (
+              <div key={idx} className={style['tree__list']}>
+                <ClassesList
+                  level={idx}
+                  editable={editable}
+                  treeItemData={item}
+                  attr={attr}
+                  tree={tree}
+                  attributesList={attributesList}
+                  refreshList={() => refreshList()}
+                  treeRender={(attr, next, idx) => this.treeRender(attr, next, idx)}
+                />
+              </div>
+            ))
+          }
+          </div>
+          <div style={{paddingTop: '10px'}}>
+            {
+              !isEmptyObject(attr)
+                ? (
+                  <Card title={`属性 - ${attr.name_cn}`}>
+                    <div className={style['attr']}>
+                      {
+                        attr.image_url
+                          ? (
+                            <div className={style['attr__image']}>
+                              <img src={attr.image_url} />
+                            </div>
+                          )
+                          : null
+                      }
+                      <div className={style['attr__content']}>
+                        <span> 是否显示： </span>
+                        <span>{attr.status === 1 ? '显示' : '不显示'}</span>
+                      </div>
+                      <div className={style['attr__content']}>
+                        <span> 权重： </span>
+                        <span>{attr.weight}</span>
+                      </div>
+                      <div className={style['attr__content']}>
+                        <span> 创建时间： </span>
+                        <span>{format(attr.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>
+                      </div>
+                    </div>
+                  </Card>
+                )
+                : null
+            }
+          </div>
         </div>
       </div>
     )
