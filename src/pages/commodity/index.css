@@ -3,3 +3,8 @@
     margin-right: 8px;
   }
 }
+.goods-list__operate-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}

@@ -10,7 +10,7 @@ import { groupBy, find } from 'lodash'
 import { toRemoteSku, toRemoteSpu, cartesianProductOf } from 'utils'
 import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
-import LzEditor from 'react-lz-editor'
+import Editor from 'components/richEditor'
 import style from './create.css'
 // const FormItem = Form.Item
 
@@ -25,7 +25,7 @@ class CommodityCreate extends Component {
       spu: {...JSON.parse(JSON.stringify(emptySpu))},
       skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
       contentObj: {
-        content: ''
+        content: '<p></p>'
       },
       skuTypes: [],
       // skus: [{"attributes":[{"attr_type":2,"created_at":1499756418,"id":2079,"level":3,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":2005,"lv2_name_cn":"33","lv3_id":2079,"lv3_name_cn":"222","name_cn":"222","parent_id":2005,"status":1,"updated_at":1499756418},{"name_cn":"样品（现货）","id":214}],"earlyDate":"","latestDate":"","miniQuantity":0,"price":0},{"attributes":[{"attr_type":2,"created_at":1499756418,"id":2079,"level":3,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":2005,"lv2_name_cn":"33","lv3_id":2079,"lv3_name_cn":"222","name_cn":"222","parent_id":2005,"status":1,"updated_at":1499756418},{"name_cn":"大货（快时尚级）","id":215}],"earlyDate":"","latestDate":"","miniQuantity":0,"price":0}],
@@ -143,10 +143,11 @@ class CommodityCreate extends Component {
     }))
     const cartesian = cartesianProductOf(...demo)
     const skus = cartesian.map(item => {
+      console.log(item)
       return {
-        type: item.filter(attr => attr.lv1_name_cn === '商品类型')[0],
-        typeId: item.filter(attr => attr.lv1_name_cn === '商品类型')[0].id,
-        attributes: item.filter(attr => attr.lv1_name_cn !== '商品类型'),
+        type: item.filter(attr => !attr.level)[0],
+        typeId: item.filter(attr => !attr.level)[0].id,
+        attributes: item.filter(attr => attr.level),
         earlyDate: '',
         latestDate: '',
         miniQuantity: '',
@@ -192,7 +193,7 @@ class CommodityCreate extends Component {
     })
   }
 
-  handleRemove = (e, index) => {
+  handleRemove = (index) => {
     const skus = [...this.state.skus]
     skus.splice(index, 1)
     this.setState({
@@ -209,8 +210,11 @@ class CommodityCreate extends Component {
       promiseList.push(this.props.saveAccess(data))
     }
 
-    await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
-    // this.props.history.push('/main/goods')
+    this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }).then(res => {
+      this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))).then(res => {
+        this.props.history.push('/main/goods')
+      })
+    })
   }
 
   changeSpu = (spu) => {
@@ -253,7 +257,7 @@ class CommodityCreate extends Component {
     })
   }
 
-  receiveHtml = (content) => {
+  changeText = (content) => {
     // console.log(this.state.contentObj)
     this.setState({
       contentObj: { ...this.state.contentObj, content: content }
@@ -308,7 +312,9 @@ class CommodityCreate extends Component {
           <div className={style['commodity-create__input-row']}>
             <Input className={style['commodity-create__third-input']} value={this.state.spu.title}></Input>
           </div>
-          <LzEditor importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
+          <Editor
+            contentState={this.state.contentObj.content}
+            onChange={this.changeText}/>
           <div className={style['commodity-create__btn-box']}>
             <Button className={style['commodity-create__btn']} onClick={this.handleFinish}>保存并关闭</Button>
             <Button className={style['commodity-create__btn']}>保存并新建</Button>

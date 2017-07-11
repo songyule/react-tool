@@ -4,9 +4,6 @@ import SkuItem from './sku-item'
 import style from './create-sku-list.css'
 
 class CreateSkuList extends Component {
-  constructor (props) {
-    super(props)
-  }
 
   render () {
     return (

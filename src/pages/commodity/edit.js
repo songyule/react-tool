@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
 import SpuPlane from './components/spu-plane'
 import CreateAttributesPlane from './components/create-attributes-plane'
 import CreateSkuList from './components/create-sku-list'
@@ -7,10 +7,10 @@ import { emptySpu } from './model'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { groupBy, find, findIndex } from 'lodash'
-import { toRemoteSku, toRemoteSpu, cartesianProductOf, toLocalSpu, toLocalSku } from 'utils'
+import { toRemoteSku, toRemoteSpu, toLocalSpu, toLocalSku } from 'utils'
 import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
-import style from './create.css'
+import style from './edit.css'
 // const FormItem = Form.Item
 
 @connect(
@@ -26,9 +26,9 @@ class CommodityEdit extends Component {
       fileList: [],
       skuTypes: [],
       skus: [],
-      customAttributes: [],
       attributesVisible: false,
-      selecteds: []
+      selecteds: [],
+      notLoaded: true
     }
     this.showAttributesDialog = this.showAttributesDialog.bind(this)
   }
@@ -54,7 +54,6 @@ class CommodityEdit extends Component {
   }
 
   changeSkuAttributes = (value) => {
-    console.log(value)
     this.setState({
       skuAttributes: value
     })
@@ -64,6 +63,9 @@ class CommodityEdit extends Component {
     const id = this.props.match.params.id
     this.props.getSpuInfo(id).then(res => {
       const spu = toLocalSpu(res.data)
+      this.setState({
+        notLoaded: false
+      })
       if (spu.accessStatus === 3) {
         const selecteds = []
         this.props.getAccess(id).then(accessRes => {
@@ -108,13 +110,6 @@ class CommodityEdit extends Component {
         skuTypes: [...new Set(skus.map(sku => String((sku.type||{}).id)))],
         skuAttributes
       })
-    })
-  }
-
-  promiseGetAttribute = (name) => {
-    return new Promise((resolve, reject) => {
-      const matchAttribute = find(this.state.customAttributes, { name_cn: name })
-      resolve(matchAttribute)
     })
   }
 
@@ -164,10 +159,9 @@ class CommodityEdit extends Component {
     this.setState({
       skus
     })
-    console.log(this.state.skus)
   }
 
-  handleRemove = (e, index) => {
+  handleRemove = (index) => {
     const skus = [...this.state.skus]
     skus.splice(index, 1)
     this.setState({
@@ -188,7 +182,7 @@ class CommodityEdit extends Component {
 
     const nameAttributes = []
     skuAttributes.forEach(attribute => {
-      if (attribute.name.id && attribute.name.changed) nameAttributes.push({ attr_type: 2, name_cn: attribute.name, parent_id: 1942 })
+      if (attribute.name.id && attribute.name.changed) nameAttributes.push({ attr_type: 2, name_cn: attribute.name.value, parent_id: 1942 })
     })
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
 
@@ -254,15 +248,13 @@ class CommodityEdit extends Component {
 
   render () {
     return (
-      <div className={style['page_commodity-create']}>
-        <div className="commodity-create__header">
-          <h3>
-            编辑商品
-          </h3>
+      <div className={style['page_commodity-edit']}>
+        <div className={style['commodity-edit__header']}>
+          <h3>编辑商品</h3>
           <Button onClick={this.handleFinish}>修改</Button>
         </div>
-        <div className="commodity-create__first">
-          <SpuPlane
+        <div className="commodity-edit__first">
+          {!this.state.notLoaded && <SpuPlane
             spu={this.state.spu}
             fileList={this.state.fileList}
             selecteds={this.state.selecteds}
@@ -272,15 +264,12 @@ class CommodityEdit extends Component {
             changeSelecteds={this.changeSelecteds}
             changeImages={this.changeImages}
             ref="spuPlane">
-          </SpuPlane>
-          <CreateAttributesPlane ref="createAttributesPlane" skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
-            <div className={style['commodity-create__btn-box']}></div>
-          {
-              // <Button onClick={this.finishFirst}>下一步</Button>
-          }
+          </SpuPlane>}
+          <CreateAttributesPlane ref="createAttributesPlane" inEdit={true} skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
+          <div className={style['commodity-edit__btn-box']}></div>
         </div>
 
-        <div className="commodity-create__second">
+        <div className="commodity-edit__second">
           <CreateSkuList skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove}></CreateSkuList>
         </div>
       </div>

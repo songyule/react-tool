@@ -61,8 +61,8 @@ class CommodityList extends PureComponent {
         total: 0
       },
       list: [],
-      classes: [],
-      selectedRowKeys: []
+      classes: []
+      // selectedRowKeys: []
     }
 
     this.changeClass = this.changeClass.bind(this)
@@ -249,9 +249,9 @@ class CommodityList extends PureComponent {
     })
   }
 
-  onSelectChange = (selectedRowKeys) => {
-    this.setState({ selectedRowKeys })
-  }
+  // onSelectChange = (selectedRowKeys) => {
+  //   this.setState({ selectedRowKeys })
+  // }
 
   componentWillMount () {
     this.getGoodsData()
@@ -259,21 +259,21 @@ class CommodityList extends PureComponent {
   }
 
   render () {
-    const { selectedRowKeys } =this.state
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    }
+    // const { selectedRowKeys } =this.state
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.onSelectChange,
+    // }
 
     return (
       <div className="page_goods-list">
-        <div className="goods-list__operate-row">
+        <div className={style['goods-list__operate-row']}>
           <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
           <Link to="/main/goods-create">
             <Button>创建</Button>
           </Link>
         </div>
-        <Table rowKey="id" rowSelection={rowSelection} columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
+        <Table rowKey="id" columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
       </div>
     )
   }

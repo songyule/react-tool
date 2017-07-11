@@ -3,19 +3,16 @@ import { Button, Input, Row, Col } from 'antd'
 import style from './sku-item.css'
 
 class SkuItem extends Component {
-  constructor (props) {
-    super(props)
-  }
 
   showAttributes (attributes) {
-    return Object.keys(attributes).map(key => `${attributes[key].lv2_name_cn ? attributes[key].lv2_name_cn : '商品类型'}:${attributes[key].name_cn}`).join(',')
+    return Object.keys(attributes).map(key => `${attributes[key].lv2_name_cn}:${attributes[key].name_cn}`).join(',')
   }
 
   render () {
     return (
       <Row className="sku-item">
         <Col span="5">
-          { this.showAttributes(this.props.sku.attributes) }
+          { this.showAttributes(this.props.sku.attributes) },商品类型:{this.props.sku.type.name_cn}
         </Col>
         <Col span="6">
           <Row>
