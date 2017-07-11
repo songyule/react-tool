@@ -1,0 +1,9 @@
+.commodity-content-edit__header-row {
+  padding: 8px 0;
+}
+.commodity-content-edit__operate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+}

@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import {toLocalSpu } from 'utils'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import LzEditor from 'react-lz-editor'
+import Editor from 'components/richEditor'
 import { Button } from 'antd'
+import style from './content-edit.css'
 import * as commodityActions from 'actions/commodity'
 
 @connect(
@@ -37,8 +38,7 @@ export default class CommodityContentEdit extends Component {
     })
   }
 
-  receiveHtml = (content) => {
-    // console.log(this.state.contentObj)
+  changeText = (content) => {
     this.setState({
       contentObj: { ...this.state.contentObj, content: content }
     })
@@ -51,17 +51,19 @@ export default class CommodityContentEdit extends Component {
 
   render () {
     return (
-      <div className="page_commodity-content-edit">
-        <div className="commodity-content-edit__header-row">
+      <div className={style['page_commodity-content-edit']}>
+        <div className={style['commodity-content-edit__header-row']}>
           <h3>商品名称：{this.state.spu.title}</h3>
         </div>
-        <div className="commodity-content-edit__operate-row">
+        <div className={style['commodity-content-edit__operate-row']}>
           <h3>详情页</h3>
           <div className="commodity-content-edit__btn-box">
             <Button onClick={this.handleSubmit}>保存</Button>
           </div>
         </div>
-        <LzEditor active={true} importContent={this.state.contentObj.showContent} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
+        <Editor
+          contentState={this.state.contentObj.content}
+          onChange={this.changeText}/>
       </div>
     )
   }

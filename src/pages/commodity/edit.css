@@ -1,0 +1,18 @@
+.commodity-edit {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #c3c3c3;
+  }
+
+  &__btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    clear: both;
+  }
+}

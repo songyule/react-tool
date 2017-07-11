@@ -9,10 +9,6 @@ const FormItem = Form.Item
   state => state
 )
 class CreateAttributesPlane extends Component {
-  constructor (props) {
-    super(props)
-  }
-
   addAttribute = () => {
     const skuAttributes = [...this.props.skuAttributes]
     skuAttributes.push({ name: { value: '' }, children: [{ value: '' }] })
@@ -105,16 +101,16 @@ class CreateAttributesPlane extends Component {
                       </div>
                       <div className={style["attribute-row__right"]}>
                         { attribute.children.map((item, childIndex) => <Input key={childIndex} onChange={ e => this.changeAttributeValue({e, index, childIndex}) } value={this.props.skuAttributes[index].children[childIndex].value}></Input>) }
-                        <Button onClick={() => this.addAttributeValue(index)}>+</Button>
+                        { !this.props.inEdit && <Button onClick={() => this.addAttributeValue(index)}>+</Button> }
                       </div>
-                      { index !== 0 && <Button onClick={() => this.removeAttribute(index)}>-</Button> }
+                      { index !== 0 && !this.props.inEdit && <Button onClick={() => this.removeAttribute(index)}>-</Button> }
                     </div>
                   )
                 }) }
               </div>
             </FormItem>
           </Form>
-          <Button onClick={this.addAttribute}>+</Button>
+          { !this.props.inEdit && <Button onClick={this.addAttribute}>+</Button> }
         </div>
       </div>
     )
