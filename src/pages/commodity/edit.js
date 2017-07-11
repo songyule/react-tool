@@ -324,7 +324,7 @@ class CommodityEdit extends Component {
           <h3>
             新建商品 - 第 {this.state.step} 步
           </h3>
-          <Button onclick={this.handleFinish}>修改</Button>
+          <Button onClick={this.handleFinish}>修改</Button>
         </div>
         { this.state.step === 1 && <div className="commodity-create__first">
           <SpuPlane
