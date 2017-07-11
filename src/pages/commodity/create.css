@@ -2,16 +2,25 @@
   padding-top: 20px;
 }
 .commodity-create {
-  &__btn-box {
-    margin-top: 8px;
+  &__btn {
+    margin-right: 8px;
   }
-}
-.commodity-create__input-row {
-  margin: 8px 0;
-}
-.commodity-create__btn-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  clear: both;
+
+  &__btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    clear: both;
+  }
+
+  &__input-row {
+    margin: 8px 0;
+  }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
 }

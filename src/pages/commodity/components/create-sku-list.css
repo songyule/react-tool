@@ -1,3 +1,7 @@
 .create-sku-list__head {
   display: flex;
+  margin-bottom: 8px;
+}
+.create-sku-list__item {
+  margin-bottom: 8px;
 }
