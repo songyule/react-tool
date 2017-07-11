@@ -116,6 +116,7 @@ export default class ClassesList extends PureComponent {
         } else {
           message.success('创建成功')
           this.setState({ visible: false })
+          this.props.refreshList()
         }
       }
     })
@@ -134,6 +135,7 @@ export default class ClassesList extends PureComponent {
         } else {
           message.success('保存成功')
           this.setState({ visible: false })
+          this.props.refreshList()
         }
       }
     })
@@ -164,6 +166,7 @@ export default class ClassesList extends PureComponent {
     if (bindRes.code === 200) {
       message.success('创建成功')
       this.setState({ visible: false })
+      this.props.refreshList()
     }
   }
 
