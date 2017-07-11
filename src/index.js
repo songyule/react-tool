@@ -4,7 +4,7 @@ import registerServiceWorker from './utils/registerServiceWorker'
 import { Provider } from 'react-redux'
 import store from '@/redux/store'
 import history from 'router/history'
-import './styles/index.css'
+// import './styles/index.css'
 import CustomRoute from 'router'
 
 render(
