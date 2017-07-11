@@ -1,0 +1,19 @@
+.attribute-row {
+  display: flex;
+  margin-bottom: 8px;
+
+  :global(input) {
+    width: 100px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  &__left {
+    width: 100px;
+    margin-right: 8px;
+  }
+  &__right {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

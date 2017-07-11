@@ -20,7 +20,7 @@ export default class extends PureComponent {
       pageVisible: false,
       goodsVisible: false,
       fileList: props.fileList || '',
-      selectedRowObjs: props.fileList || []
+      selectedRowObjs: props.selectedRowObjs || []
     }
   }
 
@@ -62,7 +62,7 @@ export default class extends PureComponent {
 
 
   render () {
-    const { isDragging, isAdd } = this.props
+    const { isDragging, isAdd, index } = this.props
     const { selectedRowObjs, fileList } = this.state
     const opacity = isDragging ? 0 : 1
 
@@ -70,9 +70,12 @@ export default class extends PureComponent {
       <div>
         {
           (fileList && !isAdd && fileList.length) ? (
-            <div  className={styles.box} style={{ opacity }} onClick={this.showModal}>
-              <Icon className={styles.box__close} type="close-square" onClick={this.props.delPage} />
-              <img src={fileList[0].response} alt="" style={{width: '100%'}} />
+            <div className={styles.wrapper}>
+              <div  className={styles.box} style={{ opacity }} onClick={this.showModal}>
+                <Icon className={styles.box__close} type="close-square" onClick={this.props.delPage} />
+                <div className={styles.img} style={{'backgroundImage': `url(${fileList[0].response})`}}></div>
+              </div>
+              <p className={styles.page}>第{index + 1}页</p>
             </div>
           ) : null
         }
@@ -90,7 +93,7 @@ export default class extends PureComponent {
             className={styles.upload}
             onChange={ this.handleChange }
           ></MyUpload>
-          <AddGoods selectedRowObjs={selectedRowObjs} onChange={this.goodsChange}></AddGoods>
+          <AddGoods selectedRowObjs={[...selectedRowObjs]} onChange={this.goodsChange}>{selectedRowObjs}</AddGoods>
         </Modal>
       </div>
     )

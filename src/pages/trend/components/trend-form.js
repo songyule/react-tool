@@ -50,6 +50,7 @@ export default class extends PureComponent {
     if (nextProps.trend_image) {
       let temp = nextProps.trend_image.map(item => {
         return ({
+          id: item.rank_order + item.trend_image,
           fileList: [{
             uid: -1,
             name: 'sdhjkf123333hsyuiweyrnn.png',
@@ -73,8 +74,9 @@ export default class extends PureComponent {
 
     this.props.form.validateFields((err, fieldsValue) => {
       if (err) return
-      let trend = this.state.pages.map(item => {
+      let trend = this.state.pages.map((item, index) => {
         return ({
+          rank_order: index + 1,
           trend_image: item.fileList[0].response,
           spu_id: item.selectedRowObjs.map(val => val.id) || []
         })
@@ -104,7 +106,7 @@ export default class extends PureComponent {
           [hoverIndex, 0, dragCard],
         ],
       },
-    }));
+    }), () => console.log(this.state.pages))
   }
 
   changeItem = (fileList, selectedRowObjs, index) => {
@@ -120,9 +122,12 @@ export default class extends PureComponent {
     temp.fileList = fileList
     temp.selectedRowObjs = selectedRowObjs
     this.refs.addItem.clear()
-    this.setState({
-      pages: [...pages, temp]
-    }, console.log(this.state.pages, 22))
+
+    if (fileList && fileList.length) {
+      this.setState({
+        pages: [...pages, temp]
+      })
+    }
   }
 
   showModal = () => {
@@ -164,6 +169,7 @@ export default class extends PureComponent {
         },
       },
     }
+    console.log(pages)
 
     return (
       <div style={{width: '1000px'}}>
@@ -186,16 +192,17 @@ export default class extends PureComponent {
               <div style={style}>
                 {pages.map((page, i) => (
                   <DragItem
-                    key={i + Math.random()}
+                    key={page.id}
                     index={i}
-                    id={i}
+                    id={page.id}
                     moveCard={this.moveCard}
                   >
                     <TrendItem
+                      index={i}
                       onChange={(...arg) => this.changeItem(...arg, i)}
                       delPage={(e) => this.delPage(i, e)}
                       fileList={page.fileList}
-                      selectedRowObjs={page.selectedRowObjs}
+                      selectedRowObjs={[...page.selectedRowObjs]}
                     ></TrendItem>
                   </DragItem>
                 ))}

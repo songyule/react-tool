@@ -58,14 +58,14 @@ export default class LoginForm extends PureComponent {
       if (err) {
         return;
       }
-      this.props.login({ mobile: this.state.mobile, code: this.state.code })
-      this.props.history.push('/main/topic')
+      this.props.login({ mobile: this.state.mobile, code: this.state.code }).then(res => this.props.history.push('/main/topic'))
     })
   }
 
   render () {
     const { getFieldDecorator, getFieldError } = this.props.form
     const { time } = this.state
+    console.log(getFieldDecorator)
     return (
       <div className={style.login}>
 

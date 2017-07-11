@@ -50,7 +50,7 @@ function check401(res) {
   // 登陆界面不需要做401校验
   if (res.status === 401) {
     message.error('请重新登录')
-    // window.localStorage.removeItem('USER')
+    window.localStorage.removeItem('USER')
     window.location.href = '/login'
     return Promise.reject(res)
   }
@@ -81,6 +81,8 @@ function checkStatus(res) {
     return res
   } else {
     // 这里补充更多错误参数
+    res.json().then(res => message.error(res.descr))
+
     return res.text().then(errorMsg => {
       return new StandardError({
         statusCode: res.status,

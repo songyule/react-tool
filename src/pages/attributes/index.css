@@ -1,5 +1,28 @@
 :global(.ant-tree li .ant-tree-node-content-wrapper) {
   width: calc(100% - 18px);
+
+}
+
+:global {
+  .vertical-center-modal {
+    text-align: center;
+    white-space: nowrap;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      width: 0;
+    }
+
+    & .ant-modal {
+      display: inline-block;
+      vertical-align: middle;
+      top: 0;
+      text-align: left;
+    }
+  }
 }
 
 .tree {
@@ -10,4 +33,8 @@
       line-height: 22px;
     }
   }
+}
+
+.title-single-button {
+  text-align: right;
 }

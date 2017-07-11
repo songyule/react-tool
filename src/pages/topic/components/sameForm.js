@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { Form, Input, Switch, TreeSelect } from 'antd'
 import PropTypes from 'prop-types'
 import MyUpload from './img-upload'
-import store from '@/redux/store'
+// import store from '@/redux/store'
 import { getTags } from 'actions/article'
 import arrayToTree from 'array-to-tree'
 
@@ -22,7 +22,7 @@ export default class SameForm extends PureComponent {
 
     this.state = {
       fileList: props.fileList || '',
-      checked: false,
+      checked: true,
       isFirst: true,
       TreeData: [],
       tags: []
@@ -49,7 +49,7 @@ export default class SameForm extends PureComponent {
     if (nextProps.id === this.props.id) return
 
     this.setState({
-      checked: nextProps.status === 2,
+      checked: nextProps.status ? nextProps.status === 2 : true,
     })
 
     if (nextProps.cover_image && this.state.isFirst) {
@@ -115,11 +115,13 @@ export default class SameForm extends PureComponent {
   }
 
   handleChange = (fileList) => {
+    console.log(fileList)
     this.setState({ fileList }, this.props.onChange(fileList))
   }
 
   render() {
     const { getFieldDecorator, status } = this.props
+    console.log(status ? status === 2 : true)
     // const name = store.getState().userLogin.name_cn
     const formItemLayout = {
       labelCol: {
@@ -173,7 +175,7 @@ export default class SameForm extends PureComponent {
         hasFeedback: false,
         name: 'display',
         opts: {
-          initialValue: status === 2,
+          initialValue: status ? status === 2 : true,
         },
         content: <Switch checkedChildren={'显示'} unCheckedChildren={'隐藏'} checked={this.state.checked} onChange={this.changeE} />
       },

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import Title from 'components/title'
 import { Input, Table, Button, Switch, Select, Modal, message, Menu } from 'antd'
 import { Link } from 'react-router-dom'
-import { getArticles, changeArticle, getEditors } from 'actions/article'
+import { getArticles, changeArticle, getUpdator } from 'actions/article'
 
 import { format } from 'utils'
 const ButtonGroup = Button.Group
@@ -131,6 +131,7 @@ export default class extends PureComponent {
         let trend = val.trend_image.map(item => {
           return ({
             trend_image: item.trend_image,
+            rank_order: item.rank_order,
             spu_id: (item.spu && item.spu.map(val => val.id)) || []
           })
         })
@@ -166,7 +167,7 @@ export default class extends PureComponent {
     this.getArticleList()
 
     // 获取编辑列表
-    getEditors().then(res => {
+    getUpdator({article_type: 2}).then(res => {
       this.setState({
         editors: res.data
       })
@@ -206,7 +207,7 @@ export default class extends PureComponent {
       filterDropdown: (
         <div style={{width: '100px', padding: '5px', textAlign: 'center'}}>
           <Menu onClick={(e) => this.filterEditor(e)}>
-            { this.state.editors.map(item => <Menu.Item key={item.id}>{item.name_cn}</Menu.Item>) }
+            { this.state.editors.map(item => <Menu.Item key={item.updator_id}>{item.updator_name}</Menu.Item>) }
           </Menu>
           <div><Button onClick={() => this.filterEditor({key: ''})}>清除</Button></div>
         </div>

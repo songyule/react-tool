@@ -1,0 +1,7 @@
+.tree {
+  height: 260px;
+  overflow-y: auto;
+  border: 1px solid #d9d9d9;
+  background-color: #F7F7F7;
+  border-radius: 4px;
+}

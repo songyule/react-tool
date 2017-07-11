@@ -1,33 +1,95 @@
 import React, { PureComponent } from 'react'
 import Title from 'components/title'
+import { isEmptyObject } from 'utils/index'
 import AccountForm from './form'
-import AccountTabs from './tabs'
+import History from './history'
+import { connect } from 'react-redux'
 import { Button } from 'antd'
+import { editUser } from 'actions/user'
+import './edit.css'
+const ButtonGrop = Button.Group
+
+
+@connect(
+  state => state
+)
 
 export default class EditAccount extends PureComponent {
+  constructor () {
+    super()
+    this.state = {
+      disabled: true,
+      user: []
+    }
+  }
 
-  componentWillMount () {
-    console.log(this.props.location.state)
+  handleEdit () {
+    this.setState({ disabled: false })
   }
 
   handleSave () {
+    this.accountForm.validateFields(async (err, fieldsValue) => {
+      if (err) return
+
+      const { type, userName, phone, email, org, status, role, id } = fieldsValue
+      console.log(type ,typeof type)
+      const params = {
+        name_cn: userName,
+        status: status ? 1 : 2,
+        mobile: phone,
+        mail: email,
+        org_id: type === 'a' ? '9e761a02f5d74d3494395a3e46c824e7' : org,
+        role: role
+      }
+
+      const res = await editUser(params, id)
+
+      if (res.code === 200) {
+        this.setState({ disabled: true })
+      }
+    })
 
   }
 
+  handleCancel () {
+    this.setState({ disabled: true })
+  }
+
   render () {
-    const { id, user_name, login_name, phone, email } = this.props.location.state
+    const { id, name_cn, mobile, mail, status, role, org } = this.props.location.state
+    const { disabled } = this.state
+
     return (
       <div>
-        <Title title={user_name} />
+
+      <Title title={name_cn} >
+        <div className="right-button-box">
+          {
+            disabled
+              ? <Button type="primary" onClick={::this.handleEdit}> 编辑 </Button>
+              : (
+                <ButtonGrop>
+                  <Button type="primary" onClick={::this.handleSave}> 保存 </Button>
+                  <Button onClick={::this.handleCancel}> 取消 </Button>
+                </ButtonGrop>
+              )
+          }
+        </div>
+      </Title>
         <AccountForm
           id={id}
-          userName={user_name}
-          loginName={login_name}
-          phone={phone}
-          email={email}
+          userName={name_cn}
+          phone={mobile}
+          email={mail}
+          status={!!(status === 1)}
+          disabled={disabled}
+          role={role}
+          isPersonal={isEmptyObject(org)}
+          ref={(ref) => {this.accountForm = ref}}
         />
-        <Button onClick={this.handleSave}> 保存 </Button>
-        <AccountTabs />
+        <Title title="登录历史">
+        </Title>
+        <History id={id}/>
       </div>
     )
   }

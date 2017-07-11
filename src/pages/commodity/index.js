@@ -2,11 +2,12 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
-import { Table, Input, Select, Menu, Cascader } from 'antd'
+import { Table, Input, Select, Menu, Cascader, Button } from 'antd'
 // import { spu as spuList } from './commodity.json'
 import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } from 'utils'
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
+import { Link } from 'react-router-dom'
 
 const Option = Select.Option
 const Search = Input.Search
@@ -103,7 +104,7 @@ class CommodityList extends PureComponent {
 
   handleSearch = (value) => {
     this.setState({
-      spu: { ...this.state.spu, kw: value }
+      spu: { ...this.state.spu, kw: value, currentPage: 1 }
     }, () => {
       this.getGoodsData()
     })
@@ -111,8 +112,9 @@ class CommodityList extends PureComponent {
 
   getGoodsData = async () => {
     const params = {}
-    params.offset = this.state.spu.currentPage * this.state.spu.pageSize
+    params.offset = (this.state.spu.currentPage - 1) * this.state.spu.pageSize
     params.limit = this.state.spu.pageSize
+    params.order_by = 1
     params.as_supplier = 1
     if (this.state.spu.check_status) params.check_status = this.state.spu.check_status
     if (this.state.spu.status) params.status = this.state.spu.status
@@ -200,8 +202,9 @@ class CommodityList extends PureComponent {
       classes: arrayToTree(classes)[0].children
     })
     console.log(arrayToTree(classes)[0].children)
+    return res
   }
-  
+
   pageChange = (value) => {
     this.setState({
       spu: {...this.state.spu, currentPage: value }
@@ -253,7 +256,12 @@ class CommodityList extends PureComponent {
 
     return (
       <div className="page_goods-list">
-        <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
+        <div className="goods-list__operate-row">
+          <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
+          <Link to="/main/goods-create">
+            <Button>创建</Button>
+          </Link>
+        </div>
         <Table rowKey="id" rowSelection={rowSelection} columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
       </div>
     )

@@ -82,6 +82,35 @@ export function format (time, formatStr) {
   })
 }
 
+export function generateAttrTree (data, pid) {
+  let result = []
+  let temp = []
+  for (var i = 0; i < data.length; i++) {
+    if ((!data[i].parant_id && !pid) || data[i].parent_id === pid) {
+      const obj = { name_cn: data[i].name_cn, id: data[i].id, rgb: data[i].value_str }
+      temp = generateAttrTree(data, data[i].id)
+
+      if (temp.length > 0) {
+        obj.children = temp
+      }
+      result.push(obj)
+    }
+  }
+  return result
+}
+
+export function cartesianProductOf () {
+  return Array.prototype.reduce.call(arguments, function(a, b) {
+    var ret = [];
+    a.forEach(function(a) {
+      b.forEach(function(b) {
+        ret.push(a.concat([b]));
+      });
+    });
+   return ret;
+  }, [[]]);
+}
+
 /**
  * 对象转成搜索参数
  * @param  {[type]} params [description]
@@ -135,4 +164,54 @@ export function countdown ({
       update && update(seconds)
     }, 1000)
   })
+}
+
+export function isEmptyObject(e) {
+  var t
+  for (t in e)
+      return !1
+  return !0
+}
+
+export function toRemoteSpu (spu) {
+  return {
+    name_cn: spu.title,
+    image_url: spu.imgList,
+    attr_id: spu.attributes.map(item => item.id),
+    class_id: spu.classes.map(item => item.id),
+    // status: spu.status ? 1 : 2,
+    access_status: spu.accessStatus
+  }
+}
+
+export function toRemoteSku (sku) {
+  return {
+    attr_id: sku.attributes.map(attribute => attribute.id),
+    price: Number(sku.price),
+    moq: Number(sku.miniQuantity),
+    min_delay_day: Number(sku.earlyDate),
+    max_delay_day: Number(sku.latestDate)
+  }
+}
+
+// 包装函数，保证函数只执行一次
+export function onceWrapper (func) {
+  let executed = false
+  let promiseObj = null
+  return (...arg) => {
+    if (executed) return promiseObj
+    executed = true
+    promiseObj = func(...arg)
+    return promiseObj
+  }
+}
+
+export function isRepeat (arr) {
+  var hash = {};
+  for(var i in arr) {
+      if(hash[arr[i]])
+      return true;
+      hash[arr[i]] = true;
+  }
+  return false;
 }
