@@ -192,7 +192,7 @@ export default class extends Component {
               <Route path='/main/attributes' component={Attributes} />
               {/*商品相关 ==== */}
               <Route path='/main/goods' component={Goods} />
-              <Route path='/main/goods-edit' component={GoodsEdit} />
+              <Route path='/main/goods-edit/:id' component={GoodsEdit} />
               <Route path='/main/goods-create' component={GoodsCreate} />
             </div>
         </div>

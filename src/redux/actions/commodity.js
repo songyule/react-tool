@@ -101,3 +101,39 @@ export const createSpuText = (data) => async (dispatch, getState) => {
     console.log('error：', error)
   }
 }
+
+export const updateSpuText = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.patch(`/commodity/spu/text/${id}`, { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
+export const getSpuInfo = (id) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get(`/commodity/spu/${id}`)
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
+export const getSkuList = (id) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get('/commodity/sku', { params: { spu_id: id } })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
+export const updateSpu = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.patch(`commodity/spu/${id}`, { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}

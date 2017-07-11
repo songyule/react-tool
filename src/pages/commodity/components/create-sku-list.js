@@ -19,7 +19,7 @@ class CreateSkuList extends Component {
           <Col span="5">操作</Col>
         </Row>
         {this.props.skus.map((sku, index) => (
-          <div className="create-sku-list__item">
+          <div className="create-sku-list__item" key={index}>
             <SkuItem sku={sku} changeEarly={e => this.props.changeEarly(e, index)} changeLatest={e => this.props.changeLatest(e, index)} changeMini={e => this.props.changeMini(e, index)} changePrice={e => this.props.changePrice(e, index)} handleRemove={() => this.props.handleRemove(index)}></SkuItem>
           </div>
         ))}

@@ -29,7 +29,6 @@ class SpuPlane extends PureComponent {
     this.state = {
       attributesVisible: false,
       attributes: {},
-      fileList: [],
       attributeList: [],
       attrOptions: []
     }
@@ -98,7 +97,7 @@ class SpuPlane extends PureComponent {
 
   handleUpload = (fileList) => {
     fileList = fileList || []
-    this.setState({ fileList })
+    this.props.changeImages(fileList)
     this.props.form.setFieldsValue({ imgList: fileList.map(item => item.response) })
     this.props.changeSpu({ ...this.props.spu, imgList: fileList.map(item => item.response) })
   }
@@ -266,7 +265,7 @@ class SpuPlane extends PureComponent {
                   message: '至少上传一张图片'
                 }]
               })(
-                <MyUpload onChange={this.handleUpload} fileList={[...this.state.fileList]}></MyUpload>
+                <MyUpload onChange={this.handleUpload} fileList={[...this.props.fileList]}></MyUpload>
               )}
           </FormItem>
           <FormItem

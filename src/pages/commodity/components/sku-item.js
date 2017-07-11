@@ -19,18 +19,18 @@ class SkuItem extends Component {
         <Col span="5">
           <Row>
             <Col span="12">
-              <Input onChange={this.props.changeEarly}></Input>
+              <Input value={this.props.sku.earlyDate} onChange={this.props.changeEarly}></Input>
             </Col>
             <Col span="12">
-              <Input onChange={this.props.changeLatest}></Input>
+              <Input value={this.props.sku.latestDate} onChange={this.props.changeLatest}></Input>
             </Col>
           </Row>
         </Col>
         <Col span="5">
-          <Input onChange={this.props.changeMini}></Input>
+          <Input value={this.props.sku.miniQuantity} onChange={this.props.changeMini}></Input>
         </Col>
         <Col span="5">
-          <Input onChange={this.props.changePrice}></Input>
+          <Input value={this.props.sku.price} onChange={this.props.changePrice}></Input>
         </Col>
         <Col span="5">
           <Button onClick={this.props.handleRemove}>删除</Button>
