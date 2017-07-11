@@ -22,6 +22,15 @@ export const originGetClasses = (params) => async (dispatch, getState) => {
 }
 export const getClasses = onceWrapper(originGetClasses)
 
+export const getClassesForClasses = async () => {
+  try {
+    let response = await fetch.get('/commodity/class')
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
 const originGetGoodsAttributes = (params) => async (dispatch, getState) => {
   try {
     let response = await fetch.get('/commodity/opt/attribute')

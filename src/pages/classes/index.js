@@ -66,7 +66,8 @@ export default class Classes extends PureComponent {
   }
 
   getClassesList = async () => {
-    const res = await this.props.getClasses()
+    const res = await commodityActions.getClassesForClasses()
+    console.log(res)
     const { data } = await commodityActions.getAttributesList()
     this.setState({
       data: [...[this.format(res.data)]],
