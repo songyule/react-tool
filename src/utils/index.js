@@ -1,3 +1,5 @@
+import { find } from 'lodash'
+
 export function showClasses (classes) {
   return classes ? classes.map(item => {
     if (item.level === 1) return item.name_cn
@@ -184,6 +186,31 @@ export function toRemoteSpu (spu) {
   }
 }
 
+export function toLocalSpu (spu) {
+  const classes = spu.commodity_class ? spu.commodity_class : []
+
+  return {
+    id: spu.id,
+    title: spu.name_cn,
+    classes,
+    classesSelected: classes.length ? classes.map(item => classToSelected(item)) : [[]],
+    imgList: spu.image_url,
+    attributes: spu.commodity_attribute || [],
+    accessStatus: spu.access_status || 2,
+    backupAccessStatus: spu.access_status || 2,
+  }
+}
+
+export function classToSelected (data) {
+  let level = 1
+  const list = []
+  while (level <= data.level) {
+    list.push(data[`lv${level}_id`])
+    level++
+  }
+  return list
+}
+
 export function toRemoteSku (sku) {
   return {
     attr_id: sku.attributes.map(attribute => attribute.id),
@@ -191,6 +218,23 @@ export function toRemoteSku (sku) {
     moq: Number(sku.miniQuantity),
     min_delay_day: Number(sku.earlyDate),
     max_delay_day: Number(sku.latestDate)
+  }
+}
+
+
+export function toLocalSku (sku) {
+  const type = sku.attribute ? find(sku.attribute, { lv1_name_cn: '商品类型' }) : {}
+  const attributes = sku.attribute && sku.attribute.filter(attribute => attribute.lv1_name_cn !== '商品类型')
+
+  return {
+    id: sku.id,
+    type,
+    typeId: type.id,
+    attributes,
+    price: String(sku.price || ''),
+    miniQuantity: sku.moq || 0,
+    earlyDate: String(sku.min_delay_day || ''),
+    latestDate: String(sku.max_delay_day || '')
   }
 }
 
