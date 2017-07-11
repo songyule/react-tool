@@ -13,6 +13,5 @@ export const emptySpu = {
   imgList: [],
   attributes: [],
   accessStatus: 2,
-  backupAccessStatus: 2,
-  content: ''
+  backupAccessStatus: 2
 }

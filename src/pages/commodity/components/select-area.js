@@ -37,12 +37,20 @@ class SelectArea extends Component {
   }
 
   searchLabel = (e) => {
-    this.state.labelScroll.kw = e.target.value
+    this.setState({
+      labelScroll: {
+        ...this.state.labelScroll, kw: e.target.value
+      }
+    })
     this.commonGet('label')
   }
 
   searchClient = (e) => {
-    this.state.clientScroll.kw = e.target.value
+    this.setState({
+      clientScroll: {
+        ...this.state.clientScroll, kw: e.target.value
+      }
+    })
     this.commonGet('client')
   }
 
@@ -108,8 +116,8 @@ class SelectArea extends Component {
             <TabPane tab="标签" key="1">
               <Input placeholder="请输入客户标签名" onChange={this.searchLabel}></Input>
               <div className={style['select-area__checkbox-scroll']}>
-                {this.state.labelScroll.list.map(item =>
-                  <div className="select-area__checkbox-box">
+                {this.state.labelScroll.list.map((item, index) =>
+                  <div className="select-area__checkbox-box" key={index}>
                     <Checkbox onChange={ () => this.changeLabel(item) }>{ item.name_cn }（{ item.client_count }）</Checkbox>
                   </div>
                 )}
@@ -119,8 +127,8 @@ class SelectArea extends Component {
             <TabPane tab="客户" key="2">
               <Input placeholder="请输入客户简称或全称"></Input>
               <div className={style['select-area__checkbox-scroll']}>
-                {this.state.clientScroll.list.map(item =>
-                  <div className="select-area__checkbox-box">
+                {this.state.clientScroll.list.map((item, index) =>
+                  <div className="select-area__checkbox-box" key={index}>
                     <Checkbox onChange={ () => this.changeClient(item) }>{ item.name_official }</Checkbox>
                   </div>
                 )}

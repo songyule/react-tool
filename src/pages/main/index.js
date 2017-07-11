@@ -194,7 +194,8 @@ export default class extends Component {
               <Route path='/main/attributes' component={Attributes} />
               {/*商品相关 ==== */}
               <Route path='/main/goods' component={Goods} />
-              <Route path='/main/goods-edit' component={GoodsEdit} />
+              <Route path='/main/goods-edit/:id' component={GoodsEdit} />
+              <Route path='/main/goods-content-edit/:id' component={GoodsContentEdit} />
               <Route path='/main/goods-create' component={GoodsCreate} />
             </div>
         </div>
@@ -225,4 +226,5 @@ const Attributes = asyncComponent(() => import ('pages/attributes'))
 const editTrend = asyncComponent(() => import ('pages/trend/edit-trend'))
 const Goods = asyncComponent(() => import('pages/commodity/index'))
 const GoodsEdit = asyncComponent(() => import('pages/commodity/edit'))
+const GoodsContentEdit = asyncComponent(() => import('pages/commodity/content-edit'))
 const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))

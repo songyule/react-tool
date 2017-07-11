@@ -8,6 +8,7 @@ import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } f
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
 import { Link } from 'react-router-dom'
+import style from './index.css'
 
 const Option = Select.Option
 const Search = Input.Search
@@ -60,8 +61,8 @@ class CommodityList extends PureComponent {
         total: 0
       },
       list: [],
-      classes: [],
-      selectedRowKeys: []
+      classes: []
+      // selectedRowKeys: []
     }
 
     this.changeClass = this.changeClass.bind(this)
@@ -140,7 +141,7 @@ class CommodityList extends PureComponent {
         render: text => <span>{text}</span>
       },
       {
-        title: <Cascader options={this.state.classes} onChange={this.changeClass}><span>分类</span></Cascader>,
+        title: <Cascader options={this.state.classes} onChange={this.changeClass} changeOnSelect><span>分类</span></Cascader>,
         dataIndex: 'commodity_class',
         render: text => <span>{showClasses(text)}</span>
       },
@@ -182,6 +183,16 @@ class CommodityList extends PureComponent {
         title: '更新时间',
         dataIndex: 'updated_at',
         render: text => <span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>
+      },
+      {
+        title: '操作',
+        dataIndex: 'id',
+        render: (text, record) => (
+          <div className="operate-box">
+            <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看详情</Link>
+            <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看内容</Link>
+          </div>
+        )
       }
     ]
   }
@@ -238,9 +249,9 @@ class CommodityList extends PureComponent {
     })
   }
 
-  onSelectChange = (selectedRowKeys) => {
-    this.setState({ selectedRowKeys })
-  }
+  // onSelectChange = (selectedRowKeys) => {
+  //   this.setState({ selectedRowKeys })
+  // }
 
   componentWillMount () {
     this.getGoodsData()
@@ -248,21 +259,21 @@ class CommodityList extends PureComponent {
   }
 
   render () {
-    const { selectedRowKeys } =this.state
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    }
+    // const { selectedRowKeys } =this.state
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.onSelectChange,
+    // }
 
     return (
       <div className="page_goods-list">
-        <div className="goods-list__operate-row">
+        <div className={style['goods-list__operate-row']}>
           <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
           <Link to="/main/goods-create">
             <Button>创建</Button>
           </Link>
         </div>
-        <Table rowKey="id" rowSelection={rowSelection} columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
+        <Table rowKey="id" columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
       </div>
     )
   }
