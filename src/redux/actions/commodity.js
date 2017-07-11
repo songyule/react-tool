@@ -31,6 +31,15 @@ export const getClassesForClasses = async () => {
   }
 }
 
+export const getAttributesOfClass = async (params) => {
+  try {
+    let response = await fetch.get('/commodity/class', { params })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
 const originGetGoodsAttributes = (params) => async (dispatch, getState) => {
   try {
     let response = await fetch.get('/commodity/opt/attribute')
