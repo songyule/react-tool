@@ -116,7 +116,7 @@ class CommodityList extends PureComponent {
     params.offset = (this.state.spu.currentPage - 1) * this.state.spu.pageSize
     params.limit = this.state.spu.pageSize
     params.order_by = 1
-    params.as_supplier = 1
+    // params.as_supplier = 1
     if (this.state.spu.check_status) params.check_status = this.state.spu.check_status
     if (this.state.spu.status) params.status = this.state.spu.status
     if (this.state.spu.class_id) params.class_id = this.state.spu.class_id

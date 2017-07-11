@@ -83,6 +83,15 @@ export const createSku = async (id, data) => {
   }
 }
 
+export const removeSku = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.delete(`/commodity/sku/${id}`)
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
 export const createSkuList = (id, list) => async (dispatch, getState) => {
   try {
     let response = await Promise.all(list.map(sku => createSku(id, sku)))
