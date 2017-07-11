@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Input, Row, Col } from 'antd'
+import { Button, Input, Row, Col, message } from 'antd'
 import SpuPlane from './components/spu-plane'
 import CreateAttributesPlane from './components/create-attributes-plane'
 import CreateSkuList from './components/create-sku-list'
@@ -22,12 +22,13 @@ class CommodityCreate extends Component {
   constructor () {
     super()
     this.state = {
-      spu: {...emptySpu},
+      spu: {...JSON.parse(JSON.stringify(emptySpu))},
       skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
       contentObj: {
         content: ''
       },
       skuTypes: [],
+      // skus: [{"attributes":[{"attr_type":2,"created_at":1499756418,"id":2079,"level":3,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":2005,"lv2_name_cn":"33","lv3_id":2079,"lv3_name_cn":"222","name_cn":"222","parent_id":2005,"status":1,"updated_at":1499756418},{"name_cn":"样品（现货）","id":214}],"earlyDate":"","latestDate":"","miniQuantity":0,"price":0},{"attributes":[{"attr_type":2,"created_at":1499756418,"id":2079,"level":3,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":2005,"lv2_name_cn":"33","lv3_id":2079,"lv3_name_cn":"222","name_cn":"222","parent_id":2005,"status":1,"updated_at":1499756418},{"name_cn":"大货（快时尚级）","id":215}],"earlyDate":"","latestDate":"","miniQuantity":0,"price":0}],
       skus: [],
       fileList: [],
       step: 1,
@@ -79,9 +80,36 @@ class CommodityCreate extends Component {
     return bool
   }
 
+  validAttributes = () => {
+    let bool = true
+    if (this.isRepeat(this.state.skuAttributes.map(attr => attr.name.value))) bool = false
+    this.state.skuAttributes.forEach(attr => {
+      if (this.isRepeat(attr.children.map(child => child.value))) bool = false
+    })
+    if (!bool) message.warning('属性名或属性值不可重复')
+    return bool
+  }
+
+  validAttributesPlus = () => {
+    let bool = true
+    this.state.skuAttributes.forEach(attr => {
+      if (!attr.name.value) bool = false
+      console.log(attr)
+      attr.children.forEach(child => {
+        if (!child.value) bool = false
+      })
+    })
+    if (!bool) message.warning('属性名或属性值必填')
+    return bool
+  }
+
+  isRepeat = (array) => {
+    return array.length !== [...new Set(array)].length
+  }
+
   finishFirst = async () => {
-    if (!this.createAttributesPlaneValid() || !this.spuPlaneValid()) return
-    // const attributesObj = groupBy(this.state.skuAttributes, 'name')
+    // if (!this.spuPlaneValid() || !this.createAttributesPlaneValid()) return
+    if (!this.spuPlaneValid() || !this.createAttributesPlaneValid() || !this.validAttributes() || !this.validAttributesPlus()) return
     const skuAttributes = [...this.state.skuAttributes]
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name.value, parent_id: 1942, weight: 1 })) })
     // const nameRes = {data: [{"attr_type":2,"created_at":1499305851,"id":1959,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1959,"lv2_name_cn":"11","name_cn":"11","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1},{"attr_type":2,"created_at":1499305851,"id":1960,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1960,"lv2_name_cn":"22","name_cn":"22","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1}]}
@@ -116,11 +144,13 @@ class CommodityCreate extends Component {
     const cartesian = cartesianProductOf(...demo)
     const skus = cartesian.map(item => {
       return {
-        attributes: item,
+        type: item.filter(attr => attr.lv1_name_cn === '商品类型')[0],
+        typeId: item.filter(attr => attr.lv1_name_cn === '商品类型')[0].id,
+        attributes: item.filter(attr => attr.lv1_name_cn !== '商品类型'),
         earlyDate: '',
         latestDate: '',
-        miniQuantity: 0,
-        price: 0
+        miniQuantity: '',
+        price: ''
       }
     })
 
@@ -180,7 +210,7 @@ class CommodityCreate extends Component {
     }
 
     await Promise.all(this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }), this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))))
-    this.props.history.push('/main/goods')
+    // this.props.history.push('/main/goods')
   }
 
   changeSpu = (spu) => {
@@ -195,7 +225,17 @@ class CommodityCreate extends Component {
     })
   }
 
+  validSkus = () => {
+    let bool = true
+    this.state.skus.forEach(sku => {
+      if (!sku.price || !sku.miniQuantity || !sku.earlyDate || !sku.latestDate) bool = false
+    })
+    if (!bool) message.warning('sku数据都为必填项')
+    return bool
+  }
+
   finishSecond = () => {
+    if (!this.validSkus()) return
     this.setState({
       step: 3
     })
@@ -251,16 +291,16 @@ class CommodityCreate extends Component {
         </div> }
 
         { this.state.step === 2 && <div className="commodity-create__second">
-          <Row className="commodity-create__name-row">
-            <Col span={4}>商品名称</Col>
-            <Col span={20}>
-              <Input value={this.state.spu.title}></Input>
+          <Row className={style['commodity-create__name-row']}>
+            <Col span={5}>商品名称</Col>
+            <Col span={19}>
+              {this.state.spu.title}
             </Col>
           </Row>
           <CreateSkuList skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove}></CreateSkuList>
           <div className={style['commodity-create__btn-box']}>
-            <Button onClick={this.goFirst}>上一步</Button>
-            <Button onClick={this.finishSecond}>下一步</Button>
+            <Button className={style['commodity-create__btn']} onClick={this.goFirst}>上一步</Button>
+            <Button className={style['commodity-create__btn']} onClick={this.finishSecond}>下一步</Button>
           </div>
         </div> }
 
@@ -270,9 +310,9 @@ class CommodityCreate extends Component {
           </div>
           <LzEditor importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
           <div className={style['commodity-create__btn-box']}>
-            <Button onClick={this.handleFinish}>保存并关闭</Button>
-            <Button>保存并新建</Button>
-            <Button>取消</Button>
+            <Button className={style['commodity-create__btn']} onClick={this.handleFinish}>保存并关闭</Button>
+            <Button className={style['commodity-create__btn']}>保存并新建</Button>
+            <Button className={style['commodity-create__btn']}>取消</Button>
           </div>
         </div> }
       </div>

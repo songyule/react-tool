@@ -29,7 +29,6 @@ class CreateAttributesPlane extends Component {
     const skuAttributes = [...this.props.skuAttributes]
     skuAttributes[index].name.value = e.target.value
     skuAttributes[index].name.changed = true
-    // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
@@ -37,14 +36,12 @@ class CreateAttributesPlane extends Component {
     const skuAttributes = [...this.props.skuAttributes]
     skuAttributes[index].children[childIndex].value = e.target.value
     skuAttributes[index].children[childIndex].changed = true
-    // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
   addAttributeValue = (index) => {
     const skuAttributes = [...this.props.skuAttributes]
     skuAttributes[index].children.push({ value: '' })
-    // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
@@ -103,6 +100,7 @@ class CreateAttributesPlane extends Component {
                   return (
                     <div className={style["attribute-row"]} key={index}>
                       <div className={style["attribute-row__left"]}>
+
                         <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input>
                       </div>
                       <div className={style["attribute-row__right"]}>
