@@ -60,7 +60,7 @@ class CreateAttributesPlane extends Component {
         <div className="ant-col-xs-24 ant-col-sm-5"></div>
         <div className="ant-col-xs-24 ant-col-sm-15">
           <Form className="create-attributes-plane__form">
-            <FormItem
+            { !this.props.inEdit && <FormItem
               label="">
               {getFieldDecorator('skuTypes', {
                 rules: [{
@@ -78,7 +78,7 @@ class CreateAttributesPlane extends Component {
                   </div>
                 </div>
               )}
-            </FormItem>
+            </FormItem> }
           </Form>
           <Form className="create-attributes-plane__form">
             <FormItem
@@ -96,8 +96,7 @@ class CreateAttributesPlane extends Component {
                   return (
                     <div className={style["attribute-row"]} key={index}>
                       <div className={style["attribute-row__left"]}>
-
-                        <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input>
+                        { this.props.inEdit ? this.props.skuAttributes[index].name.value : <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input> }
                       </div>
                       <div className={style["attribute-row__right"]}>
                         { attribute.children.map((item, childIndex) => <Input key={childIndex} onChange={ e => this.changeAttributeValue({e, index, childIndex}) } value={this.props.skuAttributes[index].children[childIndex].value}></Input>) }

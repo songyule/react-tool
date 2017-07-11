@@ -3,6 +3,7 @@ import { Button, Modal } from 'antd'
 import SpuPlane from './components/spu-plane'
 import CreateAttributesPlane from './components/create-attributes-plane'
 import CreateSkuList from './components/create-sku-list'
+import SkuForm from './components/sku-form'
 import { emptySpu } from './model'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -28,7 +29,8 @@ class CommodityEdit extends Component {
       skus: [],
       attributesVisible: false,
       selecteds: [],
-      notLoaded: true
+      notLoaded: true,
+      createVisible: false
     }
     this.showAttributesDialog = this.showAttributesDialog.bind(this)
   }
@@ -163,9 +165,11 @@ class CommodityEdit extends Component {
 
   handleRemove = (index) => {
     const skus = [...this.state.skus]
-    skus.splice(index, 1)
-    this.setState({
-      skus
+    this.props.removeSku(skus[index].id).then(res => {
+      skus.splice(index, 1)
+      this.setState({
+        skus
+      })
     })
   }
 
@@ -246,6 +250,20 @@ class CommodityEdit extends Component {
     })
   }
 
+  handleOk () {}
+
+  handleCancel = () => {
+    this.setState({
+      createVisible: false
+    })
+  }
+
+  createSku = () => {
+    this.setState({
+      createVisible: true
+    })
+  }
+
   render () {
     return (
       <div className={style['page_commodity-edit']}>
@@ -267,11 +285,17 @@ class CommodityEdit extends Component {
           </SpuPlane>}
           <CreateAttributesPlane ref="createAttributesPlane" inEdit={true} skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
           <div className={style['commodity-edit__btn-box']}></div>
+          {
+            // <Button onClick={this.createSku}>新建 SKU</Button>
+          }
         </div>
 
         <div className="commodity-edit__second">
           <CreateSkuList skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove}></CreateSkuList>
         </div>
+        <Modal visible={this.state.createVisible} title="新建 SKU" width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
+          <SkuForm></SkuForm>
+        </Modal>
       </div>
     )
   }
