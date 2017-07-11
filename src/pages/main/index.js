@@ -83,17 +83,6 @@ export default class extends Component {
         ]
       },
       {
-        key: 'requisitions',
-        title: '需求单',
-        children: [
-          {
-            key: 'requisition',
-            title: '原版',
-            router: '/main/requisition'
-          }
-        ]
-      },
-      {
         key: 'key02',
         title: '类目与商品管理',
         children: [
@@ -189,7 +178,7 @@ export default class extends Component {
               <Route path='/main/clientEdit' component={OrgEdit} />
               <Route path='/main/supplierEdit' component={OrgEdit} />
               {/*需求单相关 ====> */}
-              <Route path='/main/requisition' component={Requisitions} />
+              <Route path='/main/requisitionDetail' component={Requisitions} />
               {/*文章相关 ====> */}
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>

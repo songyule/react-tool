@@ -1,35 +1,59 @@
 import React, { PureComponent } from 'react'
 import { Input, Row, Col, Table } from 'antd'
 import style from './css/original.css'
+import { mergeSpuAttr } from 'utils'
 
 class original extends PureComponent {
   state = {
     initData: [
       [{
         label: '商品名称',
-        dataIndex: 'test',
+        dataIndex: 'sku_snapshot',
+        twoLevel: 'spu_name_cn'
       }, {
-        label: '商品类目',
-        dataIndex: 'test',
+        label: 'SKUID',
+        dataIndex: 'sku_snapshot',
+        twoLevel: 'id'
       }],
       [{
         label: '数量',
-        dataIndex: 'test',
+        dataIndex: 'sample_amount',
       }, {
         label: '单价',
-        dataIndex: 'test',
+        dataIndex: 'sku_snapshot',
+        twoLevel: 'price'
       }],
       [{
-        label: 'SKUID',
-        dataIndex: 'test',
+        label: '商品类目',
+        dataIndex: 'classify',
       }]
      ],
-    data: {
-      test: 'hahah',
-      test2: 'heeieieie'
-    },
     samplingMes: {},
-    dataSource: []
+    spu_img_arr: [],
+    skuData: [],
+    spuData: []
+  }
+
+  componentWillReceiveProps (nextProps) {
+    console.log(nextProps.samplingMes)
+    let classify = nextProps.samplingMes.sku_snapshot.spu.commodity_class
+    let classifyStr = ''
+    let classifyStrC = classify.map(item => {
+      let lv = item.level
+      let lvText =''
+      for (let i = 1; i <= lv; i ++) {
+        lvText = i === 1 ? lvText + `${item['lv' + [i] + '_name_cn']}` : lvText + `/${item['lv' + [i] + '_name_cn']}`
+      }
+      return lvText
+    })
+    classifyStr = classifyStr + classifyStrC + '&'
+    nextProps.samplingMes.classify = classifyStr
+    this.setState({
+      samplingMes: nextProps.samplingMes,
+      spu_img_arr: nextProps.samplingMes.sku_snapshot.spu.image_url,
+      skuData: nextProps.samplingMes.sku_snapshot.attribute,
+      spuData: mergeSpuAttr(nextProps.samplingMes.sku_snapshot.spu.commodity_attribute)
+    })
   }
 
   render () {
@@ -55,7 +79,6 @@ class original extends PureComponent {
                           item.map((val, index) => {
                             return <Col span={10} key={index}>
                                     <span className={style.inputTitle}>{val.label}:</span>
-                                    {console.log(val.twoLevel)}
                                     <Input disabled style={{width: 300}} value={
                                       val.twoLevel ? samplingMes[val.dataIndex] && samplingMes[val.dataIndex][val.twoLevel] : samplingMes[val.dataIndex]
                                     }/>
@@ -67,17 +90,18 @@ class original extends PureComponent {
           }
           <Row>
             <h4>SKU描述:</h4>
-            <Table pagination={false} columns={columns} dataSource={this.state.dataSource} key='123'></Table>
+            <Table pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
           </Row>
           <Row>
             <h4>商品描述:</h4>
-            <Table pagination={false} columns={columns} dataSource={this.state.dataSource} key='1234'></Table>
+            {console.log(this.state.spuData)}
+            <Table pagination={false} columns={columns} dataSource={this.state.spuData} key='1234'></Table>
           </Row>
           <Row className={style.flex}>
             <span className={style.inputTitle}>商品图片:</span>
             <div>
               {
-                this.state.samplingMes.img_arr && this.state.samplingMes.img_arr.map((item, index) => {
+                this.state.spu_img_arr && this.state.spu_img_arr.map((item, index) => {
                   return (<img key={index} src={item} alt="img" className={style.originImg}/>)
                 })
               }

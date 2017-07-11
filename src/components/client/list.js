@@ -69,7 +69,7 @@ export default class extends PureComponent {
 
   render () {
     const selectBefore = (
-      <Select defaultValue="公司名称" style={{ width: 80 }} onChange={this.changeSearchType}>
+      <Select defaultValue="公司名称" style={{ width: 80 }} onChange={this.changeSearchType} disabled>
         <Option value="title">公司名称</Option>
       </Select>
     )
@@ -108,7 +108,7 @@ export default class extends PureComponent {
                                   <p>{item.name_cn}</p>
                                   <p>{item.name_official}</p>
                                   <p>{item.phone}</p>
-                                  <p>www.fuliaoyi.com</p>
+                                  <p>{item.website}</p>
                                 </div>
                               </div>
                             </Card>
