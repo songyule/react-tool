@@ -1,38 +1,15 @@
 import React, { PureComponent } from 'react'
-import { Input, Row, Col, Table, Button } from 'antd'
-import { Link } from 'react-router-dom'
+import { Input, Row, Col, Table } from 'antd'
 import style from './css/original.css'
-import Title from 'components/title'
-const InputGroup = Input.Group
+
 class original extends PureComponent {
   state = {
     initData: [
-      [{
-        label: '客户编码',
-        dataIndex: 'test',
-      }, {
-        label: '客户等级',
-        dataIndex: 'test',
-      }],
-      [{
-        label: '业务员',
-        dataIndex: 'test',
-      }, {
-        label: '提交人',
-        dataIndex: 'test',
-      }],
       [{
         label: '商品名称',
         dataIndex: 'test',
       }, {
         label: '商品类目',
-        dataIndex: 'test',
-      }],
-      [{
-        label: 'SKU料号',
-        dataIndex: 'test',
-      }, {
-        label: 'SKUID',
         dataIndex: 'test',
       }],
       [{
@@ -43,92 +20,67 @@ class original extends PureComponent {
         dataIndex: 'test',
       }],
       [{
-        label: '质检内容',
-        dataIndex: 'test2',
-      }, {
-        label: '合计',
+        label: 'SKUID',
         dataIndex: 'test',
       }]
      ],
     data: {
       test: 'hahah',
       test2: 'heeieieie'
-    }
+    },
+    samplingMes: {},
+    dataSource: []
   }
+
   render () {
-    const dataSource = [{
-      attr: 'a',
-      attrData: 'aaaaa',
-      key: '1'
-    }, {
-      attr: 'b',
-      attrData: 'bbbbbb',
-      key: '2'
-    }]
+    const { samplingMes } = this.state
     const columns = [{
       title: '属性',
-      dataIndex: 'attr',
-      key: 'attr',
+      dataIndex: 'lv1_name_cn',
+      key: 'lv1_name_cn',
       width: '200'
     },{
       title: '属性值',
-      dataIndex: 'attrData',
-      key: 'attrData',
+      dataIndex: 'name_cn',
+      key: 'name_cn',
     }]
+
     return (
-      <div className={style.original_box}>
-
-        <Title title='需求单号：'>
-          <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: -15}}>
-            <p style={{display: 'flex', alignItems: 'center'}}>670bd8afb6a749d1885ec563d624302a</p>
-            <Button type="primary">
-              <Link to="/main/clientNew">返回</Link>
-            </Button>
-          </div>
-        </Title>
-
+      <div className={style.main}>
         <div>
           {
             this.state.initData.map((item, index) => {
               return  <Row key={index}>
                         {
-                          item.map((item, index) => {
+                          item.map((val, index) => {
                             return <Col span={10} key={index}>
-                                    <span className={style.inputTitle}>{item.label}:</span>
-                                    <Input disabled style={{width: 300}} value={this.state.data[item.dataIndex]}/>
+                                    <span className={style.inputTitle}>{val.label}:</span>
+                                    {console.log(val.twoLevel)}
+                                    <Input disabled style={{width: 300}} value={
+                                      val.twoLevel ? samplingMes[val.dataIndex] && samplingMes[val.dataIndex][val.twoLevel] : samplingMes[val.dataIndex]
+                                    }/>
                                   </Col>
                           })
                         }
                       </Row>
             })
           }
-          <Row className={style.flex}>
-            <span style={{width:60, textAlign: 'right', marginRight: 5}}>交期:</span>
-            <InputGroup compact style={{display: 'block', width: 300}}>
-              <Input disabled style={{ width: 138, textAlign: 'center' }} placeholder="Minimum" />
-              <Input style={{ width: 24, borderLeft: 0, pointerEvents: 'none' }} placeholder="~" />
-              <Input disabled style={{ width: 138, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum" />
-            </InputGroup>
+          <Row>
+            <h4>SKU描述:</h4>
+            <Table pagination={false} columns={columns} dataSource={this.state.dataSource} key='123'></Table>
           </Row>
           <Row>
-            <Table pagination={false} columns={columns} dataSource={dataSource}></Table>
+            <h4>商品描述:</h4>
+            <Table pagination={false} columns={columns} dataSource={this.state.dataSource} key='1234'></Table>
           </Row>
           <Row className={style.flex}>
-            <span style={{width:60, textAlign: 'right', marginRight: 5}}>备注:</span>
-            <Input 
-            type="textarea" 
-            disabled 
-            autosize
-            style={{width: '80%'}}
-            defaultValue="这是一大段话这是一大段话这是一大段话这是一大段话这是一大段话"/>
-          </Row>
-          <Row className={style.flex}>
-            <span style={{width:60, textAlign: 'right', marginRight: 5}}>图片展示:</span>
+            <span className={style.inputTitle}>商品图片:</span>
             <div>
-              <img src="" alt="img" className={style.originImg}/>
-              <img src="" alt="img" className={style.originImg}/>
-              <img src="" alt="img" className={style.originImg}/>
-              <img src="" alt="img" className={style.originImg}/>
+              {
+                this.state.samplingMes.img_arr && this.state.samplingMes.img_arr.map((item, index) => {
+                  return (<img key={index} src={item} alt="img" className={style.originImg}/>)
+                })
+              }
             </div>
           </Row>
         </div>
