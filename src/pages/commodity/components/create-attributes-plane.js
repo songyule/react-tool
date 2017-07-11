@@ -15,7 +15,7 @@ class CreateAttributesPlane extends Component {
 
   addAttribute = () => {
     const skuAttributes = [...this.props.skuAttributes]
-    skuAttributes.push({ name: '', value: [''] })
+    skuAttributes.push({ name: { value: '' }, children: [{ value: '' }] })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
@@ -27,21 +27,23 @@ class CreateAttributesPlane extends Component {
 
   changeAttributeName = (e, index) => {
     const skuAttributes = [...this.props.skuAttributes]
-    skuAttributes[index].name = e.target.value
+    skuAttributes[index].name.value = e.target.value
+    skuAttributes[index].name.changed = true
     // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
   changeAttributeValue = ({e, index, childIndex}) => {
     const skuAttributes = [...this.props.skuAttributes]
-    skuAttributes[index].value[childIndex] = e.target.value
+    skuAttributes[index].children[childIndex].value = e.target.value
+    skuAttributes[index].children[childIndex].changed = true
     // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
 
   addAttributeValue = (index) => {
     const skuAttributes = [...this.props.skuAttributes]
-    skuAttributes[index].value.push('')
+    skuAttributes[index].children.push({ value: '' })
     // this.props.form.setFieldsValue({ skuAttributes })
     this.props.changeSkuAttributes(skuAttributes)
   }
@@ -101,10 +103,10 @@ class CreateAttributesPlane extends Component {
                   return (
                     <div className={style["attribute-row"]} key={index}>
                       <div className={style["attribute-row__left"]}>
-                        <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name}></Input>
+                        <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input>
                       </div>
                       <div className={style["attribute-row__right"]}>
-                        { attribute.value.map((item, childIndex) => <Input key={childIndex} onChange={ e => this.changeAttributeValue({e, index, childIndex}) } value={this.props.skuAttributes[index].value[childIndex]}></Input>) }
+                        { attribute.children.map((item, childIndex) => <Input key={childIndex} onChange={ e => this.changeAttributeValue({e, index, childIndex}) } value={this.props.skuAttributes[index].children[childIndex].value}></Input>) }
                         <Button onClick={() => this.addAttributeValue(index)}>+</Button>
                       </div>
                       { index !== 0 && <Button onClick={() => this.removeAttribute(index)}>-</Button> }

@@ -23,14 +23,13 @@ class CommodityCreate extends Component {
     super()
     this.state = {
       spu: {...emptySpu},
-      skuAttributes: [{ name: '', value: [''] }],
+      skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
       contentObj: {
         content: ''
       },
       skuTypes: [],
       skus: [],
       fileList: [],
-      customAttributes: [],
       step: 1,
       attributesVisible: false,
       selecteds: []
@@ -64,21 +63,6 @@ class CommodityCreate extends Component {
     })
   }
 
-  componentWillMount = () => {
-    this.props.getCommodityAttributeList({ parent_id: 1942, limit: 999999 }).then(res => {
-      this.setState({
-        customAttributes: res.data.attribute
-      })
-    })
-  }
-
-  promiseGetAttribute = (name) => {
-    return new Promise((resolve, reject) => {
-      const matchAttribute = find(this.state.customAttributes, { name_cn: name })
-      resolve(matchAttribute)
-    })
-  }
-
   spuPlaneValid = () => {
     let bool = false
     this.refs.spuPlane.validateFields(e => {
@@ -99,79 +83,22 @@ class CommodityCreate extends Component {
     if (!this.createAttributesPlaneValid() || !this.spuPlaneValid()) return
     // const attributesObj = groupBy(this.state.skuAttributes, 'name')
     const skuAttributes = [...this.state.skuAttributes]
-    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name, parent_id: 1942, weight: 1 })) })
+    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name.value, parent_id: 1942, weight: 1 })) })
     // const nameRes = {data: [{"attr_type":2,"created_at":1499305851,"id":1959,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1959,"lv2_name_cn":"11","name_cn":"11","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1},{"attr_type":2,"created_at":1499305851,"id":1960,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1960,"lv2_name_cn":"22","name_cn":"22","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1}]}
 
     nameRes.data.forEach(item => {
-      const matchAttr = find(skuAttributes, { name: item.name_cn })
-      matchAttr.attribute = item
+      const matchAttr = find(skuAttributes, attr => attr.name.value === item.name_cn)
+      matchAttr.name.attribute = item
     })
 
     const attributes = []
     skuAttributes.forEach(attribute => {
-      attribute.value.forEach(child => {
-        attributes.push({ attr_type: 2, name_cn: child, parent_id: attribute.attribute.id })
+      attribute.children.forEach(child => {
+        attributes.push({ attr_type: 2, name_cn: child.value, parent_id: attribute.name.attribute.id })
       })
     })
 
     const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
-    // const childRes = await Promise.all(attributes.map(attribute => this.props.createCommodityAttribute(attribute)))
-    // const childRes = {
-    //   data: [
-    //     {
-    //       attr_type: 2,
-    //       created_at: 1499305851,
-    //       id: 2000,
-    //       level: 3,
-    //       lv1_id: 1942,
-    //       lv1_name_cn: '测试',
-    //       lv2_id: 1960,
-    //       lv2_name_cn: '22',
-    //       lv3_id: 2000,
-    //       lv3_name_cn: '33',
-    //       name_cn: '33',
-    //       parent_id: 1960,
-    //       status: 1,
-    //       updated_at: 1499305851,
-    //       weight: 1
-    //     },
-    //     {
-    //       attr_type: 2,
-    //       created_at: 1499305851,
-    //       id: 2001,
-    //       level: 3,
-    //       lv1_id: 1942,
-    //       lv1_name_cn: '测试',
-    //       lv2_id: 1960,
-    //       lv2_name_cn: '22',
-    //       lv3_id: 2001,
-    //       lv3_name_cn: '44',
-    //       name_cn: '44',
-    //       parent_id: 1960,
-    //       status: 1,
-    //       updated_at: 1499305851,
-    //       weight: 1
-    //     },
-    //     {
-    //       attr_type: 2,
-    //       created_at: 1499305851,
-    //       id: 2003,
-    //       level: 3,
-    //       lv1_id: 1942,
-    //       lv1_name_cn: '测试',
-    //       lv2_id: 1961,
-    //       lv2_name_cn: '11',
-    //       lv3_id: 2003,
-    //       lv3_name_cn: '555',
-    //       name_cn: '555',
-    //       parent_id: 1960,
-    //       status: 1,
-    //       updated_at: 1499305851,
-    //       weight: 1
-    //     }
-    //   ]
-    // }
-    // const classifyAttributes = groupBy(childRes.map(item => item.data), 'lv2_id')
     const classifyAttributes = groupBy(childRes.data, 'lv2_id')
     const demo = []
     Object.keys(classifyAttributes).forEach(key => {
@@ -233,7 +160,6 @@ class CommodityCreate extends Component {
     this.setState({
       skus
     })
-    console.log(this.state.skus)
   }
 
   handleRemove = (e, index) => {
@@ -249,7 +175,7 @@ class CommodityCreate extends Component {
     const spuRes = await this.props.createSpu(toRemoteSpu(this.state.spu))
     if (this.state.spu.accessStatus === 3) {
       const data = { spu_id: spuRes.data.id, client_list: [] }
-      this.props.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
+      this.state.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
       promiseList.push(this.props.saveAccess(data))
     }
 
@@ -288,6 +214,7 @@ class CommodityCreate extends Component {
   }
 
   receiveHtml = (content) => {
+    // console.log(this.state.contentObj)
     this.setState({
       contentObj: { ...this.state.contentObj, content: content }
     })
@@ -341,7 +268,7 @@ class CommodityCreate extends Component {
           <div className={style['commodity-create__input-row']}>
             <Input className={style['commodity-create__third-input']} value={this.state.spu.title}></Input>
           </div>
-          <LzEditor active={true} importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
+          <LzEditor importContent={this.state.contentObj.content} cbReceiver={this.receiveHtml} fullScreen={false} convertFormat="html"></LzEditor>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.handleFinish}>保存并关闭</Button>
             <Button>保存并新建</Button>

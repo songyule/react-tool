@@ -6,7 +6,7 @@ import CreateSkuList from './components/create-sku-list'
 import { emptySpu } from './model'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { groupBy, find } from 'lodash'
+import { groupBy, find, findIndex } from 'lodash'
 import { toRemoteSku, toRemoteSpu, cartesianProductOf, toLocalSpu, toLocalSku } from 'utils'
 import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
@@ -22,16 +22,11 @@ class CommodityEdit extends Component {
     super()
     this.state = {
       spu: {...emptySpu},
-      skuAttributes: [{ name: '', value: [''] }],
-      contentObj: {
-        id: '',
-        content: ''
-      },
+      skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
       fileList: [],
       skuTypes: [],
       skus: [],
       customAttributes: [],
-      step: 1,
       attributesVisible: false,
       selecteds: []
     }
@@ -59,14 +54,26 @@ class CommodityEdit extends Component {
   }
 
   changeSkuAttributes = (value) => {
+    console.log(value)
     this.setState({
       skuAttributes: value
     })
   }
 
   componentWillMount = () => {
-    this.props.getSpuInfo(this.props.match.params.id).then(res => {
+    const id = this.props.match.params.id
+    this.props.getSpuInfo(id).then(res => {
       const spu = toLocalSpu(res.data)
+      if (spu.accessStatus === 3) {
+        const selecteds = []
+        this.props.getAccess(id).then(accessRes => {
+          selecteds.push(...accessRes.data.labels.map((label) => ({ id: label.id, type: 'label', data: label, label: `${label.name_cn}（${label.client_count || 0}）` })))
+          selecteds.push(...accessRes.data.clients.map((client) => ({ id: client.id, type: 'client', data: client, label: client.name_official })))
+        })
+        this.setState({
+          selecteds
+        })
+      }
       this.setState({
         spu,
         fileList: spu.imgList.map(item => ({
@@ -88,20 +95,20 @@ class CommodityEdit extends Component {
       const groupAttributes = groupBy(attributes, 'lv2_id')
       const skuAttributes = []
       Object.keys(groupAttributes).forEach(key => {
-        skuAttributes.push({ name: groupAttributes[key][0].lv2_name_cn, value: groupAttributes[key].map(item => item.name_cn) })
+        skuAttributes.push({
+          name: {
+            value: groupAttributes[key][0].lv2_name_cn,
+            id: groupAttributes[key][0].lv2_id
+          },
+          children: groupAttributes[key].map(item => ({ value: item.name_cn, id: item.id }))
+        })
       })
-      // skus.map(sku => sku.attributes)
       this.setState({
         skus,
-        skuTypes: skus.map(sku => String(sku.type.id)),
+        skuTypes: [...new Set(skus.map(sku => String((sku.type||{}).id)))],
         skuAttributes
       })
     })
-    // this.props.getCommodityAttributeList({ parent_id: 1942, limit: 999999 }).then(res => {
-    //   this.setState({
-    //     customAttributes: res.data.attribute
-    //   })
-    // })
   }
 
   promiseGetAttribute = (name) => {
@@ -125,99 +132,6 @@ class CommodityEdit extends Component {
       bool = !e
     })
     return bool
-  }
-
-  finishFirst = async () => {
-    if (!this.createAttributesPlaneValid() || !this.spuPlaneValid()) return
-    // const attributesObj = groupBy(this.state.skuAttributes, 'name')
-    const skuAttributes = [...this.state.skuAttributes]
-    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name, parent_id: 1942, weight: 1 })) })
-    // const nameRes = {data: [{"attr_type":2,"created_at":1499305851,"id":1959,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1959,"lv2_name_cn":"11","name_cn":"11","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1},{"attr_type":2,"created_at":1499305851,"id":1960,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1960,"lv2_name_cn":"22","name_cn":"22","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1}]}
-
-    nameRes.data.forEach(item => {
-      const matchAttr = find(skuAttributes, { name: item.name_cn })
-      matchAttr.attribute = item
-    })
-
-    const attributes = []
-    skuAttributes.forEach(attribute => {
-      attribute.value.forEach(child => {
-        attributes.push({ attr_type: 2, name_cn: child, parent_id: attribute.attribute.id })
-      })
-    })
-
-    const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
-    const classifyAttributes = groupBy(childRes.data, 'lv2_id')
-    const demo = []
-    Object.keys(classifyAttributes).forEach(key => {
-      const attributes = []
-      classifyAttributes[key].forEach(item => {
-        attributes.push(item)
-      })
-      demo.push(attributes)
-    })
-    const filterAttributes = this.props.commodityAttributeObj.skuAttributes.filter(item => item.name_cn === '商品类型')
-    const typeAttributes = filterAttributes[0] ? filterAttributes[0].children : []
-    demo.push(this.state.skuTypes.map(item => {
-      return find(typeAttributes, { id: Number(item) })
-    }))
-    const cartesian = cartesianProductOf(...demo)
-    const skus = cartesian.map(item => {
-      return {
-        attributes: item,
-        earlyDate: '',
-        latestDate: '',
-        miniQuantity: 0,
-        price: 0
-      }
-    })
-
-    this.setState({
-      skus,
-      step: 2
-    })
-    // await Promise.all(Object.keys(attributesObj).map(key => {
-    //   const matchAttribute = find(this.state.customAttributes, { name_cn: key })
-
-
-    //   this.setState({
-    //     step: 2
-    //   })
-    //   return matchAttribute ?
-    //   this.props.multiCreateCommodityAttribute({ attribute: attributesObj[key].map(item => ({ attr_type: 2, name_cn: item.value, parent_id: matchAttribute.id, weight: 1 })) }) :
-    //   this.props.createCommodityAttribute({ attr_type: 2, name_cn: key, parent_id: 1942, weight: 1 }).then(res => {
-    //     return this.props.multiCreateCommodityAttribute({attribute: attributesObj[key].map(item => ({ attr_type: 2, name_cn: item.value, parent_id: res.data.id, weight: 1 })) }).then(res => {
-    //       console.log(res)
-    //     })
-    //     // attributesObj[key].map(item => {
-    //     //   return this.props.createCommodityAttribute({ attr_type: 2, name_cn: item.value, parent_id: res.data.id, weight: 1 }).then(res => {
-    //     //     item.id = res.data.id
-    //     //   })
-    //     // })
-    //   })
-    // }))
-    // const demo = []
-    // Object.keys(attributesObj).map(key => {
-    //   const attributes = []
-    //   attributesObj[key].map(item => {
-    //     attributes.push(item)
-    //   })
-    //   demo.push(attributes)
-    // })
-    // const cartesian = cartesianProductOf(...demo)
-    // const skus = cartesian.map(item => {
-    //   return {
-    //     attributes: item,
-    //     earlyDate: '',
-    //     latestDate: '',
-    //     miniQuantity: 0,
-    //     price: 0
-    //   }
-    // })
-    // this.setState({
-    //   skus
-    // })
-    // this.props.createCommodityAttribute({ attr_type: 2, name_cn: '123', parent_id: 1942, weight: 1 })
   }
 
   handleEarly = (e, index) => {
@@ -263,33 +177,60 @@ class CommodityEdit extends Component {
 
   handleFinish = async () => {
     const promiseList = []
-    const spuRes = await promiseList.push(this.props.updateSpu(this.state.spu.id, toRemoteSpu(this.state.spu)))
-    promiseList.push(this.state.contentObj.id ? this.props.updateSpuText(this.state.spu.id, this.state.contentObj.content) : this.props.createSpuText({ spu_id: this.state.spu.id, text: this.state.contentObj.content }))
+    promiseList.push(this.props.updateSpu(this.state.spu.id, toRemoteSpu(this.state.spu)))
     if (this.state.spu.accessStatus === 3) {
-      const data = { spu_id: spuRes.data.id, client_list: [] }
+      const data = { spu_id: this.state.spu.id, client_list: [] }
       this.state.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
       promiseList.push(this.props.saveAccess(data))
     }
 
-    // browserHistory('main/gbrowserHistoryoods')
+    const skuAttributes = [...this.state.skuAttributes]
+
+    const nameAttributes = []
+    skuAttributes.forEach(attribute => {
+      if (attribute.name.id && attribute.name.changed) nameAttributes.push({ attr_type: 2, name_cn: attribute.name, parent_id: 1942 })
+    })
+    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
+
+    nameRes.data.forEach(item => {
+      const matchAttr = find(skuAttributes, attr => attr.name.value === item.name_cn)
+      // matchAttr.name.oldId = matchAttr.name.id
+      matchAttr.name.id = item.id
+    })
+
+    const attributes = []
+    skuAttributes.forEach(attribute => {
+      attribute.children.forEach(child => {
+        if (child.id && child.changed) attributes.push({ attr_type: 2, name_cn: child.value, parent_id: attribute.name.id })
+      })
+    })
+
+    const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
+    const handledAttributes = childRes.data
+    handledAttributes.forEach(child => {
+      const matchAttribute = find(skuAttributes, attr => attr.name.id === child.lv2_id)
+      const matchChild = find(matchAttribute.children, attrChild => child.name_cn === attrChild.value)
+      child.oldId = matchChild.id
+    })
+    const skus = this.state.skus
+    skus.forEach(sku => {
+      handledAttributes.forEach(attr => {
+        const matchIndex = findIndex(sku.attributes, { id: attr.oldId })
+        if (~matchIndex) {
+          sku.attributes.splice(matchIndex, 1)
+          sku.attributes.push(attr)
+        }
+      })
+    })
+    await Promise.all(skus.map(sku => this.props.updateSku(sku.id, toRemoteSku(sku))))
+
+
     this.props.history.push('/main/goods')
   }
 
   changeSpu = (spu) => {
     this.setState({
       spu
-    })
-  }
-
-  goFirst = () => {
-    this.setState({
-      step: 1
-    })
-  }
-
-  finishSecond = () => {
-    this.setState({
-      step: 3
     })
   }
 
@@ -305,12 +246,6 @@ class CommodityEdit extends Component {
     })
   }
 
-  receiveHtml = (content) => {
-    this.setState({
-      contentObj: { ...this.state.contentObj, content: content }
-    })
-  }
-
   changeImages = (fileList) => {
     this.setState({
       fileList
@@ -322,11 +257,11 @@ class CommodityEdit extends Component {
       <div className={style['page_commodity-create']}>
         <div className="commodity-create__header">
           <h3>
-            新建商品 - 第 {this.state.step} 步
+            编辑商品
           </h3>
           <Button onClick={this.handleFinish}>修改</Button>
         </div>
-        { this.state.step === 1 && <div className="commodity-create__first">
+        <div className="commodity-create__first">
           <SpuPlane
             spu={this.state.spu}
             fileList={this.state.fileList}
@@ -343,7 +278,7 @@ class CommodityEdit extends Component {
           {
               // <Button onClick={this.finishFirst}>下一步</Button>
           }
-        </div> }
+        </div>
 
         <div className="commodity-create__second">
           <CreateSkuList skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove}></CreateSkuList>

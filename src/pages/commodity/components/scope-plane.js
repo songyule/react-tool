@@ -58,7 +58,7 @@ class ScopePlane extends Component {
           </Radio>
         </RadioGroup>
         { this.props.spu.accessStatus === 3 ? <div className="tag-list">
-          { this.props.selecteds.map(item => <Tag>{item.label}</Tag>) }
+          { this.props.selecteds.map((item, index) => <Tag key={index}>{item.label}</Tag>) }
           </div> : '' }
         <Modal title="选择商品可见范围" visible={this.state.visible} width={800} onCancel={this.closeModal} onOk={this.handleSelecteds}>
           <SelectArea selecteds={this.state.preSelecteds} onChange={this.handlePreSelecteds}></SelectArea>

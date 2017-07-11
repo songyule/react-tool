@@ -8,6 +8,7 @@ import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } f
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
 import { Link } from 'react-router-dom'
+import style from './index.css'
 
 const Option = Select.Option
 const Search = Input.Search
@@ -140,7 +141,7 @@ class CommodityList extends PureComponent {
         render: text => <span>{text}</span>
       },
       {
-        title: <Cascader options={this.state.classes} onChange={this.changeClass}><span>分类</span></Cascader>,
+        title: <Cascader options={this.state.classes} onChange={this.changeClass} changeOnSelect><span>分类</span></Cascader>,
         dataIndex: 'commodity_class',
         render: text => <span>{showClasses(text)}</span>
       },
@@ -182,6 +183,16 @@ class CommodityList extends PureComponent {
         title: '更新时间',
         dataIndex: 'updated_at',
         render: text => <span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>
+      },
+      {
+        title: '操作',
+        dataIndex: 'id',
+        render: (text, record) => (
+          <div className="operate-box">
+            <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看详情</Link>
+            <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看内容</Link>
+          </div>
+        )
       }
     ]
   }

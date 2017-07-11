@@ -1,0 +1,5 @@
+.operate-box {
+  &__link {
+    margin-right: 8px;
+  }
+}

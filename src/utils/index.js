@@ -213,7 +213,7 @@ export function classToSelected (data) {
 
 export function toRemoteSku (sku) {
   return {
-    attr_id: sku.attributes.map(attribute => attribute.id),
+    attr_id: [...sku.attributes.map(attribute => attribute.id), (sku.type||{}).id],
     price: Number(sku.price),
     moq: Number(sku.miniQuantity),
     min_delay_day: Number(sku.earlyDate),
@@ -229,7 +229,7 @@ export function toLocalSku (sku) {
   return {
     id: sku.id,
     type,
-    typeId: type.id,
+    typeId: (type||{}).id,
     attributes,
     price: String(sku.price || ''),
     miniQuantity: sku.moq || 0,
