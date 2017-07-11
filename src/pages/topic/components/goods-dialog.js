@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
-import { Table, Input, Select, Menu, Cascader } from 'antd'
+import { Table, Input, Select, Menu, Cascader, Icon } from 'antd'
 import { showClasses, showPrice, showShelvesStatus } from 'utils'
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
@@ -127,7 +127,10 @@ export default class extends PureComponent {
         render: text => <span>{text}</span>
       },
       {
-        title: <Cascader options={this.state.classes} onChange={this.changeClass}><span>分类</span></Cascader>,
+        title: <Cascader options={this.state.classes} onChange={this.changeClass} loadData={this.loadData}>
+
+          <span><span>分类</span><Icon type="filter" /></span>
+        </Cascader>,
         dataIndex: 'commodity_class',
         render: text => <span>{showClasses(text)}</span>
       },
@@ -151,22 +154,61 @@ export default class extends PureComponent {
     ]
   }
 
+loadData = async (selectedOptions) => {
+  const targetOption = selectedOptions[selectedOptions.length - 1]
+  targetOption.loading = true
+
+  const current_classes = this.state.classes
+  // console.log(selectedOptions[0].id)
+  const res = await this.props.getClassesInArticle({parent_id: targetOption.id})
+  targetOption.loading = false
+  let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
+  classes = classes.map(item => {
+    item = { ...item, value: item.id, label: item.name_cn }
+    return item
+  })
+  classes.forEach(item => {
+    item.disabled = item.status !== 1
+    item.isLeaf = true
+  })
+  current_classes.forEach(item => {
+    if (item.id !== targetOption.id) return
+    if (classes.length) {
+      item.children = classes
+    } else {
+      item.isLeaf = true
+    }
+  })
+  // const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
+  // matchClass.parent_id = null
+  // console.log(arrayToTree(classes)[0])
+  // console.log(classes)
+  this.setState({
+    classes: [...current_classes]
+  })
+
+}
+
   getClasses = async () => {
-    const res = await this.props.getClasses()
+    const res = await this.props.getClassesInArticle({level: 1})
     let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
+    console.log(classes)
     classes = classes.map(item => {
       item = { ...item, value: item.id, label: item.name_cn }
       return item
     })
     classes.forEach(item => {
       item.disabled = item.status !== 1
+      item.isLeaf = false
     })
     const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
     matchClass.parent_id = null
+    // console.log(arrayToTree(classes)[0])
+    // console.log(classes)
     this.setState({
-      classes: arrayToTree(classes)[0].children
+      classes: classes
     })
-    console.log(arrayToTree(classes)[0].children)
+    // console.log(arrayToTree(classes)[0].children)
   }
 
   pageChange = (value) => {
@@ -184,6 +226,12 @@ export default class extends PureComponent {
       spu: {...this.state.spu, class_id: classId }
     }, () => {
       this.getGoodsData()
+    })
+  }
+
+  clear = () => {
+    this.setState({
+      spu: {...this.state.spu, class_id: '' }
     })
   }
 
@@ -211,9 +259,14 @@ export default class extends PureComponent {
   }
 
   componentWillMount () {
-    this.getGoodsData()
+    // this.getGoodsData()
     this.getClasses()
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(123)
+  //   // this.getGoodsData()
+  // }
 
   render () {
     const { selectedRowKeys } =this.state
