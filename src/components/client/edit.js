@@ -5,6 +5,7 @@ import { Tabs, Select, Button } from 'antd'
 import ClientLinkman from 'components/client/linkman'
 import ClientAccount from 'components/client/account-number'
 import { getOrgMes, getSales, getAccountNumber, setSales } from 'actions/org'
+import store from '@/redux/store'
 
 const TabPane = Tabs.TabPane
 const Option = Select.Option
@@ -27,6 +28,7 @@ export default class extends PureComponent {
   }
 
   componentWillMount() {
+    console.log(store.getState().userLogin.org.id)
     if (this.props.location.pathname.substr(6) !== 'clientEdit') {
       this.setState({
         isClientEdit: false
@@ -47,7 +49,7 @@ export default class extends PureComponent {
         orgMes: res.data
       })
     })
-    getAccountNumber({offset: 0, limit: 1000, org_id: this.props.location.state}).then(res => {
+    getAccountNumber({offset: 0, limit: 1000, org_id: store.getState().userLogin.org.id}).then(res => {
       this.setState({
         salesArr: res.data.user
       })

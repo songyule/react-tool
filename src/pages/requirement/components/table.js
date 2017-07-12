@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { format } from 'utils/index'
 import { Tag, Button } from 'antd'
+import { Link } from 'react-router-dom'
 import style from './table.css'
 const ButtonGroup = Button.Group
 
@@ -83,12 +84,12 @@ export default class RequirementTable extends PureComponent {
                   item.status === 0
                     ? (
                       <ButtonGroup>
-                        <Button> 详情 </Button>
+                        <Button><Link to={`/main/requisitionDetail/${item.id}`}> 详情 </Link></Button>
                         <Button type="primary" onClick={(e, id, type) => this.handleEdit(e, item.id, 1)}> 标为完成 </Button>
                         <Button type="danger"onClick={(e, id, type) => this.handleEdit(e, item.id, 2)}> 取消需求 </Button>
                       </ButtonGroup>
                     )
-                    : <Button> 详情 </Button>
+                    : <Button><Link to={`/main/requisitionDetail/${item.id}`}> 详情 </Link></Button>
                 }
               </td>
             </tr>

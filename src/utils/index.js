@@ -259,3 +259,21 @@ export function isRepeat (arr) {
   }
   return false;
 }
+
+// 合并商品属性
+export function mergeSpuAttr (spuArr) {
+  let idArr = []
+  let newSpuArr = []
+  spuArr.map(item => {
+    if (idArr.indexOf(item.lv1_id) === -1) {
+      idArr.push(item.lv1_id)
+      newSpuArr.push(item)
+    } else {
+      let index = idArr.indexOf(item.lv1_id)
+      newSpuArr[index].name_cn = newSpuArr[index].name_cn + ',' + item.name_cn
+    }
+    return newSpuArr
+  })
+  return newSpuArr
+}
+

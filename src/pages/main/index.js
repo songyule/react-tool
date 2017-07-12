@@ -194,6 +194,8 @@ export default class extends Component {
               <Route path='/main/supplierNew' component={CreatOrg} />
               <Route path='/main/clientEdit' component={OrgEdit} />
               <Route path='/main/supplierEdit' component={OrgEdit} />
+              {/*需求单相关 ====> */}
+              <Route path='/main/requisitionDetail/:id' component={Requisitions} />
               {/*文章相关 ====> */}
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>
@@ -226,6 +228,7 @@ export default class extends Component {
 
 // const Demo = asyncComponent(() => import ('components/demo/index'))
 // const What = asyncComponent(() => import ('components/what/index'))
+const Requisitions = asyncComponent(() => import ('pages/requisition/index'))
 const ClientList = asyncComponent(() => import ('components/client/list'))
 const CreatOrg = asyncComponent(() => import ('components/client/new'))
 const OrgEdit = asyncComponent(() => import ('components/client/edit'))
