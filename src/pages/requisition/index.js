@@ -9,24 +9,6 @@ import { postSamplingSearch } from 'actions/requisition'
 
 export default class requisition extends PureComponent {
   state = {
-    data: [
-    [{
-        label: '客户编码',
-        dataIndex: ['applicant_org', 'sn'],
-        twoLevel: 'sn'
-      }, {
-        label: '客户等级',
-        dataIndex: ['requirement'],
-        childrenData: 'true'
-      }],
-      [{
-        label: '业务员',
-        dataIndex: ['test'],
-      }, {
-        label: '提交人',
-        dataIndex: ['test'],
-      }]
-    ],
     type: 0 // 0 原版 ，1 改版， 2 定制
   }
   // 17071118091016882 0 17071118091024410 1 17071118170096655 2
@@ -70,7 +52,7 @@ export default class requisition extends PureComponent {
           <Row>
             <Col span={10}>
               <span className={style.inputTitle}>业务员:</span>
-              <Input disabled style={{width: 300}} value={samplingMes && samplingMes.applicant_org.seller.name_cn}/>
+              <Input disabled style={{width: 300}} value={samplingMes && samplingMes.applicant_org.seller[0].name_cn}/>
             </Col>
             <Col span={10}>
               <span className={style.inputTitle}>提交人:</span>
