@@ -91,7 +91,6 @@ export default class extends PureComponent {
   }
 
   eidtUser (index) {
-    console.log(index)
     this.setState({
       visible: true,
       userMes: this.state.dataSource[index],

@@ -35,7 +35,6 @@ class original extends PureComponent {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log(nextProps.samplingMes)
     let classify = nextProps.samplingMes.sku_snapshot.spu.commodity_class
     let classifyStr = ''
     let classifyStrC = classify.map(item => {
@@ -94,7 +93,6 @@ class original extends PureComponent {
           </Row>
           <Row>
             <h4>商品描述:</h4>
-            {console.log(this.state.spuData)}
             <Table pagination={false} columns={columns} dataSource={this.state.spuData} key='1234'></Table>
           </Row>
           <Row className={style.flex}>

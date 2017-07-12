@@ -35,13 +35,6 @@ class linkman extends PureComponent {
     })
   }
 
-  componentWillMount() { // 进入页面执行
-    console.log(this.props)
-    // this.setState({
-    //   visible: this.props.visible
-    // })
-  }
-
   render () {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {

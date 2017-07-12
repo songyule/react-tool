@@ -110,7 +110,6 @@ class create extends PureComponent {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         let data = {}
-        console.log(values)
         Object.assign(data, values)
         data.icon = (values.icon && values.icon[0] && values.icon[0].response) || values.icon
         data.adcode = values.residence[values.residence.length - 1]

@@ -52,7 +52,6 @@ class revision extends PureComponent {
   }
 
   componentWillMount () {
-    console.log(this.props.samplingMes)
     this.props.samplingMes.sample_deadline = format(this.props.samplingMes.sample_deadline * 1000, 'yyyy/mm/dd HH:mm:ss')
     this.setState({
       samplingMes: this.props.samplingMes,
