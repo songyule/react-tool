@@ -8,7 +8,7 @@ class ScopePlane extends Component {
     super(props)
 
     this.state = {
-      preSelecteds: [],
+      // preSelecteds: [],
       visible: false
     }
   }
@@ -36,13 +36,11 @@ class ScopePlane extends Component {
   }
 
   handlePreSelecteds = (value) => {
-    this.setState({
-      preSelecteds: value
-    })
+    this.props.changePreSelecteds(value)
   }
 
   handleSelecteds = () => {
-    this.props.changeSelecteds(this.state.preSelecteds)
+    this.props.changeSelecteds(this.props.preSelecteds)
     this.closeModal()
   }
 
@@ -58,10 +56,10 @@ class ScopePlane extends Component {
           </Radio>
         </RadioGroup>
         { this.props.spu.accessStatus === 3 ? <div className="tag-list">
-          { this.props.selecteds.map((item, index) => <Tag key={index}>{item.label}</Tag>) }
+            { this.props.selecteds.map((item, index) => <Tag key={index}>{item.label}</Tag>) }
           </div> : '' }
         <Modal title="选择商品可见范围" visible={this.state.visible} width={800} onCancel={this.closeModal} onOk={this.handleSelecteds}>
-          <SelectArea selecteds={this.state.preSelecteds} onChange={this.handlePreSelecteds}></SelectArea>
+          <SelectArea selecteds={this.props.preSelecteds} onChange={this.handlePreSelecteds}></SelectArea>
         </Modal>
       </div>
     )

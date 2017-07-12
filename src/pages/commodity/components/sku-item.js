@@ -32,6 +32,7 @@ class SkuItem extends Component {
         </Col>
         <Col className={style['sku-item__col-padding']} span="3">
           <Button onClick={this.props.handleRemove}>删除</Button>
+          { this.props.inEdit && <Button onClick={this.props.handleEdit}>编辑</Button>}
         </Col>
       </Row>
     )

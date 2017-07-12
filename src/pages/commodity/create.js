@@ -143,7 +143,6 @@ class CommodityCreate extends Component {
     }))
     const cartesian = cartesianProductOf(...demo)
     const skus = cartesian.map(item => {
-      console.log(item)
       return {
         type: item.filter(attr => !attr.level)[0],
         typeId: item.filter(attr => !attr.level)[0].id,
@@ -251,6 +250,12 @@ class CommodityCreate extends Component {
     })
   }
 
+  changePreSelecteds = (preSelecteds) => {
+    this.setState({
+      preSelecteds
+    })
+  }
+
   changeTypes = (types) => {
     this.setState({
       skuTypes: types
@@ -274,19 +279,31 @@ class CommodityCreate extends Component {
     this.props.history.push('/main/goods')
   }
 
-  submitAndCreate = () => {
-    this.setState({
-      spu: {...JSON.parse(JSON.stringify(emptySpu))},
-      skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
-      contentObj: {
-        content: '<p></p>'
-      },
-      skuTypes: [],
-      skus: [],
-      fileList: [],
-      step: 1,
-      attributesVisible: false,
-      selecteds: []
+  submitAndCreate = async () => {
+    const promiseList = []
+    const spuRes = await this.props.createSpu(toRemoteSpu(this.state.spu))
+    if (this.state.spu.accessStatus === 3) {
+      const data = { spu_id: spuRes.data.id, client_list: [] }
+      this.state.selecteds.forEach(item => item.type === 'client' ? data.client_list.push({ client_id: item.id }) : data.client_list.push({ client_label_id: item.id }))
+      promiseList.push(this.props.saveAccess(data))
+    }
+
+    this.props.createSpuText({ spu_id: spuRes.data.id, text: this.state.contentObj.content }).then(res => {
+      this.props.createSkuList(spuRes.data.id, this.state.skus.map(sku => toRemoteSku(sku))).then(res => {
+        this.setState({
+          spu: {...JSON.parse(JSON.stringify(emptySpu))},
+          skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
+          contentObj: {
+            content: '<p></p>'
+          },
+          skuTypes: [],
+          skus: [],
+          fileList: [],
+          step: 1,
+          attributesVisible: false,
+          selecteds: []
+        })
+      })
     })
   }
 
@@ -305,6 +322,7 @@ class CommodityCreate extends Component {
             changeClass={this.changeClass}
             changeSpu={this.changeSpu}
             changeSelecteds={this.changeSelecteds}
+            changePreSelecteds={this.changePreSelecteds}
             changeImages={this.changeImages}
             ref="spuPlane">
           </SpuPlane>

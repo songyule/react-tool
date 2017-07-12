@@ -29,8 +29,19 @@ class CommodityEdit extends Component {
       skus: [],
       attributesVisible: false,
       selecteds: [],
+      preSelecteds: [],
       notLoaded: true,
-      createVisible: false
+      createVisible: false,
+      editIndex: -1,
+      editSku: {
+        typeId: '',
+        type: {},
+        attributes: [],
+        price: '',
+        miniQuantity: '',
+        earlyDate: '',
+        latestDate: ''
+      }
     }
     this.showAttributesDialog = this.showAttributesDialog.bind(this)
   }
@@ -75,7 +86,8 @@ class CommodityEdit extends Component {
           selecteds.push(...accessRes.data.clients.map((client) => ({ id: client.id, type: 'client', data: client, label: client.name_official })))
         })
         this.setState({
-          selecteds
+          selecteds,
+          preSelecteds: selecteds
         })
       }
       this.setState({
@@ -260,6 +272,12 @@ class CommodityEdit extends Component {
     })
   }
 
+  changePreSelecteds = (preSelecteds) => {
+    this.setState({
+      preSelecteds
+    })
+  }
+
   changeTypes = (types) => {
     this.setState({
       skuTypes: types
@@ -272,7 +290,62 @@ class CommodityEdit extends Component {
     })
   }
 
-  handleOk () {}
+  handleOk = async () => {
+    ~this.state.editIndex ? await this.updateSku() : await this.handleCreateSku()
+    this.setState({
+      createVisible: false
+    })
+  }
+
+  handleCreateSku = async () => {
+    const sku = {...this.state.editSku}
+    const nameAttributes = []
+    this.state.editSku.attributes.forEach(attribute => {
+      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: 1942 })
+    })
+    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
+
+    nameRes.data.forEach(item => {
+      const matchAttr = find(this.state.editSku.attributes, attr => attr.lv2_name_cn === item.name_cn)
+      matchAttr.newId = item.id
+    })
+
+    const attributes = []
+    this.state.editSku.attributes.forEach(attribute => {
+      attributes.push({ attr_type: 2, name_cn: attribute.name_cn, parent_id: attribute.newId })
+    })
+
+    const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
+    sku.attributes = childRes.data
+    const skuRes = await this.props.createSkuList(this.state.spu.id, [toRemoteSku(sku)])
+    sku.id = skuRes.data.id
+    this.setState({
+      skus: [...this.state.skus, sku]
+    })
+  }
+
+  updateSku = async () => {
+    const sku = {...this.state.editSku}
+    const nameAttributes = []
+    this.state.editSku.attributes.forEach(attribute => {
+      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: 1942 })
+    })
+    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
+
+    nameRes.data.forEach(item => {
+      const matchAttr = find(this.state.editSku.attributes, attr => attr.lv2_name_cn === item.name_cn)
+      matchAttr.newId = item.id
+    })
+
+    const attributes = []
+    this.state.editSku.attributes.forEach(attribute => {
+      attributes.push({ attr_type: 2, name_cn: attribute.name_cn, parent_id: attribute.newId })
+    })
+
+    const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
+    sku.attributes = childRes.data
+    this.props.updateSku(sku.id, toRemoteSku(sku))
+  }
 
   handleCancel = () => {
     this.setState({
@@ -282,6 +355,30 @@ class CommodityEdit extends Component {
 
   createSku = () => {
     this.setState({
+      editIndex: -1,
+      editSku: {
+        typeId: '',
+        type: {},
+        attributes: [{ lv2_name_cn: '', name_cn: '' }],
+        price: '',
+        miniQuantity: '',
+        earlyDate: '',
+        latestDate: ''
+      },
+      createVisible: true
+    })
+  }
+
+  changeSku = (sku) => {
+    this.setState({
+      editSku: sku
+    })
+  }
+
+  handleEdit = (index) => {
+    this.setState({
+      editSku: {...JSON.parse(JSON.stringify(this.state.skus[index]))},
+      editIndex: index,
       createVisible: true
     })
   }
@@ -298,25 +395,27 @@ class CommodityEdit extends Component {
             spu={this.state.spu}
             fileList={this.state.fileList}
             selecteds={this.state.selecteds}
+            preSelecteds={this.state.preSelecteds}
             changeName={this.changeName}
             changeClass={this.changeClass}
             changeSpu={this.changeSpu}
             changeSelecteds={this.changeSelecteds}
+            changePreSelecteds={this.changePreSelecteds}
             changeImages={this.changeImages}
             ref="spuPlane">
           </SpuPlane>}
           <CreateAttributesPlane ref="createAttributesPlane" inEdit={true} skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes} deleteAttribute={this.deleteAttribute}></CreateAttributesPlane>
           <div className={style['commodity-edit__btn-box']}></div>
           {
-            // <Button onClick={this.createSku}>新建 SKU</Button>
+            <Button onClick={this.createSku}>新建 SKU</Button>
           }
         </div>
 
         <div className="commodity-edit__second">
-          <CreateSkuList skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove}></CreateSkuList>
+          <CreateSkuList inEdit={true} skus={this.state.skus} changeEarly={this.handleEarly} changeLatest={this.changeLatest} changeMini={this.changeMini} changePrice={this.changePrice} handleRemove={this.handleRemove} handleEdit={this.handleEdit}></CreateSkuList>
         </div>
-        <Modal visible={this.state.createVisible} title="新建 SKU" width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
-          <SkuForm></SkuForm>
+        <Modal visible={this.state.createVisible} title={~this.state.editIndex ? '编辑 SKU' : '新建 SKU'} width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
+          <SkuForm sku={this.state.editSku} changeSku={this.changeSku}></SkuForm>
         </Modal>
       </div>
     )
