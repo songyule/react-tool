@@ -95,12 +95,14 @@ export default class extends Component {
           {
             key: '/main/classes',
             title: '商城通用类目',
-            router: '/main/classes'
+            router: '/main/classes',
+            icon: 'appstore-o'
           },
           {
             key: '/main/attributes',
             title: '属性管理',
-            router: '/main/attributes'
+            router: '/main/attributes',
+            icon: 'tag-o'
           }
         ]
       },
@@ -111,7 +113,8 @@ export default class extends Component {
           {
             key: '/main/account-list',
             title: '账户列表',
-            router: '/main/account-list'
+            router: '/main/account-list',
+            icon: 'user'
           }
         ]
       },
@@ -133,7 +136,8 @@ export default class extends Component {
           {
             key: 'requirement-list',
             title: '需求单列表',
-            router: '/main/requirement-list'
+            router: '/main/requirement-list',
+            icon: 'solution'
           }
         ]
       }
