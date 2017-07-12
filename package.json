@@ -61,6 +61,7 @@
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.1",
     "fs-extra": "3.0.1",
+    "happypack": "^4.0.0-beta.1",
     "html-webpack-plugin": "2.28.0",
     "jest": "20.0.3",
     "object-assign": "4.1.1",
@@ -91,6 +92,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
+    "dll": "webpack --config config/webpack.dll.conf.js",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "build-dev": "node scripts/build-dev.js",
