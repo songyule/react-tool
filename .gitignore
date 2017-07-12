@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+fabfile.pyc
+config/vendor-manifest.json
+/public/js
 
 # testing
 /coverage

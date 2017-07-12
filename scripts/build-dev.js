@@ -64,7 +64,13 @@ measureFileSizesBeforeBuild(paths.appBuild)
       } else {
         console.log(chalk.green('Compiled successfully.\n'));
       }
-
+      process.stdout.write(stats.toString({
+        colors: true,
+        modules: false,
+        children: false,
+        chunks: false,
+        chunkModules: false
+      }) + '\n\n')
       console.log('File sizes after gzip:\n');
       printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild);
       console.log();

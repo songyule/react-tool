@@ -7,7 +7,20 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+// const HappyPack = require('happypack');
+var os = require('os')
+var HappyPack = require('happypack');
+var happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 
+function happyPack(type, loader) {
+  return new HappyPack({
+    id: type,
+    cache: true,
+    debug: true,
+    threadPool: happyThreadPool,
+    loaders: [loader]
+  })
+}
 const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
@@ -82,17 +95,24 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
-        loader: require.resolve('babel-loader'),
-        options: {
-          cacheDirectory: true,
-        },
+        loader: 'happypack/loader?id=js',
+        // options: {
+        //   cacheDirectory: true,
+        // },
       },
     ],
   },
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: path.resolve(__dirname, '..'),
+      manifest: require('./vendor-manifest.json')
+    }),
     new InterpolateHtmlPlugin(env.raw),
     new webpack.DefinePlugin(env.stringified),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    happyPack('js', 'babel-loader?cacheDirectory=true'),
+    // happyPack('eslint', 'eslint-loader'),
+    happyPack('css', 'css-loader'),
   ],
   node: {
     fs: 'empty',
