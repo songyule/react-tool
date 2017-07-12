@@ -271,7 +271,7 @@ class SpuPlane extends PureComponent {
           <FormItem
             {...formItemLayout}
             label="可见范围">
-            <ScopePlane selecteds={this.props.selecteds} spu={this.props.spu} changeSpu={this.props.changeSpu} changeSelecteds={this.props.changeSelecteds}></ScopePlane>
+            <ScopePlane selecteds={this.props.selecteds} preSelecteds={this.props.preSelecteds} spu={this.props.spu} changeSpu={this.props.changeSpu} changeSelecteds={this.props.changeSelecteds} changePreSelecteds={this.props.changePreSelecteds}></ScopePlane>
           </FormItem>
         </Form>
 

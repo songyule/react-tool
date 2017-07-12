@@ -96,6 +96,12 @@ class SelectArea extends Component {
     const index = findIndex(this.props.selecteds, { id: item.id, type: item.type })
     const selecteds = [...this.props.selecteds]
     ~index ? selecteds.splice(index, 1) : selecteds.push(item)
+    const scroll = item.type === 'label' ? this.state.labelScroll : this.state.clientScroll
+    const matchIndex = findIndex(scroll.list, { id: item.id })
+    scroll.list[matchIndex].selected = ~~index
+    this.setState({
+      [item.type === 'label' ? 'labelScroll' : 'clientScroll']: scroll
+    })
     this.props.onChange(selecteds)
     // this.setState({
     //   selecteds
@@ -118,7 +124,7 @@ class SelectArea extends Component {
               <div className={style['select-area__checkbox-scroll']}>
                 {this.state.labelScroll.list.map((item, index) =>
                   <div className="select-area__checkbox-box" key={index}>
-                    <Checkbox onChange={ () => this.changeLabel(item) }>{ item.name_cn }（{ item.client_count }）</Checkbox>
+                    <Checkbox checked={item.selected} onChange={ () => this.changeLabel(item) }>{ item.name_cn }（{ item.client_count }）</Checkbox>
                   </div>
                 )}
               </div>
@@ -129,7 +135,7 @@ class SelectArea extends Component {
               <div className={style['select-area__checkbox-scroll']}>
                 {this.state.clientScroll.list.map((item, index) =>
                   <div className="select-area__checkbox-box" key={index}>
-                    <Checkbox onChange={ () => this.changeClient(item) }>{ item.name_official }</Checkbox>
+                    <Checkbox checked={item.selected} onChange={ () => this.changeClient(item) }>{ item.name_official }</Checkbox>
                   </div>
                 )}
               </div>
@@ -142,8 +148,8 @@ class SelectArea extends Component {
         </div>
         <div className={style['select-area__right']}>
           <p>已选择的客户：</p>
-          {this.props.selecteds.map(item =>
-            <div className="select-area__checkbox-box">
+          {this.props.selecteds.map((item, index) =>
+            <div className="select-area__checkbox-box" key={index}>
               { item.label }
             </div>
           )}
