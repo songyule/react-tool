@@ -31,8 +31,9 @@ export default class requisition extends PureComponent {
   }
   // 17071118091016882 0 17071118091024410 1 17071118170096655 2
   componentWillMount () {
+    console.log(this.props.match.params.id)
     let data = {
-      id_arr: ['17071118170096655']
+      id_arr: [this.props.match.params.id]
     }
     postSamplingSearch(data).then(res => {
       console.log(res)
@@ -51,7 +52,7 @@ export default class requisition extends PureComponent {
       <div>
         <Title title='需求单号：'>
           <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: -15}}>
-            <p style={{display: 'flex', alignItems: 'center'}}>'670bd8afb6a749d1885ec563d624302a'</p>
+            <p style={{display: 'flex', alignItems: 'center'}}>{this.props.match.params.id}</p>
             <Button type="primary">
               <Link to="/main/clientNew">返回</Link>
             </Button>

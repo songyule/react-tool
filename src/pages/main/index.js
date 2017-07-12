@@ -195,7 +195,7 @@ export default class extends Component {
               <Route path='/main/clientEdit' component={OrgEdit} />
               <Route path='/main/supplierEdit' component={OrgEdit} />
               {/*需求单相关 ====> */}
-              <Route path='/main/requisitionDetail' component={Requisitions} />
+              <Route path='/main/requisitionDetail/:id' component={Requisitions} />
               {/*文章相关 ====> */}
               <Route path='/main/topic' component={Topic}/>
               <Route path='/main/trend' component={Trend}/>
