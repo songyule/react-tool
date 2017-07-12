@@ -38,6 +38,12 @@ export default class extends Component {
       [style.container__menu]: true,
       [style.container__menu__fold]: this.state.isFold
     })
+
+    const contentStyle = cs({
+      [style.container__content]: true,
+      'scroll-mark': true
+    })
+
     // key跟router需要一样, 不然刷新的时候menu高亮的值会不正确
     const menuArr = [
       {
@@ -119,6 +125,17 @@ export default class extends Component {
             router: '/main/goods'
           }
         ]
+      },
+      {
+        key: 'requirement',
+        title: '需求管理',
+        children: [
+          {
+            key: 'requirement-list',
+            title: '需求单列表',
+            router: '/main/requirement-list'
+          }
+        ]
       }
     ]
 
@@ -170,7 +187,7 @@ export default class extends Component {
                 }
               </Menu>
             </div>
-            <div className={style.container__content}>
+            <div className={contentStyle}>
               <Route path='/main/clientList' component={ClientList} />
               <Route path='/main/supplierList' component={ClientList} />
               <Route path='/main/clientNew' component={CreatOrg} />
@@ -197,6 +214,8 @@ export default class extends Component {
               <Route path='/main/goods-edit/:id' component={GoodsEdit} />
               <Route path='/main/goods-content-edit/:id' component={GoodsContentEdit} />
               <Route path='/main/goods-create' component={GoodsCreate} />
+              {/*打样相关 ==== */}
+              <Route path='/main/requirement-list' component={RequirementList} />
             </div>
         </div>
       </div>
@@ -228,3 +247,4 @@ const Goods = asyncComponent(() => import('pages/commodity/index'))
 const GoodsEdit = asyncComponent(() => import('pages/commodity/edit'))
 const GoodsContentEdit = asyncComponent(() => import('pages/commodity/content-edit'))
 const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
+const RequirementList = asyncComponent(() => import('pages/requirement/index'))

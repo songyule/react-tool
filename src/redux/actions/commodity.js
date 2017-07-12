@@ -13,18 +13,30 @@ export const getSpuList = (data) => async (dispatch, getState) => {
 
 export const originGetClasses = (params) => async (dispatch, getState) => {
   try {
-    let response = await fetch.get('/commodity/class')
+    let response = await fetch.get('/commodity/class', { params })
     dispatch({ type: constants.GET_COMMODITY_CLASSES, classes: response.data })
     return response
   } catch (error) {
     console.log('error: ', error)
   }
 }
+
+// wr在文章中使用
+export const getClassesInArticle = (params) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.get('/commodity/class', { params })
+    // dispatch({ type: constants.GET_COMMODITY_CLASSES, classes: response.data })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
 export const getClasses = onceWrapper(originGetClasses)
 
-export const getClassesForClasses = async () => {
+export const getClassesForClasses = async (params) => {
   try {
-    let response = await fetch.get('/commodity/class')
+    let response = await fetch.get('/commodity/class', { params })
     return response
   } catch (error) {
     console.log('error: ', error)
@@ -77,6 +89,15 @@ export const createSpu = (data) => async (dispatch, getState) => {
 export const createSku = async (id, data) => {
   try {
     let response = await fetch.post('/commodity/sku', { headers: { 'Content-type': 'application/json' }, body: {spu_id: id, ...data} })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
+export const removeSku = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.delete(`/commodity/sku/${id}`)
     return response
   } catch (error) {
     console.log('error：', error)

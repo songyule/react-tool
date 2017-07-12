@@ -36,7 +36,9 @@ export default class AddGoods extends PureComponent {
   // dialog 点击 ok
   handleOk = (e) => {
     let instant = this.refs.goods.wrappedInstance
-    this.refs.goods.wrappedInstance.setState({
+    instant.clear()
+
+    instant.setState({
       selectedRowKeys: [],
       beforeChangePageSelectedRowObjs: []
     })
@@ -52,7 +54,10 @@ export default class AddGoods extends PureComponent {
 
   // dialog 点击取消
   handleCancel = (e) => {
-    this.refs.goods.wrappedInstance.setState({
+    let instant = this.refs.goods.wrappedInstance
+
+    instant.clear()
+    instant.setState({
       selectedRowKeys: [],
       beforeChangePageSelectedRowObjs: []
     })
@@ -60,7 +65,12 @@ export default class AddGoods extends PureComponent {
     this.setState({ visible: false })
   }
 
-  showModal = () => {this.setState({ visible: true })}
+  showModal = () => {
+    this.setState({ visible: true }, () => {
+      let instant = this.refs.goods.wrappedInstance
+      instant.getGoodsData()
+    })
+  }
 
   // 删除商品
   closeGoods = (index) => {
