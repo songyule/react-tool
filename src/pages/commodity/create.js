@@ -270,6 +270,26 @@ class CommodityCreate extends Component {
     })
   }
 
+  cancelCreate = () => {
+    this.props.history.push('/main/goods')
+  }
+
+  submitAndCreate = () => {
+    this.setState({
+      spu: {...JSON.parse(JSON.stringify(emptySpu))},
+      skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
+      contentObj: {
+        content: '<p></p>'
+      },
+      skuTypes: [],
+      skus: [],
+      fileList: [],
+      step: 1,
+      attributesVisible: false,
+      selecteds: []
+    })
+  }
+
   render () {
     return (
       <div className={style['page_commodity-create']}>
@@ -317,8 +337,8 @@ class CommodityCreate extends Component {
             onChange={this.changeText}/>
           <div className={style['commodity-create__btn-box']}>
             <Button className={style['commodity-create__btn']} onClick={this.handleFinish}>保存并关闭</Button>
-            <Button className={style['commodity-create__btn']}>保存并新建</Button>
-            <Button className={style['commodity-create__btn']}>取消</Button>
+            <Button className={style['commodity-create__btn']} onClick={this.submitAndCreate}>保存并新建</Button>
+            <Button className={style['commodity-create__btn']} onClick={this.cancelCreate}>取消</Button>
           </div>
         </div> }
       </div>

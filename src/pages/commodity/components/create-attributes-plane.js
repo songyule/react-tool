@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Input, Button, Select, Form } from 'antd'
+import { Input, Button, Select, Form, Icon, message } from 'antd'
 import { connect } from 'react-redux'
 import style from './create-attributes-plane.css'
 const Option = Select.Option
@@ -52,6 +52,12 @@ class CreateAttributesPlane extends Component {
     this.props.changeTypes(value)
   }
 
+  deleteAttribute = (index, childIndex) => {
+    const skuAttributes = [...this.props.skuAttributes]
+    if (skuAttributes[index].children.length <= 1) return message.warning('唯一属性值不可删除')
+    this.props.deleteAttribute(index, childIndex)
+  }
+
   render () {
     const { getFieldDecorator } = this.props.form
 
@@ -99,7 +105,7 @@ class CreateAttributesPlane extends Component {
                         { this.props.inEdit ? this.props.skuAttributes[index].name.value : <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input> }
                       </div>
                       <div className={style["attribute-row__right"]}>
-                        { attribute.children.map((item, childIndex) => <Input key={childIndex} onChange={ e => this.changeAttributeValue({e, index, childIndex}) } value={this.props.skuAttributes[index].children[childIndex].value}></Input>) }
+                        { attribute.children.map((item, childIndex) => <Input addonAfter={this.props.inEdit ? <div onClick={ e => this.deleteAttribute(index, childIndex) }><Icon type="minus"></Icon></div> : ''} key={childIndex} value={this.props.skuAttributes[index].children[childIndex].value}></Input>) }
                         { !this.props.inEdit && <Button onClick={() => this.addAttributeValue(index)}>+</Button> }
                       </div>
                       { index !== 0 && !this.props.inEdit && <Button onClick={() => this.removeAttribute(index)}>-</Button> }

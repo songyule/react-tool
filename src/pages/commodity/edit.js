@@ -226,6 +226,28 @@ class CommodityEdit extends Component {
     this.props.history.push('/main/goods')
   }
 
+  deleteAttribute = (index, childIndex) => {
+    const skus = [...this.state.skus]
+    const skuAttributes = [...this.state.skuAttributes]
+    const matchId = skuAttributes[index].children[childIndex].id
+    skuAttributes[index].children.splice(childIndex, 1)
+    this.setState({
+      skus,
+      skuAttributes
+    })
+    skus.forEach((sku, skuIndex) => {
+      const matchIndex = findIndex(sku.attributes, { id: matchId })
+      if (~matchIndex) {
+        this.props.removeSku(sku.id).then(res => {
+          skus.splice(skuIndex, 1)
+          this.setState({
+            skus
+          })
+        })
+      }
+    })
+  }
+
   changeSpu = (spu) => {
     this.setState({
       spu
@@ -283,7 +305,7 @@ class CommodityEdit extends Component {
             changeImages={this.changeImages}
             ref="spuPlane">
           </SpuPlane>}
-          <CreateAttributesPlane ref="createAttributesPlane" inEdit={true} skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
+          <CreateAttributesPlane ref="createAttributesPlane" inEdit={true} skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes} deleteAttribute={this.deleteAttribute}></CreateAttributesPlane>
           <div className={style['commodity-edit__btn-box']}></div>
           {
             // <Button onClick={this.createSku}>新建 SKU</Button>
