@@ -28,7 +28,6 @@ export default class extends PureComponent {
   }
 
   componentWillMount() {
-    console.log(store.getState().userLogin.org.id)
     if (this.props.location.pathname.substr(6) !== 'clientEdit') {
       this.setState({
         isClientEdit: false
@@ -56,13 +55,9 @@ export default class extends PureComponent {
     })
     getSales({client_id:this.props.location.state}).then(res => {
       this.setState({
-        defaultSales: res.data.id
+        defaultSales: res.data[0] && res.data[0].id
       })
     })
-  }
-
-  tabChange (key) {
-    console.log(key)
   }
 
   eidtSales () {
@@ -87,7 +82,7 @@ export default class extends PureComponent {
       <div>
         <ClientNew {...this.props} orgMes={this.state.orgMes} isClientEdit={this.state.isClientEdit}></ClientNew>
         <div className={style.tabBox}>
-          <Tabs type='card' onChange={this.tabChange} defaultActiveKey="1">
+          <Tabs type='card' defaultActiveKey="1">
             <TabPane tab='联系人,地址' key='1'>
               <ClientLinkman org_id={this.props.location.state}></ClientLinkman>
             </TabPane>
