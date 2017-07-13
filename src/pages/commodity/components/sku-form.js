@@ -67,6 +67,12 @@ class SkuForm extends Component {
     this.props.changeSku(sku)
   }
 
+  removeAttribute = (index) => {
+    const sku = {...this.props.sku}
+    sku.attributes.splice(index, 1)
+    this.props.changeSku(sku)
+  }
+
   render () {
     const formItemLayout = {
       labelCol: { span: 5 },
@@ -118,6 +124,9 @@ class SkuForm extends Component {
                   </Col>
                   <Col span={9}>
                     <Input placeholder="placeholder" value={attribute.name_cn} onChange={e => this.changeAttributeValue(e, index)} />
+                  </Col>
+                  <Col span={2}>
+                    {index > 0 && <Button onClick={() => this.removeAttribute(index)}>-</Button>}
                   </Col>
                 </Row>
               )) }
