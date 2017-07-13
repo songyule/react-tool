@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
-import { Table, Input, Select, Menu, Cascader, Button } from 'antd'
+import { Table, Input, Select, Menu, Cascader, Button, Icon } from 'antd'
 // import { spu as spuList } from './commodity.json'
 import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } from 'utils'
 import LazyImage from 'lazyimage'
@@ -141,9 +141,9 @@ class CommodityList extends PureComponent {
         render: text => <span>{text}</span>
       },
       {
-        title: <Cascader options={this.state.classes} onChange={this.changeClass} changeOnSelect><span>分类</span></Cascader>,
+        title: <Cascader options={this.state.classes} onChange={this.changeClass} changeOnSelect><span>分类 <Icon type="filter" /></span></Cascader>,
         dataIndex: 'commodity_class',
-        render: text => <span>{showClasses(text)}</span>
+        render: text => <span>{showClasses(text)} </span>
       },
       {
         title: '价格',
@@ -189,8 +189,8 @@ class CommodityList extends PureComponent {
         dataIndex: 'id',
         render: (text, record) => (
           <div className="operate-box">
-            <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看详情</Link>
-            <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看内容</Link>
+            <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看商品属性</Link>
+            <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看商品介绍</Link>
           </div>
         )
       }

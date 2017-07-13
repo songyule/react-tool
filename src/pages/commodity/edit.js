@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Modal } from 'antd'
+import { Button, Modal, message } from 'antd'
 import SpuPlane from './components/spu-plane'
 import CreateAttributesPlane from './components/create-attributes-plane'
 import CreateSkuList from './components/create-sku-list'
@@ -290,7 +290,24 @@ class CommodityEdit extends Component {
     })
   }
 
+  validEditSku = () => {
+    const sku = this.state.editSku
+    if (!sku.typeId) return false
+    if (!sku.price) return false
+    if (!sku.miniQuantity) return false
+    if (!sku.earlyDate) return false
+    if (!sku.latestDate) return false
+    if (sku.attributes.length !== [...new Set(sku.attributes.map(attr => attr.lv2_name_cn))].length) return false
+    let bool = true
+    sku.attributes.forEach(attr => {
+      if (!attr.name_cn || !attr.lv2_name_cn) bool = false
+    })
+    if (!bool) return false
+    return true
+  }
+
   handleOk = async () => {
+    if (!this.validEditSku()) return message.warning('sku信息有误')
     ~this.state.editIndex ? await this.updateSku() : await this.handleCreateSku()
     this.setState({
       createVisible: false
@@ -318,9 +335,26 @@ class CommodityEdit extends Component {
     const childRes = await this.props.multiCreateCommodityAttribute({ attribute: attributes })
     sku.attributes = childRes.data
     const skuRes = await this.props.createSkuList(this.state.spu.id, [toRemoteSku(sku)])
-    sku.id = skuRes.data.id
+    sku.id = skuRes[0].data.id
+    const totalAttributes = []
+    const skus = [...this.state.skus, sku]
+    skus.forEach(sku => {
+      totalAttributes.push(...sku.attributes)
+    })
+    const groupAttributes = groupBy(totalAttributes, 'lv2_id')
+    const skuAttributes = []
+    Object.keys(groupAttributes).forEach(key => {
+      skuAttributes.push({
+        name: {
+          value: groupAttributes[key][0].lv2_name_cn,
+          id: groupAttributes[key][0].lv2_id
+        },
+        children: groupAttributes[key].map(item => ({ value: item.name_cn, id: item.id }))
+      })
+    })
     this.setState({
-      skus: [...this.state.skus, sku]
+      skus,
+      skuAttributes
     })
   }
 

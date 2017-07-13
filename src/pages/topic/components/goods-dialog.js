@@ -5,7 +5,6 @@ import * as commodityActions from 'actions/commodity';
 import { Table, Input, Select, Menu, Cascader, Icon } from 'antd'
 import { showClasses, showPrice, showShelvesStatus } from 'utils'
 import LazyImage from 'lazyimage'
-import arrayToTree from 'array-to-tree'
 
 const Option = Select.Option
 const Search = Input.Search

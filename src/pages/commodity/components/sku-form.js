@@ -68,7 +68,6 @@ class SkuForm extends Component {
   }
 
   render () {
-    const { getFieldDecorator } = this.props.form
     const formItemLayout = {
       labelCol: { span: 5 },
       wrapperCol: { span: 19 },
@@ -120,9 +119,9 @@ class SkuForm extends Component {
                   <Col span={9}>
                     <Input placeholder="placeholder" value={attribute.name_cn} onChange={e => this.changeAttributeValue(e, index)} />
                   </Col>
-                  <Col span={2}><Button onClick={this.addAttribute}>+</Button></Col>
                 </Row>
               )) }
+              <Col span={2}><Button onClick={this.addAttribute}>+</Button></Col>
             </FormItem>
           </Col>
         </Form>
