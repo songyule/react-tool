@@ -105,7 +105,7 @@ class CreateAttributesPlane extends Component {
                         { this.props.inEdit ? this.props.skuAttributes[index].name.value : <Input onChange={ value => this.changeAttributeName(value, index) } value={this.props.skuAttributes[index].name.value}></Input> }
                       </div>
                       <div className={style["attribute-row__right"]}>
-                        { attribute.children.map((item, childIndex) => <Input addonAfter={this.props.inEdit ? <div onClick={ e => this.deleteAttribute(index, childIndex) }><Icon type="minus"></Icon></div> : ''} key={childIndex} value={this.props.skuAttributes[index].children[childIndex].value} onChange={ e => this.changeAttributeValue({e, index, childIndex}) }></Input>) }
+                        { attribute.children.map((item, childIndex) => <Input addonAfter={<div onClick={ e => this.deleteAttribute(index, childIndex) }><Icon type="minus"></Icon></div>} key={childIndex} value={this.props.skuAttributes[index].children[childIndex].value} onChange={ e => this.changeAttributeValue({e, index, childIndex}) }></Input>) }
                         { !this.props.inEdit && <Button onClick={() => this.addAttributeValue(index)}>+</Button> }
                       </div>
                       { index !== 0 && !this.props.inEdit && <Button onClick={() => this.removeAttribute(index)}>-</Button> }

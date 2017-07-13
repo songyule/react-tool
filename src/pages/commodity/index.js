@@ -119,7 +119,7 @@ class CommodityList extends PureComponent {
     // params.as_supplier = 1
     if (this.state.spu.check_status) params.check_status = this.state.spu.check_status
     if (this.state.spu.status) params.status = this.state.spu.status
-    if (this.state.spu.class_id) params.class_id = this.state.spu.class_id
+    if (this.state.spu.class_id && this.state.spu.class_id[0]) params.class_id = this.state.spu.class_id
     if (this.state.spu.condition && this.state.spu.kw) params[this.state.spu.condition] = this.state.spu.kw
     const res = await this.props.getSpuList(params)
     this.setState({
@@ -141,7 +141,7 @@ class CommodityList extends PureComponent {
         render: text => <span>{text}</span>
       },
       {
-        title: <Cascader options={this.state.classes} onChange={this.changeClass} changeOnSelect><span>分类 <Icon type="filter" /></span></Cascader>,
+        title: <Cascader options={this.state.classes} onChange={this.changeClass}><span>分类 <Icon type="filter" /></span></Cascader>,
         dataIndex: 'commodity_class',
         render: text => <span>{showClasses(text)} </span>
       },
@@ -209,10 +209,14 @@ class CommodityList extends PureComponent {
     })
     const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
     matchClass.parent_id = null
-    this.setState({
-      classes: arrayToTree(classes)[0].children
+    const sortClass = arrayToTree(classes)[0].children
+    sortClass.unshift({ value: '', label: '全部' })
+    sortClass.forEach(classItem => {
+      if (classItem.children) classItem.children.unshift({ value: classItem.id, label: `全部${classItem.name_cn}` })
     })
-    console.log(arrayToTree(classes)[0].children)
+    this.setState({
+      classes: sortClass
+    })
     return res
   }
 
