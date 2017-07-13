@@ -34,7 +34,7 @@ export default class requisition extends PureComponent {
           <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: -15}}>
             <p style={{display: 'flex', alignItems: 'center'}}>{this.props.match.params.id}</p>
             <Button type="primary">
-              <Link to="/main/clientNew">返回</Link>
+              <Link to="/main/requirement-list">返回</Link>
             </Button>
           </div>
         </Title>
