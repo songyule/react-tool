@@ -41,7 +41,7 @@ export default class RequirementTable extends PureComponent {
               <th className={style['tbody__th']} colSpan ="4">
                 <div className={style['tbody__th-content']}>
                   <span>
-                    打样单号：{item.id}
+                    需求单号：{item.id}
                     创建时间：{format(item.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')}
                   </span>
                   <span>
