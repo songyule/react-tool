@@ -34,8 +34,13 @@ const roleList = (state = {}, action) => {
       window.localStorage.setItem('ROLE', JSON.stringify(action.role))
       return action.role
     default:
-      const role = JSON.parse(window.localStorage.getItem('ROLE'))
-      return role || state
+      let roleLocal = window.localStorage.getItem('ROLE')
+      try {
+        const role = (roleLocal && JSON.parse(roleLocal)) || {}
+        return role || state
+      } catch (error) {
+        return {}
+      }
   }
 }
 
@@ -45,8 +50,13 @@ const orgList = (state = {}, action) => {
       window.localStorage.setItem('ORG_LIST', JSON.stringify(action.orgList))
       return action.orgList
     default:
-      const orgList = JSON.parse(window.localStorage.getItem('ORG_LIST'))
-      return orgList || state
+      let orgLocal = window.localStorage.getItem('ORG_LIST')
+      try {
+        const orgList = (orgLocal && JSON.parse(orgLocal)) || {}
+        return orgList || state
+      } catch (error) {
+        return {}
+      }
   }
 }
 
