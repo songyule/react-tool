@@ -94,7 +94,6 @@ class CommodityCreate extends Component {
     let bool = true
     this.state.skuAttributes.forEach(attr => {
       if (!attr.name.value) bool = false
-      console.log(attr)
       attr.children.forEach(child => {
         if (!child.value) bool = false
       })
@@ -279,6 +278,14 @@ class CommodityCreate extends Component {
     this.props.history.push('/main/goods')
   }
 
+  deleteAttribute = (index, childIndex) => {
+    const skuAttributes = [...this.state.skuAttributes]
+    skuAttributes[index].children.splice(childIndex, 1)
+    this.setState({
+      skuAttributes
+    })
+  }
+
   submitAndCreate = async () => {
     const promiseList = []
     const spuRes = await this.props.createSpu(toRemoteSpu(this.state.spu))
@@ -326,7 +333,7 @@ class CommodityCreate extends Component {
             changeImages={this.changeImages}
             ref="spuPlane">
           </SpuPlane>
-          <CreateAttributesPlane ref="createAttributesPlane" skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes}></CreateAttributesPlane>
+          <CreateAttributesPlane ref="createAttributesPlane" skuAttributes={ this.state.skuAttributes } skuTypes={ this.state.skuTypes } changeTypes={this.changeTypes} changeSkuAttributes={this.changeSkuAttributes} deleteAttribute={this.deleteAttribute}></CreateAttributesPlane>
           <div className={style['commodity-create__btn-box']}>
             <Button onClick={this.finishFirst}>下一步</Button>
           </div>
