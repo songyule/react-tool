@@ -66,9 +66,8 @@ export default class AccountForm extends PureComponent {
     ]
 
     formItemArr.forEach((item, idx) => item.key = idx)
-    const { id, status, disabled, roleList, role = null, isPersonal, orgList } = this.props
+    const { id, status, disabled, roleList, role = '', isPersonal, orgList } = this.props
     const { showOrgList } = this.state
-    console.log(this.props)
 
     return (
       <div className={style['account-form']}>
