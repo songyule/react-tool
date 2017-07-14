@@ -115,13 +115,11 @@ export default class SameForm extends PureComponent {
   }
 
   handleChange = (fileList) => {
-    console.log(fileList)
     this.setState({ fileList }, this.props.onChange(fileList))
   }
 
   render() {
     const { getFieldDecorator, status } = this.props
-    console.log(status ? status === 2 : true)
     // const name = store.getState().userLogin.name_cn
     const formItemLayout = {
       labelCol: {

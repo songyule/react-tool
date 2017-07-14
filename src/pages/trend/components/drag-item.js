@@ -83,7 +83,7 @@ export default class extends Component {
 
   render() {
     const { connectDragSource, connectDropTarget, children } = this.props;
-    const cloneChildren = Children.map(this.props.children, (child) => cloneElement(child, this.props));
+    const cloneChildren = Children.map(children, (child) => cloneElement(child, this.props));
     return connectDragSource(connectDropTarget(
       <div>
         {cloneChildren}

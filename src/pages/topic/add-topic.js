@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Form, message } from 'antd'
+import { Form, message, Modal } from 'antd'
 
 import Title from 'components/title'
 import TopicForm from './components/topic-form'
@@ -22,8 +22,14 @@ export default class extends PureComponent {
 
   handleSubmit = (e) => {
     createArticle(e).then(res => {
-      this.props.history.push('/main/topic')
-      message.success('创建成功')
+      const modal = Modal.info({
+        content: '文章正在努力创建中'
+      })
+      setTimeout(() => {
+        modal.destroy()
+        this.props.history.push('/main/topic')
+        message.success('创建成功')
+      }, 2000);
     })
   }
 

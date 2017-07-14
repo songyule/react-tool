@@ -49,10 +49,16 @@ export default class extends PureComponent {
   }
 
   showModal = () => this.setState({pageVisible: true})
-  hideModal = () => this.setState({pageVisible: false})
+  hideModal = () => {
+    this.setState({pageVisible: false})
+    this.props.isAdd && this.refs.addGoods.clear()
+  }
 
   clickOkModal = () => {
     const { fileList, selectedRowObjs } = this.state
+    this.props.isAdd && this.refs.addGoods.clear()
+    console.log(123, this.props.isAdd)
+
     this.hideModal()
     this.props.onChange(fileList, selectedRowObjs)
   }
@@ -93,7 +99,7 @@ export default class extends PureComponent {
             className={styles.upload}
             onChange={ this.handleChange }
           ></MyUpload>
-          <AddGoods selectedRowObjs={[...selectedRowObjs]} onChange={this.goodsChange}>{selectedRowObjs}</AddGoods>
+          <AddGoods ref="addGoods" selectedRowObjs={[...selectedRowObjs]} onChange={this.goodsChange}>{selectedRowObjs}</AddGoods>
         </Modal>
       </div>
     )

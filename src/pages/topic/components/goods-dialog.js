@@ -230,7 +230,9 @@ loadData = async (selectedOptions) => {
 
   clear = () => {
     this.setState({
-      spu: {...this.state.spu, class_id: '' }
+      spu: {...this.state.spu, class_id: '' },
+      selectedRowKeys: [],
+      beforeChangePageSelectedRowObjs: []
     })
   }
 
