@@ -133,7 +133,7 @@ class CommodityList extends PureComponent {
       {
         title: '',
         dataIndex: 'image_url',
-        render: text => <LazyImage width={48} height={48} src={text||'https://test.fuliaoyi.com/static/img/goods-img.1063b9e.png'}></LazyImage>
+        render: text => <LazyImage width={48} height={48} src={text[0]||'https://test.fuliaoyi.com/static/img/goods-img.1063b9e.png'}></LazyImage>
       },
       {
         title: '商品名称',
