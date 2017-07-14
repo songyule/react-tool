@@ -17,7 +17,7 @@ export default class RequirementTable extends PureComponent {
     const { data } = this.props
     const TABLE_TH_NAMES = ['需求内容', '数量', '状态', '操作']
     const STATUS_MAP = {
-      0: '刚创建',
+      0: '处理中',
       1: '已完成',
       [-1]: '已关闭'
     }
