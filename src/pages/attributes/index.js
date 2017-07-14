@@ -3,8 +3,8 @@ import style from './index.css'
 import arrayToTree from 'array-to-tree'
 import Title from 'components/title'
 import AttributesForm from './form'
-import { createAttribute, editAttribute, deleteAttribute } from 'actions/management'
-import { getAttributesList } from 'actions/commodity'
+import { createAttribute, editAttribute, deleteAttribute, getManagementAttributes } from 'actions/management'
+
 import { Tree, Button, Icon, Modal, message } from 'antd'
 const [ TreeNode, ButtonGroup ] = [ Tree.TreeNode, Button.Group ]
 
@@ -137,8 +137,9 @@ export default class Attributes extends PureComponent {
   }
 
   async getAttributes () {
-    const { data } = await getAttributesList()
-    this.setState({ data })
+    const { data } = await getManagementAttributes({ limit: 10000 })
+
+    this.setState({ data: data.attribute })
   }
 
   render() {
