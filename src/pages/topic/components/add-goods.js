@@ -33,15 +33,17 @@ export default class AddGoods extends PureComponent {
     })
   }
 
+  clear () {
+    setTimeout(() => {
+      let instant = this.refs.goods.wrappedInstance
+      instant.clear()
+    }, 0)
+  }
+
   // dialog 点击 ok
   handleOk = (e) => {
     let instant = this.refs.goods.wrappedInstance
     instant.clear()
-
-    instant.setState({
-      selectedRowKeys: [],
-      beforeChangePageSelectedRowObjs: []
-    })
 
     let arr = [...this.state.selectedRowObjs, ...instant.state.selectedRowObjs]
 
@@ -57,10 +59,6 @@ export default class AddGoods extends PureComponent {
     let instant = this.refs.goods.wrappedInstance
 
     instant.clear()
-    instant.setState({
-      selectedRowKeys: [],
-      beforeChangePageSelectedRowObjs: []
-    })
 
     this.setState({ visible: false })
   }
