@@ -92,8 +92,8 @@ class CommodityEdit extends Component {
       }
       this.setState({
         spu,
-        fileList: spu.imgList.map(item => ({
-          uid: -1,
+        fileList: spu.imgList.map((item, index) => ({
+          uid: index + 1,
           name: 'sdhjkfhsyuiweyrnn222.png',
           status: 'done',
           url: item,
