@@ -78,17 +78,9 @@ export default class RequirementList extends PureComponent {
 
     const params = {
       limit: pageSize,
-<<<<<<< HEAD
-      offset: (current - 1) * pageSize
-    }
-
-    if (state === "0" || state === "1") params["state"] = state
-=======
       offset: (current - 1) * pageSize,
       state
     }
-
->>>>>>> :alien: add state in requirement list
     const res = await getRequirementList(params)
 
     this.setState({
@@ -110,16 +102,10 @@ export default class RequirementList extends PureComponent {
       <div>
         <Title title="需求单列表" />
         <Tabs onChange={this.handleChange} type="card">
-<<<<<<< HEAD
-          <TabPane tab="未完成" key="0" />
-          <TabPane tab="全部" key="-1" />
-          <TabPane tab="已完成" key="1" />
-=======
           <TabPane tab="处理中" key="0"></TabPane>
           <TabPane tab="全部" key="101"></TabPane>
           <TabPane tab="已完成" key="1"></TabPane>
           <TabPane tab="已取消" key="-1"></TabPane>
->>>>>>> :alien: add state in requirement list
         </Tabs>
         <Table data={data} onEdit={(id, type) => this.onEdit(id, type)} />
         <div style={{ textAlign: "right", padding: "20px 0" }}>
