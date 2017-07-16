@@ -11,6 +11,11 @@ export const getOrgListOnce = async (params) => {
   return response
 }
 
+export const getManagementAttributes = async (params) => {
+  const response = await fetch.get('management/attribute', { params})
+  return response
+}
+
 export const createAttribute = async (body) => {
   const response  = await fetch.post('management/attribute', { body })
   return response

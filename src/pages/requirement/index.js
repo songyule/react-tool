@@ -1,40 +1,38 @@
-import React, { PureComponent } from 'react'
-import Title from 'components/title'
-import Table from './components/table'
-import { getRequirementList, editRequirement } from 'actions/sampling'
-import { Tabs,  Pagination, message } from 'antd'
+import React, { PureComponent } from "react"
+import Title from "components/title"
+import Table from "./components/table"
+import { getRequirementList, editRequirement } from "actions/sampling"
+import { Tabs, Pagination, message } from "antd"
 const TabPane = Tabs.TabPane
 
 export default class RequirementList extends PureComponent {
-
-  constructor () {
+  constructor() {
     super()
 
     this.state = {
-      state: '0',
+      state: "0",
       data: [],
       pagination: {
         total: 0,
         current: 1,
-        pageSize: 10,
-      },
+        pageSize: 10
+      }
     }
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.getRequirementList()
   }
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState(
       {
         state: e,
         pagination: {
-          ...
-          {
+          ...{
             total: 0,
             current: 1,
-            pageSize: 10,
+            pageSize: 10
           }
         }
       },
@@ -42,12 +40,12 @@ export default class RequirementList extends PureComponent {
     )
   }
 
-  onChange = (page) => {
+  onChange = page => {
     this.setState(
       {
         pagination: {
           ...this.state.pagination,
-          current : page
+          current: page
         }
       },
       this.getRequirementList
@@ -57,17 +55,20 @@ export default class RequirementList extends PureComponent {
   onEdit = async (id, type) => {
     const res = await editRequirement({
       id,
-      status: type === 1 ? '1' : '-1'
+      status: type === 1 ? "1" : "-1"
     })
 
     if (res.code === 200) {
-      message.success(type === 1 ? '操作成功' : '取消成功')
-      this.setState({
-        pagination: {
-          ...this.state.pagination,
-          current: 1
-        }
-      }, this.getRequirementList)
+      message.success(type === 1 ? "操作成功" : "取消成功")
+      this.setState(
+        {
+          pagination: {
+            ...this.state.pagination,
+            current: 1
+          }
+        },
+        this.getRequirementList
+      )
     }
   }
 
@@ -78,9 +79,8 @@ export default class RequirementList extends PureComponent {
     const params = {
       limit: pageSize,
       offset: (current - 1) * pageSize,
+      state
     }
-
-    if (state === '0' || state === '1') params['state'] = state
     const res = await getRequirementList(params)
 
     this.setState({
@@ -91,10 +91,10 @@ export default class RequirementList extends PureComponent {
       }
     })
 
-    document.querySelector('.scroll-mark').scrollTop = 0
+    document.querySelector(".scroll-mark").scrollTop = 0
   }
 
-  render () {
+  render() {
     const { data } = this.state
     const { total, current } = this.state.pagination
 
@@ -102,16 +102,19 @@ export default class RequirementList extends PureComponent {
       <div>
         <Title title="需求单列表" />
         <Tabs onChange={this.handleChange} type="card">
-          <TabPane tab="未完成" key="0"></TabPane>
-          <TabPane tab="全部" key="-1"></TabPane>
+          <TabPane tab="处理中" key="0"></TabPane>
+          <TabPane tab="全部" key="101"></TabPane>
           <TabPane tab="已完成" key="1"></TabPane>
+          <TabPane tab="已取消" key="-1"></TabPane>
         </Tabs>
-        <Table
-          data={data}
-          onEdit={(id, type) => this.onEdit(id, type)}
-        />
-        <div style={{textAlign: 'right', padding: '20px 0'}}>
-          <Pagination defaultCurrent={1} current={current} onChange={this.onChange} total={total} />
+        <Table data={data} onEdit={(id, type) => this.onEdit(id, type)} />
+        <div style={{ textAlign: "right", padding: "20px 0" }}>
+          <Pagination
+            defaultCurrent={1}
+            current={current}
+            onChange={this.onChange}
+            total={total}
+          />
         </div>
       </div>
     )

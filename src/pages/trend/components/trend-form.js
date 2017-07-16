@@ -169,7 +169,6 @@ export default class extends PureComponent {
         },
       },
     }
-    console.log(pages)
 
     return (
       <div style={{width: '1000px'}}>
