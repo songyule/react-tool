@@ -24,3 +24,12 @@
 .left {
   margin-left: 10px;
 }
+
+:global {
+  .ant-card-extra {
+    right: 5px;
+  }
+  .ant-card-head {
+    padding: 0 12px;
+  }
+}
