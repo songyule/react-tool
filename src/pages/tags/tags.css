@@ -2,14 +2,14 @@
   /* background: #f00; */
   display: inline-block;
   height: 300px;
-  width: 300px;
+  width: 200px;
   margin-right: 30px;
   overflow-y: scroll;
 }
 
 .tag {
   display: inline-block;
-  width: 50%;
+  width: 100%;
   margin-bottom: 10px;
 }
 
