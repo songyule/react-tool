@@ -89,6 +89,7 @@ export default class Tags extends PureComponent {
 
   openLevelOne = () => {
     this.setState({
+      isChange: false,
       visible: true,
       id: ''
     })
@@ -96,6 +97,7 @@ export default class Tags extends PureComponent {
 
   openLevelTwo = (id) => {
     this.setState({
+      isChange: false,
       visible: true,
       id
     })
@@ -138,8 +140,8 @@ export default class Tags extends PureComponent {
               title={tag.name}
               extra={
                 <div>
-                  <Button size="small" shape="circle" type="primary" icon="plus" onClick={() => this.openLevelTwo(tag.id)} style={{marginRight: '10px'}}></Button>
-                  <Button size="small" shape="circle" type="primary" ghost icon="edit" onClick={() => this.openLevelChange(tag.id, tag.name)} style={{marginRight: '10px'}} />
+                  <Button size="small" shape="circle" type="primary" icon="plus" onClick={() => this.openLevelTwo(tag.id)} style={{marginRight: '5px'}}></Button>
+                  <Button size="small" shape="circle" type="primary" ghost icon="edit" onClick={() => this.openLevelChange(tag.id, tag.name)} style={{marginRight: '5px'}} />
                   <Button size="small" shape="circle" type="danger" ghost icon="close" onClick={(e) => this.delTag(e, tag.id)} />
                 </div>
               }
