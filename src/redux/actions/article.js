@@ -22,7 +22,7 @@ export const changeArticle = async (id, body) => {
 
 // 获得tags
 export const getTags = async () => {
-  let response = await fetch.get(`/article/tag/list`)
+  let response = await fetch.get(`/article/tag/edit/list`)
   return response
 }
 
@@ -38,3 +38,17 @@ export const getUpdator = async (params) => {
   return response
 }
 
+// 新增标签
+export const addTag = async (body) => {
+  return await fetch.post(`/article/tag/edit/list`, { body })
+}
+
+// 新增标签
+export const delTag = async (id, body) => {
+  return await fetch.delete(`/article/tag/edit/single/${id}`, { body })
+}
+
+// 修改标签
+export const changeTag = async (id, body) => {
+  return await fetch.patch(`/article/tag/edit/single/${id}`, { body })
+}
