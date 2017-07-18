@@ -70,7 +70,10 @@ export default class SameForm extends PureComponent {
   // 获取标签
   getCustomTags = async () => {
     try {
-      const { data } = await getTags()
+      const { data } = await getTags({
+        limit: 10000,
+        offset: 0
+      })
       let TreeData = arrayToTree(data.article_tag, {
         parentProperty: 'parent_id',
         customID: 'id'
