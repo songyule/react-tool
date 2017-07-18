@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
 import ScopePlane from './scope-plane';
 import { Form, Input, Cascader, Button, Modal, Checkbox, Tag } from 'antd'
-import MyUpload from 'components/img-upload'
+import MyUpload from 'components/common/img-upload.js'
 // import arrayToTree from 'array-to-tree'
 import { uniqBy } from 'lodash'
 import { generateAttrTree, isRepeat } from 'utils'
