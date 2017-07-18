@@ -146,6 +146,18 @@ export default class extends Component {
             icon: 'solution'
           }
         ]
+      },
+      {
+        key: 'home',
+        title: '首页管理',
+        children: [
+          {
+            key: 'home-settings',
+            title: '首页设置',
+            router: '/main/home-settings',
+            icon: 'solution'
+          }
+        ]
       }
     ]
 
@@ -227,6 +239,7 @@ export default class extends Component {
               <Route path='/main/goods-create' component={GoodsCreate} />
               {/*打样相关 ==== */}
               <Route path='/main/requirement-list' component={RequirementList} />
+              <Route path='/main/home-settings' component={HomeSettings} />
             </div>
         </div>
       </div>
@@ -260,3 +273,4 @@ const GoodsEdit = asyncComponent(() => import('pages/commodity/edit'))
 const GoodsContentEdit = asyncComponent(() => import('pages/commodity/content-edit'))
 const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
 const RequirementList = asyncComponent(() => import('pages/requirement/index'))
+const HomeSettings = asyncComponent(() => import('pages/home/settings'))

@@ -86,3 +86,30 @@ export const editClass = async (body, id) => {
   const response = await fetch.patch(`/management/commodity_class/${id}`, { body })
   return response
 }
+
+export const setIndexConfig = (data) => async (dispatch, getState) => {
+  try {
+    const response = await fetch.post('/management/index/config', { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const getIndexConfig = (data) => async (dispatch, getState) => {
+  try {
+    const response = await fetch.get('/management/index/config', { params: data })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const updateIndexConfig = (id, data) => async (dispatch, getState) => {
+  try {
+    const response = await fetch.patch(`/management/index/config/${id}`, { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error ', error)
+  }
+}
