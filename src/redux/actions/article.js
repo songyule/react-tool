@@ -21,8 +21,8 @@ export const changeArticle = async (id, body) => {
 }
 
 // 获得tags
-export const getTags = async () => {
-  let response = await fetch.get(`/article/tag/edit/list`)
+export const getTags = async (params) => {
+  let response = await fetch.get(`/article/tag/edit/list`, { params })
   return response
 }
 

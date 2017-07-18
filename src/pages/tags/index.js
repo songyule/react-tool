@@ -102,7 +102,10 @@ export default class Tags extends PureComponent {
   }
 
   getTags = () => {
-    getTags().then(res => {
+    getTags({
+      limit: 10000,
+      offset: 0
+    }).then(res => {
       let TreeData = arrayToTree(res.data.article_tag, {
         parentProperty: 'parent_id',
         customID: 'id'
@@ -135,8 +138,9 @@ export default class Tags extends PureComponent {
               title={tag.name}
               extra={
                 <div>
-                  <Button icon="edit" onClick={() => this.openLevelChange(tag.id, tag.name)} style={{marginRight: '10px'}} />
-                  <Button type="danger" icon="close" onClick={(e) => this.delTag(e, tag.id)} />
+                  <Button size="small" shape="circle" type="primary" icon="plus" onClick={() => this.openLevelTwo(tag.id)} style={{marginRight: '10px'}}></Button>
+                  <Button size="small" shape="circle" type="primary" ghost icon="edit" onClick={() => this.openLevelChange(tag.id, tag.name)} style={{marginRight: '10px'}} />
+                  <Button size="small" shape="circle" type="danger" ghost icon="close" onClick={(e) => this.delTag(e, tag.id)} />
                 </div>
               }
             >
@@ -150,7 +154,6 @@ export default class Tags extends PureComponent {
                   </div>
                 ))
               }
-              <Button type="primary" onClick={() => this.openLevelTwo(tag.id)}>新增<Icon type="plus"></Icon></Button>
             </Card>
           ))
         }
