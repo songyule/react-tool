@@ -60,9 +60,11 @@ export default class AccountList extends PureComponent {
     this.setState({
       search: {
         ...this.state.search,
-        type: e
+        type: e,
+        content: ''
       }
     })
+    document.querySelector('.ant-input-search').value = ''
   }
 
   onSearch = (value) => {
@@ -184,6 +186,8 @@ export default class AccountList extends PureComponent {
         <Option value="mobile">手机号
         </Option>
         <Option value="org_name_official">组织名称
+        </Option>
+        <Option value="name_cn">用户名
         </Option>
       </Select>
     )

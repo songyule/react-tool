@@ -99,8 +99,9 @@ class CommodityList extends PureComponent {
 
   changeCondition = (value) => {
     this.setState({
-      spu: { ...this.state.spu, condition: value }
+      spu: { ...this.state.spu, condition: value, kw: '' }
     })
+    document.querySelector('.ant-input-search').value = ''
   }
 
   handleSearch = (value) => {

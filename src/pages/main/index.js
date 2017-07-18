@@ -61,6 +61,12 @@ export default class extends Component {
             title: '趋势文章',
             router: '/main/trend',
             icon: 'area-chart'
+          },
+          {
+            key: '/main/tags',
+            title: '文章标签管理',
+            router: '/main/tags',
+            icon: 'tag'
           }
         ]
       },
@@ -207,6 +213,7 @@ export default class extends Component {
               <Route path='/main/edit-topic/:id' component={editTopic}/>
               <Route path='/main/add-trend' component={addTrend}/>
               <Route path='/main/edit-trend/:id' component={editTrend}/>
+              <Route path='/main/tags' component={Tags}/>
               {/*文章相关 <=== */}
               <Route path='/main/account-list' component={AccountList} />
               <Route path='/main/account-create' component={AccountCreate} />
@@ -240,6 +247,7 @@ const Topic = asyncComponent(() => import ('pages/topic/index'))
 const Trend = asyncComponent(() => import ('pages/trend/index'))
 const addTopic = asyncComponent(() => import ('pages/topic/add-topic'))
 const editTopic = asyncComponent(() => import ('pages/topic/edit-topic'))
+const Tags = asyncComponent(() => import ('pages/tags/index'))
 const addTrend = asyncComponent(() => import ('pages/trend/add-trend'))
 const AccountList = asyncComponent(() => import ('pages/account/index'))
 const AccountCreate = asyncComponent(() => import ('pages/account/create'))

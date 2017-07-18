@@ -15,6 +15,7 @@
     margin-bottom: 10px;
   }
   .orgCard {
+    cursor: pointer;
     display: flex;
     .orgImg {
       margin-right: 10px;
@@ -26,6 +27,7 @@
       height: 60px;
     }
     p {
+      min-width: 150px;
       overflow: hidden;
       text-overflow:ellipsis;
       white-space: nowrap;

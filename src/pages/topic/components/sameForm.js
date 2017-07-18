@@ -70,16 +70,19 @@ export default class SameForm extends PureComponent {
   // 获取标签
   getCustomTags = async () => {
     try {
-      const { data } = await getTags()
-      let TreeData = arrayToTree(data, {
+      const { data } = await getTags({
+        limit: 10000,
+        offset: 0
+      })
+      let TreeData = arrayToTree(data.article_tag, {
         parentProperty: 'parent_id',
         customID: 'id'
       })
-      TreeData.map(item => {
+      TreeData && TreeData.map(item => {
         item.label = item.name
         item.key = item.id
         item.value = item.id
-        item.children.map(res => {
+        item.children && item.children.map(res => {
           res.label = res.name
           res.key = res.id
           res.value = res.id
@@ -93,7 +96,6 @@ export default class SameForm extends PureComponent {
     } catch (error) {
       console.log(error)
     }
-
   }
 
   changeE = (e) => {
@@ -129,7 +131,6 @@ export default class SameForm extends PureComponent {
         sm: { span: 22 },
       },
     }
-
     const tProps = {
       treeData: this.state.TreeData,
       value: this.state.tags,

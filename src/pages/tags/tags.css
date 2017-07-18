@@ -1,0 +1,35 @@
+.what {
+  /* background: #f00; */
+  display: inline-block;
+  height: 300px;
+  width: 200px;
+  margin-right: 30px;
+  overflow-y: scroll;
+}
+
+.tag {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.edit {
+  margin-left: 3px;
+  display: inline-block;
+  &:hover {
+    color: #49a9ee;
+  }
+}
+
+.left {
+  margin-left: 10px;
+}
+
+:global {
+  .ant-card-extra {
+    right: 5px;
+  }
+  .ant-card-head {
+    padding: 0 12px;
+  }
+}
