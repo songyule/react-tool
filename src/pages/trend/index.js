@@ -72,9 +72,11 @@ export default class extends PureComponent {
     this.setState({
       search: {
         ...this.state.search,
-        type: e
+        type: e,
+        content: ''
       }
     })
+    document.querySelector('.ant-input-search').value = ''
   }
 
   // 修改页码
