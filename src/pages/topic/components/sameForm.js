@@ -78,11 +78,11 @@ export default class SameForm extends PureComponent {
         parentProperty: 'parent_id',
         customID: 'id'
       })
-      TreeData.map(item => {
+      TreeData && TreeData.map(item => {
         item.label = item.name
         item.key = item.id
         item.value = item.id
-        item.children.map(res => {
+        item.children && item.children.map(res => {
           res.label = res.name
           res.key = res.id
           res.value = res.id
@@ -96,7 +96,6 @@ export default class SameForm extends PureComponent {
     } catch (error) {
       console.log(error)
     }
-
   }
 
   changeE = (e) => {
