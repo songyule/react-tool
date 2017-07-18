@@ -60,9 +60,11 @@ export default class AccountList extends PureComponent {
     this.setState({
       search: {
         ...this.state.search,
-        type: e
+        type: e,
+        content: ''
       }
     })
+    document.querySelector('.ant-input-search').value = ''
   }
 
   onSearch = (value) => {
