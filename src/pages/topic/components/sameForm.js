@@ -71,7 +71,7 @@ export default class SameForm extends PureComponent {
   getCustomTags = async () => {
     try {
       const { data } = await getTags()
-      let TreeData = arrayToTree(data, {
+      let TreeData = arrayToTree(data.article_tag, {
         parentProperty: 'parent_id',
         customID: 'id'
       })
@@ -129,7 +129,6 @@ export default class SameForm extends PureComponent {
         sm: { span: 22 },
       },
     }
-
     const tProps = {
       treeData: this.state.TreeData,
       value: this.state.tags,
