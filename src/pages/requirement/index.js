@@ -41,6 +41,10 @@ export default class RequirementList extends PureComponent {
   }
 
   onChange = page => {
+    this.handleCommonChange(page)
+  }
+
+  handleCommonChange (page) {
     this.setState(
       {
         pagination: {
@@ -60,15 +64,7 @@ export default class RequirementList extends PureComponent {
 
     if (res.code === 200) {
       message.success(type === 1 ? "操作成功" : "取消成功")
-      this.setState(
-        {
-          pagination: {
-            ...this.state.pagination,
-            current: 1
-          }
-        },
-        this.getRequirementList
-      )
+      this.handleCommonChange(1)
     }
   }
 
@@ -91,7 +87,7 @@ export default class RequirementList extends PureComponent {
       }
     })
 
-    document.querySelector(".scroll-mark").scrollTop = 0
+    window.scrollTo(0, 0)
   }
 
   render() {

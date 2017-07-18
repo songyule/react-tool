@@ -185,6 +185,8 @@ export default class AccountList extends PureComponent {
         </Option>
         <Option value="org_name_official">组织名称
         </Option>
+        <Option value="name_cn">用户名
+        </Option>
       </Select>
     )
 
