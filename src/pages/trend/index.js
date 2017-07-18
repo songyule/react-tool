@@ -128,7 +128,7 @@ export default class extends PureComponent {
     confirm({
       content: '确定要删除这篇文章吗？',
       onOk: async () => {
-        let trend = val.trend_image.map(item => {
+        let trend = val.trend_image && val.trend_image.map(item => {
           return ({
             trend_image: item.trend_image,
             rank_order: item.rank_order,
