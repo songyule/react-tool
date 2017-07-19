@@ -37,8 +37,9 @@ export default class AccountForm extends PureComponent {
   componentWillReceiveProps (nextProps) {
     if (nextProps.resetForm) {
       this.props.form.resetFields()
+      console.log(!this.props.isPersonal)
       this.setState({
-        showOrgList: !!(this.props.isPersonal || this.props.orgId !== '9e761a02f5d74d3494395a3e46c824e7')
+        showOrgList: !!(!this.props.isPersonal && !!(this.props.orgId && (this.props.orgId !== '9e761a02f5d74d3494395a3e46c824e7')))
       })
     }
   }
