@@ -5,6 +5,7 @@ import * as commodityActions from 'actions/commodity';
 import { Table, Input, Select, Menu, Cascader, Icon } from 'antd'
 import { showClasses, showPrice, showShelvesStatus } from 'utils'
 import LazyImage from 'lazyimage'
+import style from './topic-form.css'
 
 const Option = Select.Option
 const Search = Input.Search
@@ -41,7 +42,7 @@ export default class extends PureComponent {
         status: '',
         check_status: '',
         currentPage: 1,
-        pageSize: 5,
+        pageSize: 8,
         total: 0
       },
       list: [],
@@ -153,45 +154,53 @@ export default class extends PureComponent {
     ]
   }
 
-loadData = async (selectedOptions) => {
-  const targetOption = selectedOptions[selectedOptions.length - 1]
-  targetOption.loading = true
+  // 删除选中商品
+  closeGoods = (index) => {
+    let objs = this.state.selectedRowObjs
+    let keys = this.state.selectedRowKeys
+    objs.splice(index, 1)
+    keys.splice(index, 1)
+    this.setState({
+      selectedRowObjs: [...objs],
+      selectedRowKeys: [...keys]
+    })
+  }
+  // 异步加载数据
+  loadData = async (selectedOptions) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1]
+    targetOption.loading = true
 
-  const current_classes = this.state.classes
-  // console.log(selectedOptions[0].id)
-  const res = await this.props.getClassesInArticle({parent_id: targetOption.id})
-  targetOption.loading = false
-  let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
-  classes = classes.map(item => {
-    item = { ...item, value: item.id, label: item.name_cn }
-    return item
-  })
-  classes.forEach(item => {
-    item.disabled = item.status !== 1
-    item.isLeaf = true
-  })
-  current_classes.forEach(item => {
-    if (item.id !== targetOption.id) return
-    if (classes.length) {
-      item.children = classes
-    } else {
+    const current_classes = this.state.classes
+
+    const res = await this.props.getClassesInArticle({parent_id: targetOption.id})
+    targetOption.loading = false
+    let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
+    classes = classes.map(item => {
+      item = { ...item, value: item.id, label: item.name_cn }
+      return item
+    })
+    classes.forEach(item => {
+      item.disabled = item.status !== 1
       item.isLeaf = true
-    }
-  })
-  // const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
-  // matchClass.parent_id = null
-  // console.log(arrayToTree(classes)[0])
-  // console.log(classes)
-  this.setState({
-    classes: [...current_classes]
-  })
+    })
+    current_classes.forEach(item => {
+      if (item.id !== targetOption.id) return
+      if (classes.length) {
+        item.children = classes
+      } else {
+        item.isLeaf = true
+      }
+    })
 
-}
+    this.setState({
+      classes: [...current_classes]
+    })
+
+  }
 
   getClasses = async () => {
     const res = await this.props.getClassesInArticle({level: 1})
     let classes = res.data.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
-    console.log(classes)
     classes = classes.map(item => {
       item = { ...item, value: item.id, label: item.name_cn }
       return item
@@ -202,12 +211,10 @@ loadData = async (selectedOptions) => {
     })
     const matchClass = classes.filter(item => item.parent_id === -1)[0] || {}
     matchClass.parent_id = null
-    // console.log(arrayToTree(classes)[0])
-    // console.log(classes)
+
     this.setState({
       classes: classes
     })
-    // console.log(arrayToTree(classes)[0].children)
   }
 
   pageChange = (value) => {
@@ -215,6 +222,7 @@ loadData = async (selectedOptions) => {
       beforeChangePageSelectedRowObjs: this.state.selectedRowObjs,
       spu: {...this.state.spu, currentPage: value }
     }, () => {
+      document.querySelector('.ant-modal-wrap').scrollTop = 0
       this.getGoodsData()
     })
   }
@@ -232,6 +240,7 @@ loadData = async (selectedOptions) => {
     this.setState({
       spu: {...this.state.spu, class_id: '' },
       selectedRowKeys: [],
+      selectedRowObjs: [],
       beforeChangePageSelectedRowObjs: []
     })
   }
@@ -254,32 +263,45 @@ loadData = async (selectedOptions) => {
 
   onSelectChange = (selectedRowKeys, selectedRowObjs) => {
     const { beforeChangePageSelectedRowObjs } = this.state
-    // console.log(selectedRowKeys, selectedRowObjs)
     let obj = beforeChangePageSelectedRowObjs.length ? [...beforeChangePageSelectedRowObjs, ...selectedRowObjs] : selectedRowObjs
     this.setState({ selectedRowKeys, selectedRowObjs: obj })
   }
 
   componentWillMount () {
-    // this.getGoodsData()
     this.getClasses()
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(123)
-  //   // this.getGoodsData()
-  // }
-
   render () {
-    const { selectedRowKeys } =this.state
+    const { selectedRowKeys, selectedRowObjs } =this.state
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
     }
-
     return (
       <div className="page_goods-list">
-        <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
+        <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch} style={{marginBottom: '10px'}}/>
         <Table rowKey="id" rowSelection={rowSelection} columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
+        <div>
+          {
+            selectedRowObjs.length ? (
+              <div>
+                <h2>已选商品</h2>
+                <div className={style['goods-wrapper']}>
+                  {
+                    selectedRowObjs.map((obj,index) => (
+                      <div className={style.item} key={index}>
+                        <Icon type="close-circle" onClick={() => this.closeGoods(index)} className={style.item__close} />
+                        <img className={style.item__img} src={obj.image_url} alt=""/>
+                        <p  className={style.item__name}>{obj.name_cn}</p>
+                        <p  className={style.item__price}>{showPrice(obj.sku)}</p>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            ) : null
+          }
+        </div>
       </div>
     )
   }

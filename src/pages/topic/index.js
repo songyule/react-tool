@@ -3,6 +3,8 @@ import Title from 'components/title'
 import { Input, Table, Button, Switch, Select, Modal, message, Menu, Tag } from 'antd'
 import { Link } from 'react-router-dom'
 import { getArticles, changeArticle, getUpdator } from 'actions/article'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import { PC_URL } from 'api/config'
 
 import { format } from 'utils'
 const ButtonGroup = Button.Group
@@ -246,8 +248,13 @@ export default class extends PureComponent {
       render: (text, record) => (
         <span>
           <ButtonGroup>
-            <Button type="primary" onClick={() => this.props.history.push(`/main/edit-topic/${record.id}`)}>编辑</Button>
-            <Button type="danger" onClick={() => this.showConfirm(record)}>删除</Button>
+            <Button type="primary" size="small" onClick={() => this.props.history.push(`/main/edit-topic/${record.id}`)}>编辑</Button>
+            <Button type="danger" size="small" ghost onClick={() => this.showConfirm(record)}>删除</Button>
+            <Button type="primary" size="small" ghost>
+              <CopyToClipboard text={`${PC_URL}/topic-detail/${record.id}`}>
+                <span>复制链接</span>
+              </CopyToClipboard>
+            </Button>
           </ButtonGroup>
         </span>
       ),

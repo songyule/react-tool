@@ -44,12 +44,11 @@ export default class AddGoods extends PureComponent {
   handleOk = (e) => {
     let instant = this.refs.goods.wrappedInstance
     instant.clear()
-
     let arr = [...this.state.selectedRowObjs, ...instant.state.selectedRowObjs]
-
+    this.clear()
     this.setState({
       visible: false,
-      selectedRowObjs: arr
+      selectedRowObjs: []
     })
     this.props.onChange(arr)
   }
@@ -59,8 +58,12 @@ export default class AddGoods extends PureComponent {
     let instant = this.refs.goods.wrappedInstance
 
     instant.clear()
+    this.clear()
 
-    this.setState({ visible: false })
+    this.setState({
+      visible: false,
+      selectedRowObjs: []
+    })
   }
 
   showModal = () => {
