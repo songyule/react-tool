@@ -89,7 +89,7 @@ export default class AccountForm extends PureComponent {
                 {getFieldDecorator('type', { initialValue: 'a' })(
                   <RadioGroup disabled={disabled} onChange={this.onRadioChange}>
                     <Radio value="a">辅料易账号</Radio>
-                    <Radio value="b">客服账号</Radio>
+                    <Radio value="b">客户账号</Radio>
                   </RadioGroup>
                 )}
               </FormItem>
