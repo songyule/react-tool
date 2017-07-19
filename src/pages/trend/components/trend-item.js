@@ -56,8 +56,7 @@ export default class extends PureComponent {
 
   clickOkModal = () => {
     const { fileList, selectedRowObjs } = this.state
-    this.props.isAdd && this.refs.addGoods.clear()
-    console.log(123, this.props.isAdd)
+    // this.props.isAdd && this.refs.addGoods.clear()
 
     this.hideModal()
     this.props.onChange(fileList, selectedRowObjs)

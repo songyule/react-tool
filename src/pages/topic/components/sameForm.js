@@ -82,12 +82,17 @@ export default class SameForm extends PureComponent {
         item.label = item.name
         item.key = item.id
         item.value = item.id
-        item.children && item.children.map(res => {
-          res.label = res.name
-          res.key = res.id
-          res.value = res.id
-          return res
-        })
+
+        if (item.children) {
+          item.children.map(res => {
+            res.label = res.name
+            res.key = res.id
+            res.value = res.id
+            return res
+          })
+        } else {
+          item.disabled = true
+        }
         return item
       })
       this.setState({
@@ -111,7 +116,7 @@ export default class SameForm extends PureComponent {
     let left = value.filter(item => allClass.indexOf(item) === -1)
     let existed = value.filter(item => allClass.indexOf(item) > -1)
     existed.forEach(item => {
-      data.filter(val => (val.id === item)).map(val => val.children.map(val => twoClass.push(val.id)))
+      data.filter(val => (val.id === item)).map(val => val.children && val.children.map(val => twoClass.push(val.id)))
     })
     this.setState({ tags: [...twoClass, ...left] })
   }

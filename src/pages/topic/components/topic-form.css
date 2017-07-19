@@ -16,7 +16,7 @@
 .goods-wrapper {
   display: flex;
   flex-wrap: wrap;
-  width: 760px;
+  max-width: 760px;
   padding: 20px;
   background: #eee;
 }
@@ -24,16 +24,20 @@
 .item {
   background: #fff;
   text-align: center;
-  width: 150px;
-  margin: 0 20px 20px 0;
+  width: 140px;
+  margin: 0 10px 10px 0;
   padding: 5px 10px;
   position: relative;
+  &:hover {
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  }
 
   &__close {
     position: absolute;
     right: 10px;
     top: 10px;
     font-size: 18px;
+    cursor: pointer;
   }
 
 
@@ -52,7 +56,7 @@
   }
 
   &__img {
-    height: 100px;
-    width: 100px;
+    height: 120px;
+    width: 120px;
   }
 }
