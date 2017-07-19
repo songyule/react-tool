@@ -28,7 +28,6 @@ export default class AddGoods extends PureComponent {
   }
 
   componentWillReceiveProps (e) {
-    console.log(4)
     this.setState({
       selectedRowObjs: e.selectedRowObjs || []
     })
@@ -83,8 +82,7 @@ export default class AddGoods extends PureComponent {
 
   render() {
     const { selectedRowObjs } = this.state
-    console.log(selectedRowObjs)
-    // console.log(selectedRowObjs)
+
     return (
       <div>
         <Button type="primary" size="small" onClick={this.showModal}><h6>添加商品</h6></Button>
