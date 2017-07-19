@@ -4,7 +4,7 @@ import { isEmptyObject } from 'utils/index'
 import AccountForm from './form'
 import History from './history'
 import { connect } from 'react-redux'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { editUser } from 'actions/user'
 import './edit.css'
 const ButtonGrop = Button.Group
@@ -19,12 +19,16 @@ export default class EditAccount extends PureComponent {
     super()
     this.state = {
       disabled: true,
-      user: []
+      user: [],
+      resetForm: false
     }
   }
 
   handleEdit () {
-    this.setState({ disabled: false })
+    this.setState({
+      disabled: false,
+      resetForm: false
+    })
   }
 
   handleSave () {
@@ -45,6 +49,7 @@ export default class EditAccount extends PureComponent {
       const res = await editUser(params, id)
 
       if (res.code === 200) {
+        message.success('保存成功')
         this.setState({ disabled: true })
       }
     })
@@ -52,30 +57,32 @@ export default class EditAccount extends PureComponent {
   }
 
   handleCancel () {
-    this.setState({ disabled: true })
+    this.setState({
+      disabled: true,
+      resetForm: true,
+    })
   }
 
   render () {
-    const { id, name_cn, mobile, mail, status, role, org } = this.props.location.state
-    const { disabled } = this.state
+    const { id, name_cn, mobile, mail, status, role, org, org_id } = this.props.location.state
+    const { disabled, resetForm } = this.state
 
     return (
       <div>
-
-      <Title title={name_cn} >
-        <div className="right-button-box">
-          {
-            disabled
-              ? <Button type="primary" onClick={::this.handleEdit}> 编辑 </Button>
-              : (
-                <ButtonGrop>
-                  <Button type="primary" onClick={::this.handleSave}> 保存 </Button>
-                  <Button onClick={::this.handleCancel}> 取消 </Button>
-                </ButtonGrop>
-              )
-          }
-        </div>
-      </Title>
+        <Title title={name_cn} >
+          <div className="right-button-box">
+            {
+              disabled
+                ? <Button type="primary" onClick={::this.handleEdit}> 编辑 </Button>
+                : (
+                  <ButtonGrop>
+                    <Button type="primary" onClick={::this.handleSave}> 保存 </Button>
+                    <Button onClick={::this.handleCancel}> 取消 </Button>
+                  </ButtonGrop>
+                )
+            }
+          </div>
+        </Title>
         <AccountForm
           id={id}
           userName={name_cn}
@@ -84,7 +91,9 @@ export default class EditAccount extends PureComponent {
           status={!!(status === 1)}
           disabled={disabled}
           role={role}
+          resetForm={resetForm}
           isPersonal={isEmptyObject(org)}
+          orgId={org_id}
           ref={(ref) => {this.accountForm = ref}}
         />
         <Title title="登录历史">

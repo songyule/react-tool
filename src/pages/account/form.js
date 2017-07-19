@@ -34,6 +34,15 @@ export default class AccountForm extends PureComponent {
     }
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.resetForm) {
+      this.props.form.resetFields()
+      this.setState({
+        showOrgList: !!(this.props.isPersonal || this.props.orgId !== '9e761a02f5d74d3494395a3e46c824e7')
+      })
+    }
+  }
+
   onRadioChange = (e) => {
     this.setState({ showOrgList: e.target.value === 'b' })
   }
@@ -84,16 +93,22 @@ export default class AccountForm extends PureComponent {
                 </Col>
               )
             }
-            <Col span={12}>
-              <FormItem {...formItemLayout} label="账号类型">
-                {getFieldDecorator('type', { initialValue: 'a' })(
-                  <RadioGroup disabled={disabled} onChange={this.onRadioChange}>
-                    <Radio value="a">辅料易账号</Radio>
-                    <Radio value="b">客户账号</Radio>
-                  </RadioGroup>
-                )}
-              </FormItem>
-            </Col>
+            {
+              !isPersonal
+                ? (
+                  <Col span={12}>
+                    <FormItem {...formItemLayout} label="账号类型">
+                      {getFieldDecorator('type', { initialValue: 'a' })(
+                        <RadioGroup disabled={disabled} onChange={this.onRadioChange}>
+                          <Radio value="a">辅料易账号</Radio>
+                          <Radio value="b">客户账号</Radio>
+                        </RadioGroup>
+                      )}
+                    </FormItem>
+                  </Col>
+                )
+                : null
+            }
             <Col span={12}>
               <FormItem {...formItemLayout} label="状态">
                 {getFieldDecorator('status',{ initialValue: status, valuePropName: 'checked' })(
