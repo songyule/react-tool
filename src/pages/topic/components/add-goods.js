@@ -45,7 +45,7 @@ export default class AddGoods extends PureComponent {
     let instant = this.refs.goods.wrappedInstance
     instant.clear()
     let arr = [...this.state.selectedRowObjs, ...instant.state.selectedRowObjs]
-    this.clear()
+    // this.clear()
     this.setState({
       visible: false,
       selectedRowObjs: []
@@ -56,13 +56,9 @@ export default class AddGoods extends PureComponent {
   // dialog 点击取消
   handleCancel = (e) => {
     let instant = this.refs.goods.wrappedInstance
-
     instant.clear()
-    this.clear()
-
     this.setState({
       visible: false,
-      selectedRowObjs: []
     })
   }
 
@@ -87,7 +83,6 @@ export default class AddGoods extends PureComponent {
   render() {
     const { selectedRowObjs } = this.state
 
-    // console.log(selectedRowObjs)
     return (
       <div>
         <Button type="primary" size="small" onClick={this.showModal}><h6>添加商品</h6></Button>
