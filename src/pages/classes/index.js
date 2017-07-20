@@ -17,22 +17,12 @@ import { Button } from 'antd'
 
 export default class Classes extends PureComponent {
 
-  static childContextTypes = {
-    ref: PropTypes.object
-  }
-
   constructor () {
     super()
 
     this.state = {
       editable: false,
       reRender: true
-    }
-  }
-
-  getChildContext () {
-    return {
-      ref: this.props
     }
   }
 
@@ -66,18 +56,22 @@ export default class Classes extends PureComponent {
   }
 
   getClassesList = async () => {
-    const res = await commodityActions.getClassesForClasses()
-    console.log(res)
-    const { data } = await commodityActions.getAttributesList()
+    const [
+      { data: CLASSES_DATA },
+      { data: ATTRIBUTES_DATA }
+    ] = await Promise.all([
+      commodityActions.getClassesForClasses(),
+      commodityActions.getAttributesList()
+    ])
     this.setState({
-      data: [...[this.format(res.data)]],
-      attributesList: data,
+      classesList: [...[this.format(CLASSES_DATA)]],
+      attributesList: ATTRIBUTES_DATA,
       reRender: true
     })
   }
 
   render () {
-    const { data, editable, reRender, attributesList } = this.state
+    const { classesList, editable, reRender, attributesList } = this.state
 
     return (
       <div>
@@ -92,7 +86,7 @@ export default class Classes extends PureComponent {
         </Title>
         <div className={style['view']}>
           <ClassesTree
-            treeData={data}
+            treeData={classesList}
             editable={editable}
             reRender={reRender}
             attributesList={attributesList}

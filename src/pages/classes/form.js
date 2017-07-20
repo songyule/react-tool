@@ -22,12 +22,6 @@ export default class ClassesForm extends PureComponent {
     attributesList: PropTypes.array
   }
 
-  componentWillMount () {
-    if (this.props.rewrite.image_url) {
-      this.setImgBack(this.props.rewrite.image_url)
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.rewrite.image_url) {
       this.setImgBack(nextProps.rewrite.image_url)
@@ -59,12 +53,10 @@ export default class ClassesForm extends PureComponent {
     const { getFieldDecorator } = this.props.form
     const { attributesList, isRoot, seletedData } = this.props
     const { name_cn, weight, status } = this.props.rewrite
-
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 }
     }
-
 
     const loop = data => data.map((item) => {
      if (item.children) {
