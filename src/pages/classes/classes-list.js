@@ -46,15 +46,9 @@ export default class ClassesList extends PureComponent {
     attr: PropTypes.object
   }
 
-  componentWillReceiveProps (nextProps) {
-    console.log(nextProps)
-    this.setState({ })
-  }
-
   handleClick (attr, idx) {
     this.setState({ current: attr })
     if (attr.active) return
-    // this.props.getCurrentAttriburteDetail(attr)
     this.props.treeRender(attr, attr.children || attr, idx)
   }
 
@@ -70,7 +64,6 @@ export default class ClassesList extends PureComponent {
 
   handleAdd = (e, level, attr) => {
     e.stopPropagation()
-    console.log(level, attr)
     this.setState({
       visible: true,
       isCreate: true,
@@ -81,7 +74,7 @@ export default class ClassesList extends PureComponent {
 
   handleEdit = async (e, level, attr) => {
     e.stopPropagation()
-
+    console.log('列表点击编辑事件所获得的当前attr 并更改state 用于form的props', attr)
     const { data } = await getAttributesOfClass({
       class_id: attr.id,
       with_offspring: 0
@@ -173,7 +166,6 @@ export default class ClassesList extends PureComponent {
   getParams (fieldsValue) {
     const { isRoot, id } = this.state
     const { name, isShow, weight, img } = fieldsValue
-    console.log(fieldsValue)
 
     const params = {
       name_cn: name,
@@ -259,14 +251,20 @@ export default class ClassesList extends PureComponent {
           onCancel={this.handleCancel}
           onOk={isCreate ? this.handleOk : this.handleEditOk}
         >
-          <ClassesForm
-            ref={(ref) => {this.classesForm = ref}}
-            isCreate={isCreate}
-            isRoot={isRoot}
-            attributesList={attributesList}
-            rewrite={attrEdit}
-            seletedData={seletedData}
-          />
+          {
+            visible
+              ? (
+                <ClassesForm
+                  ref={(ref) => {this.classesForm = ref}}
+                  isCreate={isCreate}
+                  isRoot={isRoot}
+                  attributesList={attributesList}
+                  rewrite={attrEdit}
+                  seletedData={seletedData}
+                />
+              )
+              : null
+          }
         </Modal>
 
         <Modal
