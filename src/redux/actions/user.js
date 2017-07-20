@@ -13,7 +13,7 @@ export const sendVerify = (data) => async (dispatch, getState) => {
 
 export const login = (data) => async (dispatch, getState) => {
   try {
-    let response = await fetch.post('/user/login', {
+    let response = await fetch.post('/user/fly/login', {
       headers: { 'Content-Type': 'application/json'
     }, body: data })
     if (response) dispatch({ type: 'LOGIN_SUCCESS', user: response.data })
