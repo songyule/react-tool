@@ -12,14 +12,14 @@ const FormItem = Form.Item
 const { RangePicker } = DatePicker;
 
 const numberObj = {
-  pc_index_top_banner: 1,
+  pc_index_top_banner: -1,
   pc_index_top_topic: 4,
   pc_index_latest_trends: 3,
   pc_index_category_trend_1: 3,
   pc_index_category_trend_2: 3,
   pc_index_category_trend_3: 4,
   pc_index_category_trend_4: 4,
-  pc_index_recommend_product: 1
+  pc_index_recommend_product: -1
 }
 
 const indexObj = {}
@@ -185,15 +185,21 @@ class HomeSettings extends Component {
   }
 
   componentWillMount = () => {
-    this.props.getIndexConfig({ section_code: ['pc_index_top_banner', 'pc_index_latest_trends', 'pc_index_top_topic', 'pc_index_category_trend_1', 'pc_index_category_trend_2', 'pc_index_category_trend_3', 'pc_index_category_trend_4', 'pc_index_recommend_product'] }).then(res => {
+    this.props.getIndexConfig({ section_code: ['pc_index_top_banner', 'pc_index_latest_trends', 'pc_index_top_topic', 'pc_index_category_trend_1', 'pc_index_category_trend_2', 'pc_index_category_trend_3', 'pc_index_category_trend_4', 'pc_index_recommend_product'], limit: 9999 }).then(res => {
       const groupObj = groupBy(res.data.index_config, 'section_code')
 
       Object.keys(numberObj).forEach(key => {
         if (!groupObj[key]) groupObj[key] = []
-        let count = indexObj[key].length
-        while (count--) {
-          const matchObj = find(groupObj[key], { weight: count+1 })
-          if (matchObj) indexObj[key][count] = find(groupObj[key], { weight: count+1 })
+        let count = numberObj[key]
+        if (count === -1) {
+          indexObj[key] = groupObj[key]
+        } else {
+          const list = []
+          while (count--) {
+            const matchObj = find(groupObj[key], { 'weight': count + 1 })
+            list[count] = matchObj ? {...matchObj} : {...indexObj[key][count]}
+          }
+          indexObj[key] = list
         }
       })
       this.setState({
@@ -265,7 +271,7 @@ class HomeSettings extends Component {
                   { index === 0 && <div className="topic__list-item-square--first"></div> }
                   { index === 2 && <div className="topic__list-item-square--third"></div> }
                   <div className="home-box__image-edit" onClick={() => this.editImage('pc_index_top_topic', index)}>
-                  { this.state.indexObj.pc_index_top_topic[index].image_url ? <img src={this.state.indexObj.pc_index_top_topic[0].image_url} alt=""/> : '+'}
+                  { this.state.indexObj.pc_index_top_topic[index].image_url ? <img src={this.state.indexObj.pc_index_top_topic[index].image_url} alt=""/> : '+'}
                   </div>
                 </li>
               )) }

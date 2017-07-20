@@ -51,6 +51,11 @@
     border: 1px dashed #ccc;
     font-size: 30px;
     cursor: pointer;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+    }
   }
   .home-box--latest .home-box__content-left {
     margin-right: 20px;
