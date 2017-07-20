@@ -7,7 +7,7 @@ import SkuForm from './components/sku-form'
 import { emptySpu } from './model'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { groupBy, find, findIndex } from 'lodash'
+import { groupBy, find, findIndex, uniqBy } from 'lodash'
 import { toRemoteSku, toRemoteSpu, toLocalSpu, toLocalSku } from 'utils'
 import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
@@ -104,10 +104,11 @@ class CommodityEdit extends Component {
     })
     this.props.getSkuList(this.props.match.params.id).then(res => {
       const skus = res.data.map(toLocalSku)
-      const attributes = []
+      let attributes = []
       skus.forEach(sku => {
         attributes.push(...sku.attributes)
       })
+      attributes = uniqBy(attributes, 'id')
       const groupAttributes = groupBy(attributes, 'lv2_id')
       const skuAttributes = []
       Object.keys(groupAttributes).forEach(key => {
