@@ -44,6 +44,11 @@
   .home__recommended-item {
     width: 250px;
     height: 330px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+    }
   }
   .home-box__content-box {
     overflow: hidden;
