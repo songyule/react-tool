@@ -125,6 +125,8 @@ class HomeSettings extends Component {
       weight: editObj.weight,
       active_at: +new Date(editObj.time[0]) * 0.001,
       deactive_at: +new Date(editObj.time[1]) * 0.001
+    }).then(res => {
+      this.renderData()
     })
   }
 
@@ -140,6 +142,8 @@ class HomeSettings extends Component {
       weight: editObj.weight,
       active_at: +new Date(editObj.time[0]) * 0.001,
       deactive_at: +new Date(editObj.time[1]) * 0.001
+    }).then(res => {
+      this.renderData()
     })
   }
 
@@ -184,7 +188,7 @@ class HomeSettings extends Component {
     })
   }
 
-  componentWillMount = () => {
+  renderData = () => {
     this.props.getIndexConfig({ section_code: ['pc_index_top_banner', 'pc_index_latest_trends', 'pc_index_top_topic', 'pc_index_category_trend_1', 'pc_index_category_trend_2', 'pc_index_category_trend_3', 'pc_index_category_trend_4', 'pc_index_recommend_product'], limit: 9999 }).then(res => {
       const groupObj = groupBy(res.data.index_config, 'section_code')
 
@@ -206,6 +210,10 @@ class HomeSettings extends Component {
         indexObj
       })
     })
+  }
+
+  componentWillMount = () => {
+    this.renderData()
   }
 
   render () {
@@ -245,7 +253,7 @@ class HomeSettings extends Component {
             { this.state.indexObj.pc_index_top_banner.map((item, index) => (
             <div>
               <div className="home__banner-item" onClick={() => this.editImage('pc_index_top_banner', index)}>
-                <img src={item.image_url}/>
+                <div className="banner__carousel-slide-content" style={{ backgroundImage: `url(${item.image_url})` }}></div>
               </div>
             </div>
             )) }
@@ -311,8 +319,9 @@ class HomeSettings extends Component {
                 </div>
               </div>
               <div className="home-box__content-box">
-                <div className="home-box__image-edit" onClick={() => this.editImage('pc_index_latest_trends', 2)}>+</div>
-                { this.state.indexObj.pc_index_latest_trends[2].image_url ? <img src={this.state.indexObj.pc_index_latest_trends[2].image_url} alt=""/> : '+'}
+                <div className="home-box__image-edit" onClick={() => this.editImage('pc_index_latest_trends', 2)}>
+                  { this.state.indexObj.pc_index_latest_trends[2].image_url ? <img src={this.state.indexObj.pc_index_latest_trends[2].image_url} alt=""/> : '+'}
+                </div>
                 <div className="home-box__introduce-wrapper">
                   <div className="home-box__introduce">
                     <div className="home-box__introduce-bar-wrapper">
