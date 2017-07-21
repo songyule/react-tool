@@ -5,7 +5,7 @@ import MyUpload from 'components/common/img-upload.js'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
-import { Modal, Form, Input, DatePicker } from 'antd'
+import { Modal, Form, Input, DatePicker, Button } from 'antd'
 import { groupBy, find } from 'lodash'
 import Slider from 'react-slick'
 const FormItem = Form.Item
@@ -157,6 +157,15 @@ class HomeSettings extends Component {
   handleCancel = () => {
     this.setState({
       editVisible: false
+    })
+  }
+
+  handleDelete = () => {
+    this.props.removeIndexConfig(this.state.edit.id).then(res => {
+      this.renderData()
+      this.setState({
+        editVisible: false
+      })
     })
   }
 
@@ -460,6 +469,7 @@ class HomeSettings extends Component {
 
 
         <Modal visible={this.state.editVisible} title={this.state.edit.id ? '编辑内容' : '创建内容'} width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
+          { this.state.edit.id && <Button type="danger" onClick={this.handleDelete}>删除</Button> }
           <Form className="settings-form">
             <FormItem {...formItemLayout} label="标题">
               <Input onChange={this.changeTitle} value={this.state.edit.title}></Input>

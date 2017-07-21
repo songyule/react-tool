@@ -63,6 +63,8 @@ export default class CommodityContentEdit extends Component {
         </div>
         <Editor
           contentState={this.state.contentObj.content}
+          editClass={style['commodity-content-edit__editor']}
+          wrapperClass={style['commodity-content-edit__wrapper']}
           onChange={this.changeText}/>
       </div>
     )

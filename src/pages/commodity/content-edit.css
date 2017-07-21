@@ -7,3 +7,14 @@
   align-items: center;
   padding-bottom: 8px;
 }
+.commodity-content-edit__editor {
+  height: 500px!important;
+}
+.commodity-content-edit__wrapper {
+  height: 600px!important;
+}
+:global {
+  [data-contents="true"] {
+    padding-bottom: 25px;
+  }
+}
