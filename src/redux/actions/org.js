@@ -65,7 +65,7 @@ export const getAccountNumber = async params => { // 获取组织下的账号
 
 export const createUser = async body => { // 创建用户
   try {
-    let response = await fetch.post('/management/user', { body })
+    let response = await fetch.post('/user/list', { body })
     return response
   } catch (error) {
     console.log('error: ', error)
@@ -74,7 +74,16 @@ export const createUser = async body => { // 创建用户
 
 export const editUser = async body => { // 修改。或删除用户
   try {
-    let response = await fetch.patch(`/management/user/${body.id}`, {body})
+    let response = await fetch.patch(`/user/u/${body.id}`, {body})
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const delUser = async body => { // 修改。或删除用户
+  try {
+    let response = await fetch.delete(`/user/u/${body.id}`, {body})
     return response
   } catch (error) {
     console.log('error: ', error)
