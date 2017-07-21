@@ -113,3 +113,12 @@ export const updateIndexConfig = (id, data) => async (dispatch, getState) => {
     console.log('error ', error)
   }
 }
+
+export const removeIndexConfig = (id) => async (dispatch, getState) => {
+  try {
+    const response = await fetch.delete(`/management/index/config/${id}`)
+    return response
+  } catch (error) {
+    console.log('error ', error)
+  }
+}

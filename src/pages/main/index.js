@@ -47,6 +47,18 @@ export default class extends Component {
     // key跟router需要一样, 不然刷新的时候menu高亮的值会不正确
     const menuArr = [
       {
+        key: 'home',
+        title: '首页管理',
+        children: [
+          {
+            key: 'home-settings',
+            title: '首页设置',
+            router: '/main/home-settings',
+            icon: 'solution'
+          }
+        ]
+      },
+      {
         key: 'front-management',
         title: '前台管理',
         children: [
@@ -143,18 +155,6 @@ export default class extends Component {
             key: 'requirement-list',
             title: '需求单列表',
             router: '/main/requirement-list',
-            icon: 'solution'
-          }
-        ]
-      },
-      {
-        key: 'home',
-        title: '首页管理',
-        children: [
-          {
-            key: 'home-settings',
-            title: '首页设置',
-            router: '/main/home-settings',
             icon: 'solution'
           }
         ]

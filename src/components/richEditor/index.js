@@ -5,6 +5,7 @@ import draftToHtml from 'draftjs-to-html'
 import htmlToDraft from 'html-to-draftjs'
 import { ContentState, EditorState } from 'draft-js'
 import { wrapperUploadQiniu } from 'api/common'
+import cs from 'classnames'//引入classnames依赖库
 
 // https://github.com/applesstt/moe/blob/075358400793565b8b881471db0310eeea0284ef/src/components/RichEditor/RichEditor.js
 
@@ -48,8 +49,14 @@ export default class RichEditor extends PureComponent {
         {
           (then && contentState) ? ( <Editor
           defaultEditorState={contentState}
-          wrapperClassName={style.wrapper}
-          editorClassName={style.editor}
+          wrapperClassName={cs({
+            [style.wrapper]: true,
+            [this.props.wrapperClass]: this.props.wrapperClass
+          })}
+          editorClassName={cs({
+            [style.editor]: true,
+            [this.props.editClass]: this.props.editClass
+          })}
           onContentStateChange={this.onChange}
           uploadCallback={this.uploadImageCallBack}
           />) : null
