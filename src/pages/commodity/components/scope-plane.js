@@ -17,7 +17,7 @@ class ScopePlane extends Component {
     // this.setState({
     //   visible: false
     // })
-    if (e.target.value === 3 && this.state.preSelecteds.length === 0) {
+    if (e.target.value === 3 && this.props.preSelecteds.length === 0) {
       this.showModal()
     }
     this.props.changeSpu({...this.props.spu, accessStatus: e.target.value})

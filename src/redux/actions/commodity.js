@@ -186,6 +186,15 @@ export const updateSpu = (id, data) => async (dispatch, getState) => {
   }
 }
 
+export const updateSpuStatus = (id, data) => async (dispatch, getState) => {
+  try {
+    let response = await fetch.post(`commodity/status/spu/${id}`, { headers: { 'Content-type': 'application/json' }, body: data })
+    return response
+  } catch (error) {
+    console.log('error：', error)
+  }
+}
+
 export const updateSku = (id, data) => async (dispatch, getState) => {
   try {
     let response = await fetch.patch(`commodity/sku/${id}`, { headers: { 'Content-type': 'application/json' }, body: data })
