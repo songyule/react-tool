@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Table, Pagination, Button, Popconfirm } from 'antd'
-import { getAccountNumber, editUser } from 'actions/org'
+import { getAccountNumber, editUser, delUser } from 'actions/org'
 import style from './css/account-number.css'
 import NewNumber from 'components/client/new-number'
 
@@ -84,8 +84,8 @@ export default class extends PureComponent {
   onDelete (index) {
     let data = {}
     data.id = this.state.dataSource[index].id
-    data.status = -1
-    editUser(data).then(res => {
+    // data.status = -1
+    delUser(data).then(res => {
       this.changeData(this.state.page)
     })
   }
