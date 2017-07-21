@@ -137,7 +137,7 @@ class linkman extends PureComponent {
           {
             this.state.contactArr.map((item, index) => {
               return  <Col span={8} key={index} style={{marginBottom: 10}} onClick={() => this.editLinkMan(index)}>
-                        <Card title={item.classificationText} extra={<p className={style.cardDel} onClick={e => this.delContact(index, e)}>del</p>}>
+                        <Card title={item.classificationText} extra={<p className={style.cardDel} onClick={e => this.delContact(index, e)}>删除</p>}>
                           <p>
                             <span>{item.name}{item.genderText}</span>
                             <span style={{marginLeft: 50}}>{item.department}</span>
