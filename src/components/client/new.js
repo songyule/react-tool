@@ -171,9 +171,9 @@ class create extends PureComponent {
           <div style={{width: 200}}>
             <Button style={{marginRight: 10}} type="primary" onClick={e => this.handleSubmit(e)}>保存</Button>
             <Button type="primary">
-              <Link to="/main/clientList">
-                取消
-              </Link>
+              {
+                this.state.isClientNew ? <Link to="/main/clientList">取消</Link> : <Link to="/main/supplierList">取消</Link>
+              }
             </Button>
           </div>
         </div>
