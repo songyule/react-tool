@@ -8,8 +8,11 @@ import * as managementActions from 'actions/management'
 import { Modal, Form, Input, DatePicker, Button } from 'antd'
 import { groupBy, find } from 'lodash'
 import Slider from 'react-slick'
+import BoxHeader from 'components/home/box-header'
+
 const FormItem = Form.Item
 const { RangePicker } = DatePicker;
+
 
 const numberObj = {
   pc_index_top_banner: -1,
@@ -95,7 +98,7 @@ class HomeSettings extends Component {
       link: '',
       section_code: code
     }
-    obj.time = [moment(obj.active_at * 1000).format('YYYY/MM/DD'), moment(obj.deactive_at * 1000).format('YYYY/MM/DD')]
+    obj.time = [moment(obj.active_at * 1000).format('YYYY/MM/DD HH:mm:ss'), moment(obj.deactive_at * 1000).format('YYYY/MM/DD HH:mm:ss')]
     const fileList = []
     if (obj.image_url) fileList.push({
       uid: 1,
@@ -260,7 +263,7 @@ class HomeSettings extends Component {
         <div className="home__banner">
           <Slider {...bannerSettings}>
             { this.state.indexObj.pc_index_top_banner.map((item, index) => (
-            <div>
+            <div key={index}>
               <div className="home__banner-item" onClick={() => this.editImage('pc_index_top_banner', index)}>
                 <div className="banner__carousel-slide-content" style={{ backgroundImage: `url(${item.image_url})` }}></div>
               </div>
@@ -423,35 +426,36 @@ class HomeSettings extends Component {
         }
 
 
-        { this.state.indexObj.pc_index_category_trend_4 &&
-          <HomeBox className="home-box--lace" title="花边趋势" subhead="Lace trends">
-            { this.state.indexObj.pc_index_category_trend_4.map((item, index) => (
-              <div className="home-box__content-box" key={index}>
-                <div className="home-box__image-edit" onClick={() => this.editImage('pc_index_category_trend_4', index)}>
-                { item.image_url ? <img src={item.image_url} alt=""/> : '+'}
-                </div>
-                <div className="home-box__introduce-wrapper">
-                  <div className="home-box__introduce">
-                    <h3 className="home-box__introduce-title">{item.title}</h3>
-                    <div className="home-box__introduce-bar-wrapper">
-                      <div className="home-box__introduce-bar"></div>
-                    </div>
-                    <div className="home-box__introduce-attributes-box">
-                      <span className="home-box__introduce-date">
-                        <i className="iconfont icon-biaoqian"></i> 18\07\22
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )) }
-          </HomeBox>
-
+        {
+          // this.state.indexObj.pc_index_category_trend_4 &&
+          // <HomeBox className="home-box--lace" title="花边趋势" subhead="Lace trends">
+          //   { this.state.indexObj.pc_index_category_trend_4.map((item, index) => (
+          //     <div className="home-box__content-box" key={index}>
+          //       <div className="home-box__image-edit" onClick={() => this.editImage('pc_index_category_trend_4', index)}>
+          //       { item.image_url ? <img src={item.image_url} alt=""/> : '+'}
+          //       </div>
+          //       <div className="home-box__introduce-wrapper">
+          //         <div className="home-box__introduce">
+          //           <h3 className="home-box__introduce-title">{item.title}</h3>
+          //           <div className="home-box__introduce-bar-wrapper">
+          //             <div className="home-box__introduce-bar"></div>
+          //           </div>
+          //           <div className="home-box__introduce-attributes-box">
+          //             <span className="home-box__introduce-date">
+          //               <i className="iconfont icon-biaoqian"></i> 18\07\22
+          //             </span>
+          //           </div>
+          //         </div>
+          //       </div>
+          //     </div>
+          //   )) }
+          // </HomeBox>
         }
         <div className="home__recommended">
+          <BoxHeader title="推荐商品" subhead="Recommended products"></BoxHeader>
           <Slider {...recommendedSettings}>
             { this.state.indexObj.pc_index_recommend_product.map((item, index) => (
-            <div>
+            <div key={index}>
               <div className="home__recommended-item" onClick={() => this.editImage('pc_index_recommend_product', index)}>
                 <img src={item.image_url}/>
               </div>
@@ -482,7 +486,13 @@ class HomeSettings extends Component {
             </FormItem>
             <FormItem {...formItemLayout} label="时间">
               {
-                <RangePicker onChange={this.changeTime} size="default" value={this.state.edit.time.map(item => item ? moment(item, 'YYYY/MM/DD') : '')}></RangePicker>
+                <RangePicker
+                  showTime={{ format: 'HH:mm:ss' }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                  onChange={this.changeTime}
+                  size="default"
+                  value={this.state.edit.time.map(item => item ? moment(item, 'YYYY/MM/DD HH:mm:ss') : '')}>
+                </RangePicker>
               }
             </FormItem>
             <FormItem {...formItemLayout} label="跳转">

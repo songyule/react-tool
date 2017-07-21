@@ -2,13 +2,14 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
-import { Table, Input, Select, Menu, Cascader, Button, Icon } from 'antd'
+import { Table, Input, Select, Menu, Cascader, Button, Icon, message, Modal } from 'antd'
 // import { spu as spuList } from './commodity.json'
 import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } from 'utils'
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
 import { Link } from 'react-router-dom'
 import style from './index.css'
+const confirm = Modal.confirm
 
 const Option = Select.Option
 const Search = Input.Search
@@ -192,6 +193,7 @@ class CommodityList extends PureComponent {
           <div className="operate-box">
             <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看商品属性</Link>
             <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看商品介绍</Link>
+            { record.status === 1 ? <Button onClick={() => this.handleGround(text, 1)}>下架</Button> : <Button onClick={() => this.handleGround(text, 2)}>上架</Button>}
           </div>
         )
       }
@@ -251,6 +253,33 @@ class CommodityList extends PureComponent {
       spu: { ...this.state.spu, check_status: value.key }
     }, () => {
       this.getGoodsData()
+    })
+  }
+
+  handleGround = (id, status) => {
+    let text = ''
+    let goodsStatus
+    if (status === 1) {
+      text = '确认要下架商品？'
+      goodsStatus = 2
+    } else {
+      text = '确认要上架商品？'
+      goodsStatus = 1
+    }
+    confirm({
+      title: '提示',
+      content: text,
+      onOk: () => {
+        this.props.updateSpuStatus(id, { status: goodsStatus }).then(res => {
+          this.getGoodsData()
+          message.success('设置成功')
+        }).catch(res => {
+          message.error('设置失败')
+        })
+      },
+      onCancel: () => {
+        console.log('Cancel')
+      }
     })
   }
 
