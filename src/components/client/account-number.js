@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Table, Pagination, Button, Popconfirm } from 'antd'
-import { getAccountNumber, editUser, delUser } from 'actions/org'
+import { getAccountNumber, delUser } from 'actions/org'
 import style from './css/account-number.css'
 import NewNumber from 'components/client/new-number'
 
