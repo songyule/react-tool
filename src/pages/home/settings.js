@@ -8,7 +8,7 @@ import * as managementActions from 'actions/management'
 import { Modal, Form, Input, DatePicker, Button } from 'antd'
 import { groupBy, find } from 'lodash'
 import Slider from 'react-slick'
-import BoxHeader from 'components/home/box-header'
+import BoxHeader from './components/box-header'
 
 const FormItem = Form.Item
 const { RangePicker } = DatePicker;
