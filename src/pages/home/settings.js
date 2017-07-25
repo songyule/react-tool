@@ -8,7 +8,7 @@ import * as managementActions from 'actions/management'
 import { Modal, Form, Input, DatePicker, Button } from 'antd'
 import { groupBy, find } from 'lodash'
 import Slider from 'react-slick'
-import BoxHeader from 'components/home/box-header'
+import BoxHeader from './components/box-header'
 
 const FormItem = Form.Item
 const { RangePicker } = DatePicker;
@@ -363,7 +363,7 @@ class HomeSettings extends Component {
                     </div>
                     <div className="home-box__introduce-attributes-box">
                       <span className="home-box__introduce-date">
-                        <i className="iconfont icon-biaoqian"></i> 18\07\22
+                        <i className="iconfont icon-biaoqian"></i> 18\\07\\22
                       </span>
                     </div>
                   </div>
@@ -389,7 +389,7 @@ class HomeSettings extends Component {
                     </div>
                     <div className="home-box__introduce-attributes-box">
                       <span className="home-box__introduce-date">
-                        <i className="iconfont icon-biaoqian"></i> 18\07\22
+                        <i className="iconfont icon-biaoqian"></i> 18\\07\\22
                       </span>
                     </div>
                   </div>
@@ -415,7 +415,7 @@ class HomeSettings extends Component {
                     </div>
                     <div className="home-box__introduce-attributes-box">
                       <span className="home-box__introduce-date">
-                        <i className="iconfont icon-biaoqian"></i> 18\07\22
+                        <i className="iconfont icon-biaoqian"></i> 18\\07\\22
                       </span>
                     </div>
                   </div>
@@ -457,7 +457,7 @@ class HomeSettings extends Component {
             { this.state.indexObj.pc_index_recommend_product.map((item, index) => (
             <div key={index}>
               <div className="home__recommended-item" onClick={() => this.editImage('pc_index_recommend_product', index)}>
-                <img src={item.image_url}/>
+                <img src={item.image_url} alt=""/>
               </div>
             </div>
             )) }

@@ -515,13 +515,13 @@
     position: relative;
     flex: 1;
     height: 1px;
-    background: linear-gradient(left, #E8E8E8, #4A4A4A);
+    background: linear-gradient(to left, #E8E8E8, #4A4A4A);
   }
   .box-header__subhead-right {
     position: relative;
     flex: 1;
     height: 1px;
-    background: linear-gradient(right, #E8E8E8, #4A4A4A);
+    background: linear-gradient(to right, #E8E8E8, #4A4A4A);
   }
   .box-header__subhead-dot {
     display: block;

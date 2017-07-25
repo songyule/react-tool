@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
 import ClassesTree from './classes'
 import ClassesDetail from './detail'
 import { connect } from 'react-redux'
