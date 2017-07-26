@@ -3,6 +3,7 @@ import { Modal, Select, Input, Radio, Button, Table, Pagination } from 'antd'
 import style from './css/selectReq.css'
 import { getRequirementList } from 'actions/sampling'
 import { clientOrgSearch } from 'actions/org'
+import { format } from 'utils'
 const Option = Select.Option
 const Search = Input.Search
 const RadioGroup = Radio.Group
@@ -14,7 +15,8 @@ export default class extends PureComponent {
     page: 1,
     kw: '',
     reqOrgMes: [],
-    selectOrgValue: ''
+    selectOrgValue: '',
+    reqResult: {}
   }
   onSelectChange = (selectedRowKeys) => {
     console.log(selectedRowKeys)
@@ -26,9 +28,12 @@ export default class extends PureComponent {
       visible: false,
     }, () => {
       let data = {}
+      let a = this.state.selectedRowKeys
+      let b = this.state.reqResult.sampling[a[a.length - 1]]
       data.visible = false
       data.select = this.state.selectedRowKeys
       data.name = 'req'
+      data.reqMes = b
       this.props.callbackParent(data)
     })
   }
@@ -73,6 +78,23 @@ export default class extends PureComponent {
     let data = {
       offset: (this.state.page - 1) * 10,
       state: this.state.statusValue,
+      applicant_org_id: this.state.kw,
+      limit: 10
+    }
+    getRequirementList(data).then(res => {
+      if (res.code !== 200) return
+      let samplingData = res.data
+      samplingData.sampling.map(item => {
+        return item.created_at = format(item.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')
+      })
+      this.setState({reqResult: samplingData})
+    })
+  }
+
+  getClentOrg () {
+    if (this.state.kw.length > 10) return
+    let data = {
+      offset: 0,
       limit: 10
     }
     if (this.state.kw) {
@@ -80,60 +102,51 @@ export default class extends PureComponent {
       data.name_official = this.state.kw
     }
     clientOrgSearch(data).then(res => {
-      console.log(res)
       if (res.code === 200) this.setState({reqOrgMes: res.data.org})
     })
   }
-
-  getClentOrg () {
-    let data = {
-      offset: 0,
-      limit: 10
-    }
-    if (this.state.kw && this.state.kw.length < 10) {
-      data.name_cn = this.state.kw
-      data.name_official = this.state.kw
-    }
-    clientOrgSearch(data).then(res => {
-      if (res.code === 200) this.setState({reqOrgMes: res.data.org})
-    })
-  }
-  searchReq () {
-    this.setState({kw: document.querySelector('.ant-input-search').value}, () => {
-      this.getReq()
-    })
+  searchReq = () => {
+    this.getReq()
   }
   selectOrg = (e) => {
     console.log(e)
     let index = this.state.reqOrgMes.findIndex(item => item.id === e)
     console.log(index)
-
-    index >= 0 ? this.setState({selectOrgValue: this.state.reqOrgMes[index].name_cn}) : this.setState({selectOrgValue: e})
+    if (index >= 0) {
+      this.setState({selectOrgValue: this.state.reqOrgMes[index].name_cn, kw: e}, () => {
+        this.getClentOrg()
+        this.getReq()
+      })
+    } else {
+      this.setState({selectOrgValue: e, kw: e}, () => {
+        this.getClentOrg()
+      })
+    }
     // this.setState({kw: e}, () => {
     //   this.getClentOrg()
     // })
   }
   componentWillMount () {
-    this.getReq()
+    this.getClentOrg()
   }
   render () {
     const { selectedRowKeys } = this.state;
 
     const columns = [{
-      title: '简称',
-      dataIndex: 'name_cn',
+      title: '图片',
+      render: (text, record) => (<img style={{width: 50}} src={record.img_arr[0]}/>)
     }, {
-      title: '全称',
-      dataIndex: 'name_official',
+      title: '需求单号',
+      dataIndex: 'id',
     }, {
       title: '客户名称',
-      dataIndex: 'address',
+      dataIndex: 'applicant_org[name_cn]',
     }, {
       title: '提交人',
-      dataIndex: 'aress',
+      dataIndex: 'applicant_user[name_cn]',
     }, {
       title: '提交时间',
-      dataIndex: 'addres',
+      dataIndex: 'created_at',
     }];
     const rowSelection = {
       selectedRowKeys,
@@ -161,6 +174,7 @@ export default class extends PureComponent {
             showArrow={false}
             filterOption={false}
             onChange={this.selectOrg}
+            ref='what'
             >
               {options}
             </Select>
@@ -175,10 +189,10 @@ export default class extends PureComponent {
             <Button type="primary" onClick={this.searchReq}>搜索</Button>
           </div>
           <div style={{marginTop: 10}}>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.reqOrgMes} pagination={false}/>
+            <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.reqResult.sampling} pagination={false}/>
           </div>
           <div className={style.pagination}>
-            <Pagination defaultCurrent={1} total={50} onChange={this.pagClick}></Pagination>
+            <Pagination defaultCurrent={1} total={this.state.reqResult.total} onChange={this.pagClick}></Pagination>
           </div>
         </Modal>
       </div>
