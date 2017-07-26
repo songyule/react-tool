@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Input, Button, Select, Form, Icon, message } from 'antd'
 import { connect } from 'react-redux'
+import { find } from 'lodash'
 import style from './create-attributes-plane.css'
 const Option = Select.Option
 const FormItem = Form.Item
@@ -58,6 +59,14 @@ class CreateAttributesPlane extends Component {
     this.props.deleteAttribute(index, childIndex)
   }
 
+  showGoodsTypes = () => {
+    const types = [...new Set(this.props.skuTypes)]
+    const attributeTree = this.props.commodityAttributeObj.skuAttributes.filter(item => item.name_cn === '商品类型')
+    const typeOptions = (attributeTree[0] || {}).children || []
+    // console.log(types.map(type => find(this.props.commodityAttributeObj.skuAttributes, { id: Number(type) })).join(','))
+    return types.map(type => (find(typeOptions, { id: Number(type) }) || {}).name_cn || '').join(',')
+  }
+
   render () {
     const { getFieldDecorator } = this.props.form
 
@@ -66,7 +75,7 @@ class CreateAttributesPlane extends Component {
         <div className="ant-col-xs-24 ant-col-sm-5"></div>
         <div className="ant-col-xs-24 ant-col-sm-15">
           <Form className="create-attributes-plane__form">
-            { !this.props.inEdit && <FormItem
+            { !this.props.inEdit ? <FormItem
               label="">
               {getFieldDecorator('skuTypes', {
                 rules: [{
@@ -84,6 +93,15 @@ class CreateAttributesPlane extends Component {
                   </div>
                 </div>
               )}
+            </FormItem> : <FormItem>
+              <div className={style["attribute-row"]}>
+                <div className="attribute-row__left">
+                  商品类型：
+                </div>
+                <div className="attribute-row__right">
+                  { this.showGoodsTypes() }
+                </div>
+              </div>
             </FormItem> }
           </Form>
           <Form className="create-attributes-plane__form">

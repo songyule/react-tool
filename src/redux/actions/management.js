@@ -113,3 +113,12 @@ export const updateIndexConfig = (id, data) => async (dispatch, getState) => {
     console.log('error ', error)
   }
 }
+
+export const removeIndexConfig = (id) => async (dispatch, getState) => {
+  try {
+    const response = await fetch.patch(`/management/index/config/${id}`, { headers: { 'Content-type': 'application/json' }, body: { status: -1 } })
+    return response
+  } catch (error) {
+    console.log('error ', error)
+  }
+}

@@ -359,6 +359,8 @@ class CommodityCreate extends Component {
           </div>
           <Editor
             contentState={this.state.contentObj.content}
+            editClass={style['commodity-content-edit__editor']}
+            wrapperClass={style['commodity-content-edit__wrapper']}
             onChange={this.changeText}/>
           <div className={style['commodity-create__btn-box']}>
             <Button className={style['commodity-create__btn']} onClick={this.handleFinish}>保存并关闭</Button>

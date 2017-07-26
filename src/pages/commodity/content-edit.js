@@ -29,7 +29,7 @@ export default class CommodityContentEdit extends Component {
     const spuRes = await this.props.getSpuInfo(id)
     const contentRes = await this.props.getSpuText(id)
     this.setState({
-      spu: toLocalSpu(spuRes.data),
+      spu: toLocalSpu({text: '', ...spuRes.data}),
       contentObj: {
         id: contentRes.data.id,
         content: contentRes.data.text,
@@ -63,6 +63,8 @@ export default class CommodityContentEdit extends Component {
         </div>
         <Editor
           contentState={this.state.contentObj.content}
+          editClass={style['commodity-content-edit__editor']}
+          wrapperClass={style['commodity-content-edit__wrapper']}
           onChange={this.changeText}/>
       </div>
     )

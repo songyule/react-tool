@@ -47,6 +47,18 @@ export default class extends Component {
     // key跟router需要一样, 不然刷新的时候menu高亮的值会不正确
     const menuArr = [
       {
+        key: 'home',
+        title: '首页管理',
+        children: [
+          {
+            key: 'home-settings',
+            title: '首页设置',
+            router: '/main/home-settings',
+            icon: 'solution'
+          }
+        ]
+      },
+      {
         key: 'front-management',
         title: '前台管理',
         children: [
@@ -146,18 +158,6 @@ export default class extends Component {
             icon: 'solution'
           }
         ]
-      },
-      {
-        key: 'home',
-        title: '首页管理',
-        children: [
-          {
-            key: 'home-settings',
-            title: '首页设置',
-            router: '/main/home-settings',
-            icon: 'solution'
-          }
-        ]
       }
     ]
 
@@ -237,6 +237,7 @@ export default class extends Component {
               <Route path='/main/goods-edit/:id' component={GoodsEdit} />
               <Route path='/main/goods-content-edit/:id' component={GoodsContentEdit} />
               <Route path='/main/goods-create' component={GoodsCreate} />
+              <Route path='/main/goods-select' component={GoodsSelect} />
               {/*打样相关 ==== */}
               <Route path='/main/requirement-list' component={RequirementList} />
               <Route path='/main/home-settings' component={HomeSettings} />
@@ -277,3 +278,4 @@ const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
 const RequirementList = asyncComponent(() => import('pages/requirement/index'))
 const HomeSettings = asyncComponent(() => import('pages/home/settings'))
 const NewEnquiry = asyncComponent(() => import('pages/enquiry/new-enquiry'))
+const GoodsSelect = asyncComponent(() => import('pages/goods/index'))

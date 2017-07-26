@@ -2,46 +2,14 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity';
-import { Table, Input, Select, Menu, Cascader, Button, Icon, message, Modal } from 'antd'
-// import { spu as spuList } from './commodity.json'
-import { showClasses, showPrice, showShelvesStatus, showReviewStatus, format } from 'utils'
+import { Table, Input, Select, Cascader, Button, Icon } from 'antd'
+import { showClasses } from 'utils'
 import LazyImage from 'lazyimage'
 import arrayToTree from 'array-to-tree'
-import { Link } from 'react-router-dom'
-import style from './index.css'
-const confirm = Modal.confirm
+import style from './spu-list.css'
 
 const Option = Select.Option
 const Search = Input.Search
-
-const shelvesList = [
-  {
-    value: '1',
-    text: '已上架'
-  },
-  {
-    value: '2',
-    text: '未上架'
-  }
-]
-const reviewList = [
-  {
-    value: '2',
-    text: '审核中'
-  },
-  {
-    value: '3',
-    text: '审核通过'
-  },
-  {
-    value: '4',
-    text: '审核不通过'
-  },
-  {
-    value: '5',
-    text: '免审核'
-  }
-]
 
 @connect(
   state => state,
@@ -65,11 +33,6 @@ class CommodityList extends PureComponent {
       classes: []
       // selectedRowKeys: []
     }
-
-    this.changeClass = this.changeClass.bind(this)
-    this.shelvesClick = this.shelvesClick.bind(this)
-    this.reviewClick = this.reviewClick.bind(this)
-    this.changeCondition = this.changeCondition.bind(this)
   }
 
   selectBefore = () => {
@@ -79,11 +42,6 @@ class CommodityList extends PureComponent {
         <Option value="code">商品编号</Option>
       </Select>
     )
-  }
-
-  clickCode = (e) => {
-    // console.log(this)
-    // this.props.sendVerify({ mobile: this.state.mobile })
   }
 
   changeMobile = (e) => {
@@ -148,53 +106,10 @@ class CommodityList extends PureComponent {
         render: text => <span>{showClasses(text)} </span>
       },
       {
-        title: '价格',
-        dataIndex: 'sku',
-        render: text => <span>{showPrice(text)}</span>
-      },
-      {
-        title: '上架状态',
-        dataIndex: 'status',
-        filterDropdown: (
-          <div className="classes-filter-dropdown">
-            <Menu onClick={this.shelvesClick}>
-              { shelvesList.map(shelves => <Menu.Item key={shelves.value}>{shelves.text}</Menu.Item>) }
-            </Menu>
-          </div>
-        ),
-        render: text => <span>{showShelvesStatus(text)}</span>
-      },
-      {
-        title: '审核状态',
-        dataIndex: 'check_status',
-        filterDropdown: (
-          <div className="classes-filter-dropdown">
-            <Menu onClick={this.reviewClick}>
-              { reviewList.map(review => <Menu.Item key={review.value}>{review.text}</Menu.Item>) }
-            </Menu>
-          </div>
-        ),
-        render: text => <span>{showReviewStatus(text)}</span>
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'created_at',
-        render: text => <span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'updated_at',
-        render: text => <span>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</span>
-      },
-      {
         title: '操作',
         dataIndex: 'id',
         render: (text, record) => (
-          <div className="operate-box">
-            <Link className={style['operate-box__link']} to={`/main/goods-edit/${record.id}`}>查看商品属性</Link>
-            <Link className={style['operate-box__link']} to={`/main/goods-content-edit/${record.id}`}>查看商品介绍</Link>
-            { record.status === 1 ? <Button onClick={() => this.handleGround(text, 1)}>下架</Button> : <Button onClick={() => this.handleGround(text, 2)}>上架</Button>}
-          </div>
+          <Button onClick={() => this.props.select(record)}>选择</Button>
         )
       }
     ]
@@ -240,72 +155,17 @@ class CommodityList extends PureComponent {
     })
   }
 
-  shelvesClick (value) {
-    this.setState({
-      spu: { ...this.state.spu, status: value.key }
-    }, () => {
-      this.getGoodsData()
-    })
-  }
-
-  reviewClick (value) {
-    this.setState({
-      spu: { ...this.state.spu, check_status: value.key }
-    }, () => {
-      this.getGoodsData()
-    })
-  }
-
-  handleGround = (id, status) => {
-    let text = ''
-    let goodsStatus
-    if (status === 1) {
-      text = '确认要下架商品？'
-      goodsStatus = 2
-    } else {
-      text = '确认要上架商品？'
-      goodsStatus = 1
-    }
-    confirm({
-      title: '提示',
-      content: text,
-      onOk: () => {
-        this.props.updateSpuStatus(id, { status: goodsStatus }).then(res => {
-          this.getGoodsData()
-          message.success('设置成功')
-        }).catch(res => {
-          message.error('设置失败')
-        })
-      },
-      onCancel: () => {
-        console.log('Cancel')
-      }
-    })
-  }
-
-  // onSelectChange = (selectedRowKeys) => {
-  //   this.setState({ selectedRowKeys })
-  // }
-
   componentWillMount () {
     this.getGoodsData()
     this.getClasses()
   }
 
   render () {
-    // const { selectedRowKeys } =this.state
-    // const rowSelection = {
-    //   selectedRowKeys,
-    //   onChange: this.onSelectChange,
-    // }
 
     return (
       <div className="page_goods-list">
         <div className={style['goods-list__operate-row']}>
           <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
-          <Link to="/main/goods-create">
-            <Button>创建</Button>
-          </Link>
         </div>
         <Table rowKey="id" columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
       </div>
