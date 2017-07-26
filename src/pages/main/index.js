@@ -241,6 +241,8 @@ export default class extends Component {
               {/*打样相关 ==== */}
               <Route path='/main/requirement-list' component={RequirementList} />
               <Route path='/main/home-settings' component={HomeSettings} />
+              {/* 询价单相关 */}
+              <Route path='/main/new-enquiry' component={NewEnquiry} />
             </div>
         </div>
       </div>
@@ -275,4 +277,5 @@ const GoodsContentEdit = asyncComponent(() => import('pages/commodity/content-ed
 const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
 const RequirementList = asyncComponent(() => import('pages/requirement/index'))
 const HomeSettings = asyncComponent(() => import('pages/home/settings'))
+const NewEnquiry = asyncComponent(() => import('pages/enquiry/new-enquiry'))
 const GoodsSelect = asyncComponent(() => import('pages/goods/index'))

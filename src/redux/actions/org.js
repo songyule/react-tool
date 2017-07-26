@@ -9,6 +9,24 @@ export const searchOrg = async params => { // 搜索客户或者供应商
   }
 }
 
+export const clientOrgSearch = async body => { // 客户组织搜索接口
+  try {
+    let response = await fetch.post('/org/search/client', { body })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+export const searchClientUser = async body => { // 销售搜索负责的客户中的用户
+  try {
+    let response = await fetch.post('/user/seller/search/client/user', { body })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
 export const creatOrg = async body => { // 创建组织
   try {
     let response = await fetch.post('/management/org', { body })

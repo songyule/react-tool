@@ -4,6 +4,7 @@ import style from './css/edit.css'
 import { Tabs, Select, Button } from 'antd'
 import ClientLinkman from 'components/client/linkman'
 import ClientAccount from 'components/client/account-number'
+import Business from 'components/client/business'
 import { getOrgMes, getSales, getAccountNumber, setSales } from 'actions/org'
 import store from '@/redux/store'
 
@@ -82,7 +83,7 @@ export default class extends PureComponent {
       <div>
         <ClientNew {...this.props} orgMes={this.state.orgMes} isClientEdit={this.state.isClientEdit}></ClientNew>
         <div className={style.tabBox}>
-          <Tabs type='card' defaultActiveKey="1">
+          <Tabs type='card' defaultActiveKey="4">
             <TabPane tab='联系人,地址' key='1'>
               <ClientLinkman org_id={this.props.location.state}></ClientLinkman>
             </TabPane>
@@ -104,6 +105,12 @@ export default class extends PureComponent {
                   }
                 </Select>
                 <Button type="primary" style={{marginLeft: 10}} onClick={this.eidtSales.bind(this)}>{this.state.disabled ? '编辑' : '完成'}</Button>
+              </TabPane>
+            }
+            {
+              !this.state.isClientEdit &&
+              <TabPane tab='业务' key='4'>
+                <Business {...this.state.props} orgMes={this.state.orgMes}></Business>
               </TabPane>
             }
           </Tabs>

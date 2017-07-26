@@ -1,0 +1,21 @@
+.class {
+  display: flex;
+  align-items: center;
+}
+.aptitude {
+  display: flex;
+  margin-top: 20px;
+  text-align: center;
+  .aptitudeBox {
+    width: 200px;
+    margin: 0 10px;
+    p {
+      margin-bottom: 10px;
+    }
+  }
+}
+:global{
+  .ant-upload-list-item-info{
+    left: 0;
+  }
+}

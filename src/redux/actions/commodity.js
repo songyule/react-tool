@@ -11,6 +11,26 @@ export const getSpuList = (data) => async (dispatch, getState) => {
   }
 }
 
+//获取分类
+export const getClass = async params => { // 根据category查询所有tag
+  try {
+    let response = await fetch.get('/commodity/class', { params })
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
+// 设置供应商业务
+export const editOrgClass = async body => { // 修改组织信息
+  try {
+    let response = await fetch.patch(`/management/org/${body.id}`, {body})
+    return response
+  } catch (error) {
+    console.log('error: ', error)
+  }
+}
+
 export const originGetClasses = (params) => async (dispatch, getState) => {
   try {
     let response = await fetch.get('/commodity/class', { params })

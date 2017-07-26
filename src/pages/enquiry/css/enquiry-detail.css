@@ -1,0 +1,30 @@
+  .inputTitle {
+    width: 80px;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .col {
+    line-height: 28px;
+    width: 50px;
+    margin-right: 10px;
+  }
+  .dataSources {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    .clickReq {
+      display: flex;
+      margin: 10px 0;
+    }
+    p {
+      margin-left: 5px;
+      line-height: 28px;
+    }
+  }
+  .originImg {
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
