@@ -89,30 +89,6 @@ export default class extends PureComponent {
           })
         }
       })
-      // if (this.state.orgMes.license && this.state.orgMes.license.org_code) {
-      //   this.setState({
-      //     org_code: [{
-      //       uid: -1,
-      //       name: '233',
-      //       status: 'done',
-      //       url: (this.state.orgMes.license && this.state.orgMes.license.org_code) || '',
-      //       response: (this.state.orgMes.license && this.state.orgMes.license.org_code) || '',
-      //       thumbUrl: (this.state.orgMes.license && this.state.orgMes.license.org_code) || '',
-      //     }]
-      //   })
-      // }
-      // if (this.state.orgMes.license && this.state.orgMes.license.tax_reg) {
-      //   this.setState({
-      //     tax_reg: [{
-      //       uid: -1,
-      //       name: '233',
-      //       status: 'done',
-      //       url: (this.state.orgMes.license && this.state.orgMes.license.tax_reg) || '',
-      //       response: (this.state.orgMes.license && this.state.orgMes.license.tax_reg) || '',
-      //       thumbUrl: (this.state.orgMes.license && this.state.orgMes.license.tax_reg) || '',
-      //     }]
-      //   })
-      // }
       this.setState({
         arrIds: arrId
       })

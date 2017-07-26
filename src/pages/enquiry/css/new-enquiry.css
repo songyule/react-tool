@@ -1,0 +1,49 @@
+.newContent {
+  padding: 0 0 20px 0;
+  .flex {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  .mBottom {
+    margin-bottom: 10px !important;
+  }
+  :global {
+    .ant-form-item-label {
+      /*background: pink;*/
+      width: 100px;
+      text-align: right;
+    }
+    .ant-form-item {
+      display: flex;
+      margin-bottom: 0 !important;
+    }
+  }
+  .originImg {
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
+  .inputTitle {
+    width: 300px;
+  }
+  .tier {
+    margin-bottom: 10px !important;
+  }
+  .table {
+    width: 800px;
+    margin-bottom: 30px;
+    margin-top: 10px;
+  }
+  .btn {
+    height: 32px;
+    margin-right: 10px;
+  }
+  .enquiryBottom {
+    width: 1000px;
+    justify-content: center;
+    button {
+      margin: 0 10px;
+    }
+  }
+}
