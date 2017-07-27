@@ -31,7 +31,6 @@ class CommodityList extends PureComponent {
       },
       list: [],
       classes: []
-      // selectedRowKeys: []
     }
   }
 
@@ -39,36 +38,32 @@ class CommodityList extends PureComponent {
     return (
       <Select defaultValue={this.state.spu.condition} onChange={this.changeCondition}>
         <Option value="name_cn">商品名称</Option>
-        <Option value="code">商品编号</Option>
+        <Option value="id">SPUID</Option>
       </Select>
     )
-  }
-
-  changeMobile = (e) => {
-    this.setState({
-      mobile: e.target.value
-    })
-  }
-
-  changeCode = (e) => {
-    this.setState({
-      code: e.target.value
-    })
   }
 
   changeCondition = (value) => {
     this.setState({
       spu: { ...this.state.spu, condition: value, kw: '' }
     })
-    document.querySelector('.ant-input-search').value = ''
   }
 
   handleSearch = (value) => {
     this.setState({
       spu: { ...this.state.spu, kw: value, currentPage: 1 }
     }, () => {
-      this.getGoodsData()
+      this.state.spu.condition === 'name_cn' ? this.getGoodsData() : this.getSingleGoodsData()
     })
+  }
+
+  getSingleGoodsData = async () => {
+    const res = await this.props.getSpuInfo(this.state.spu.kw)
+    this.setState({
+      list: res.data ? [res.data] : [],
+      spu: { ...this.state.spu, total: res.data ? 1 : 0 }
+    })
+    console.log(res)
   }
 
   getGoodsData = async () => {
@@ -109,7 +104,7 @@ class CommodityList extends PureComponent {
         title: '操作',
         dataIndex: 'id',
         render: (text, record) => (
-          <Button onClick={() => this.props.select(record)}>选择</Button>
+          <Button type="primary" onClick={() => this.props.select(record)}>选择</Button>
         )
       }
     ]
@@ -160,14 +155,28 @@ class CommodityList extends PureComponent {
     this.getClasses()
   }
 
+  changeSearch = (e) => {
+    this.setState({
+      spu: {...this.state.spu, kw: e.target.value}
+    })
+  }
+
   render () {
+    const beforeSelection = this.selectBefore()
+    const columns = this.getColumns()
+    const paginationConfigs = {
+      current: this.state.spu.currentPage,
+      pageSize: this.state.spu.pageSize,
+      total: this.state.spu.total,
+      onChange: this.pageChange
+    }
 
     return (
-      <div className="page_goods-list">
-        <div className={style['goods-list__operate-row']}>
-          <Search addonBefore={this.selectBefore()} placeholder="搜索商品名称" onSearch={this.handleSearch}/>
+      <div className="spu-list">
+        <div className={style['spu-list__operate-row']}>
+          <Search addonBefore={beforeSelection} placeholder="搜索商品名称" onSearch={this.handleSearch} value={this.state.spu.kw} onChange={this.changeSearch}/>
         </div>
-        <Table rowKey="id" columns={this.getColumns()} dataSource={this.state.list} pagination={{ current: this.state.spu.currentPage, pageSize: this.state.spu.pageSize, total: this.state.spu.total, onChange: this.pageChange }}></Table>
+        <Table rowKey="id" columns={columns} dataSource={this.state.list} pagination={paginationConfigs} scroll={{ y: 300 }}></Table>
       </div>
     )
   }

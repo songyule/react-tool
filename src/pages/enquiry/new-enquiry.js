@@ -5,6 +5,7 @@ import style from './css/new-enquiry.css'
 import MyUpload from '../../pages/topic/components/img-upload'
 import SelectReq from 'components/enquiry/select-req'
 import SelectClient from 'components/enquiry/select-client'
+import CommoditySelection from './components/commodity-selection/index'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
 
@@ -24,6 +25,7 @@ class newEnquiry extends PureComponent {
     isMaterial: true,
     reqVisible: false,
     clientVisible: false,
+    commodityVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {}
@@ -94,6 +96,22 @@ class newEnquiry extends PureComponent {
     getClass({level: 1}).then(res => {
       console.log(res)
       this.setState({lv1ClassArr: res.data})
+    })
+  }
+  showGoodsSelect = () => {
+    this.setState({
+      commodityVisible: true
+    })
+  }
+  commodityCancel = () => {
+    this.setState({
+      commodityVisible: false
+    })
+  }
+  commodityCallback = (sku) => {
+    console.log(sku)
+    this.setState({
+      commodityVisible: false
     })
   }
   componentWillMount() {
@@ -249,7 +267,7 @@ class newEnquiry extends PureComponent {
                                                 })(
                                                     <Input className={style.inputTitle}></Input>
                                                 )}
-                                                <Button type="primary" style={{marginLeft: 10}}>选择商品</Button>
+                                                <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
                                               </FormItem>
                                               <FormItem label="SKU描述">
                                                 <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
@@ -397,6 +415,7 @@ class newEnquiry extends PureComponent {
         </Form>
         <SelectReq visible={this.state.reqVisible} callbackParent={this.callbackParent}></SelectReq>
         <SelectClient visible={this.state.clientVisible} callbackParent={this.callbackParent}></SelectClient>
+        <CommoditySelection visible={this.state.commodityVisible} onCancel={this.commodityCancel} callback={this.commodityCallback}></CommoditySelection>
       </div>
     )
   }
