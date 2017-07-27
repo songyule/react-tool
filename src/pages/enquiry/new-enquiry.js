@@ -19,7 +19,6 @@ class newEnquiry extends PureComponent {
     skuData: [],
     spuData: [],
     fileList: [],
-    imgArr: ['https://timage.fuliaoyi.com/FnV4neLabh9t7iXXK2ZH4W8qgryJ', 'https://timage.fuliaoyi.com/FskxEs_W5dnGOj78q8FU6ljTGCc3'],
     isReq: true,
     isType: '',
     isMaterial: true,
@@ -289,8 +288,8 @@ class newEnquiry extends PureComponent {
                 })(
                   <Select className={style.inputTitle} disabled={this.state.isType !== 3}>
                     {
-                      this.state.lv1ClassArr.map(item => {
-                        return (<Option value={item.lv1_id}>{item.name_cn}</Option>)
+                      this.state.lv1ClassArr.map((item, index) => {
+                        return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
                       })
                     }
                   </Select>
@@ -332,8 +331,8 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="商品要求" className={style.tier}>
             {
-              goodsReq.map(item => {
-                return (<div className={style.mBottom}>
+              goodsReq.map((item, index) => {
+                return (<div className={style.mBottom} key={index}>
                           <FormItem label={item.name}>
                             {getFieldDecorator(item.filed, {
                               initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || ''
