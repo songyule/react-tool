@@ -6,6 +6,7 @@ import MyUpload from '../../pages/topic/components/img-upload'
 import SelectReq from 'components/enquiry/select-req'
 import SelectClient from 'components/enquiry/select-client'
 import { getClass } from 'actions/commodity'
+import { creatSampling } from 'actions/sampling'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
@@ -82,6 +83,10 @@ class newEnquiry extends PureComponent {
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       console.log(values)
+      values.custom_commodity_class_id = 0
+      creatSampling(values).then(res => {
+        console.log(res)
+      })
     })
   }
 
