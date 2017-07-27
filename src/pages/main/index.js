@@ -158,6 +158,18 @@ export default class extends Component {
             icon: 'solution'
           }
         ]
+      },
+      {
+        key: 'enquiry',
+        title: '询报价',
+        children: [
+          {
+            key: 'enquiry-list',
+            title: '报价单列表',
+            router: '/main/enquiry-list',
+            icon: 'solution'
+          }
+        ]
       }
     ]
 
@@ -242,6 +254,7 @@ export default class extends Component {
               <Route path='/main/home-settings' component={HomeSettings} />
               {/* 询价单相关 */}
               <Route path='/main/new-enquiry' component={NewEnquiry} />
+              <Route path='/main/enquiry-list' component={EnquiryList} />
             </div>
         </div>
       </div>
@@ -277,3 +290,4 @@ const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
 const RequirementList = asyncComponent(() => import('pages/requirement/index'))
 const HomeSettings = asyncComponent(() => import('pages/home/settings'))
 const NewEnquiry = asyncComponent(() => import('pages/enquiry/new-enquiry'))
+const EnquiryList = asyncComponent(() => import('pages/enquiry/enquiry-list'))

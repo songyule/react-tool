@@ -114,11 +114,11 @@ export default class extends PureComponent {
         </Row>
         <Row>
           <h4>SKU描述:</h4>
-          <Table pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
+          <Table pagination={false} columns={columns} dataSource={this.state.skuData} key='0'></Table>
         </Row>
         <Row>
           <h4>商品描述:</h4>
-          <Table pagination={false} columns={columns} dataSource={this.state.spuData} key='1234'></Table>
+          <Table pagination={false} columns={columns} dataSource={this.state.spuData} key='1'></Table>
         </Row>
         <Row className={style.dataSources}>
           <span className={style.inputTitle}>用户上传图片:</span>
