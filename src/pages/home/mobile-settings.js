@@ -10,6 +10,9 @@ import { emptyItem, numberObj, dataObj as indexObj } from './utils'
 import Banner from './components/mobile/banner.js'
 import Nav from './components/mobile/nav.js'
 import Topic from './components/mobile/topic'
+import LatestTrends from './components/mobile/latest-trends'
+import CommonTrends from './components/mobile/common-trends'
+import Recommended from './components/mobile/recommended'
 import TrendList from './components/trend-list'
 import { MOBILE_URL } from 'api/config'
 import './mobile-settings.css'
@@ -212,7 +215,17 @@ class HomeSettings extends Component {
 
         <Nav></Nav>
 
-        <Topic></Topic>
+        <Topic list={this.state.indexObj.pc_index_top_topic}></Topic>
+
+        <LatestTrends list={this.state.indexObj.pc_index_latest_trends}></LatestTrends>
+
+        <CommonTrends title="贴布绣趋势" list={this.state.indexObj.pc_index_category_trend_1}></CommonTrends>
+
+        <CommonTrends title="纽扣趋势" list={this.state.indexObj.pc_index_category_trend_2}></CommonTrends>
+
+        <CommonTrends title="织带趋势" list={this.state.indexObj.pc_index_category_trend_3}></CommonTrends>
+
+        <Recommended list={this.state.indexObj.pc_index_recommend_product}></Recommended>
 
         <Modal visible={this.state.editVisible} title={this.state.edit.id ? '编辑内容' : '创建内容'} width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
           { this.state.edit.id && <Button type="danger" onClick={this.handleDelete}>删除</Button> }

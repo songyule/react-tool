@@ -1,0 +1,11 @@
+:global {
+  .latest-trends {
+    margin-top: 16px;
+    padding: 9px 15px 14px;
+    background: #fff;
+
+    &__content {
+      margin-top: 10px;
+    }
+  }
+}

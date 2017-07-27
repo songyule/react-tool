@@ -1,0 +1,33 @@
+:global {
+  .home-common-card {
+    position: relative;
+    width: 165px;
+    margin-right: 8px;
+
+    &__title {
+      margin-top: 11px;
+      text-align: center;
+      font-size: 11px;
+      color: #444444;
+    }
+
+    &__img {
+      width: 100%;
+    }
+
+    &__image-box {
+      position: relative;
+    }
+
+    &__label {
+      position: absolute;
+      bottom: -7px;
+      width: 100%;
+      text-align: center;
+    }
+
+    &__label-img {
+      width: 76px;
+    }
+  }
+}

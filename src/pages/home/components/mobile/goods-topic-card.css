@@ -1,0 +1,31 @@
+:global {
+  .goods-topic-card {
+    position: relative;
+    width: 106px;
+
+    img {
+      width: 100%;
+    }
+
+    &__title {
+      color: #444;
+    }
+
+    &__wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 14px 0;
+      text-align: center;
+    }
+
+    &__button {
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: #000;
+      color: #fff;
+      font-size: 8px;
+    }
+  }
+}
