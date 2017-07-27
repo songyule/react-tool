@@ -1,0 +1,19 @@
+:global {
+  @component goods-topic {
+    margin-top: 16px;
+    padding: 9px 15px 14px;
+    background: #fff;
+
+    @descendent content {
+      display: flex;
+      width: auto;
+      margin-top: 10px;
+      overflow-x: scroll;
+    }
+
+    @descendent card {
+      flex-shrink: 0;
+      margin-right: 9px;
+    }
+  }
+}
