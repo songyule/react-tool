@@ -28,7 +28,8 @@ class newEnquiry extends PureComponent {
     commodityVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
-    reqMes: {}
+    reqMes: {},
+    selectSku: {}
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -43,6 +44,7 @@ class newEnquiry extends PureComponent {
 
   }
   onChangeWd = (e) => { // 数据来源
+    if (!e.target.value) this.handleReset()
     this.setState({
       isReq: e.target.value
     })
@@ -62,12 +64,28 @@ class newEnquiry extends PureComponent {
   callbackParent = (val) => { // 选择需求单的回调
     console.log(val)
     if (val.name === 'req') {
+      if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
+      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      let fileArr = []
+      val.reqMes.img_arr.map((item, index) => {
+        let obj ={
+                    uid: index,
+                    name: '233',
+                    status: 'done',
+                    url: item || '',
+                    response: item || '',
+                    thumbUrl: item || ''
+                  }
+        return fileArr.push(obj)
+      })
+      console.log(fileArr)
       this.setState({
         reqVisible: val.visible,
         reqNumber: val.select[0] || '',
         reqMes: val.reqMes,
         skuData: val.reqMes.sku_snapshot.attribute,
-        spuData: val.reqMes.sku_snapshot.spu.commodity_attribute
+        spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
+        fileList: fileArr
       })
     } else if (val.name === 'client') {
       this.setState({
@@ -85,18 +103,32 @@ class newEnquiry extends PureComponent {
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       console.log(values)
-      values.custom_commodity_class_id = 0
+      let arr = []
+      values.img.map(item => {
+        arr.push(item.response)
+        return arr
+      })
+      values.img = arr
+      if (this.state.isType !== 3) values.custom_commodity_class_id = 0
       creatSampling(values).then(res => {
         console.log(res)
       })
     })
   }
-
   getLv1Class () {
     getClass({level: 1}).then(res => {
       console.log(res)
       this.setState({lv1ClassArr: res.data})
     })
+  }
+  classify (val) {
+    if (!val) return
+    let classArr = []
+    val.map(item => {
+      return classArr.push(item.name_cn)
+    })
+    console.log(classArr)
+    return classArr.join(',')
   }
   showGoodsSelect = () => {
     this.setState({
@@ -109,10 +141,16 @@ class newEnquiry extends PureComponent {
     })
   }
   commodityCallback = (sku) => {
-    console.log(sku)
+    let newReqMes = this.state.reqMes
+    newReqMes.sku_snapshot = sku
     this.setState({
-      commodityVisible: false
+      commodityVisible: false,
+      reqMes: newReqMes,
+      selectSku: sku
     })
+  }
+  handleReset = () => {
+    this.setState({reqMes: {}, skuData: [], spuData: []})
   }
   componentWillMount() {
     this.getLv1Class()
@@ -247,7 +285,7 @@ class newEnquiry extends PureComponent {
               </FormItem>
               <FormItem label="类目">
                 {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: ''
+                  initialValue: (reqMes && reqMes.classify) || ''
                 })(
                   <Select className={style.inputTitle} disabled={this.state.isType !== 3}>
                     {
@@ -285,7 +323,9 @@ class newEnquiry extends PureComponent {
                                             </div>
             }
             <FormItem label="商品补充描述">
-              {getFieldDecorator('img')(
+              {getFieldDecorator('img', {
+                initialValue: (reqMes && reqMes.img_arr) || ''
+              })(
                 <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
               )}
             </FormItem>
