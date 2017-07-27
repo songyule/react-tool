@@ -1,0 +1,5 @@
+.spu-list__operate-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 16px;
+}
