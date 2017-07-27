@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Button, Modal } from 'antd'
+import { Modal } from 'antd'
 import SpuList from './components/spu-list'
 import SkuList from './components/sku-list'
 
@@ -13,7 +13,6 @@ export default class extends PureComponent {
     super()
 
     this.state = {
-      editVisible: false,
       selectedSpu: {},
       step: 1
     }
@@ -27,19 +26,28 @@ export default class extends PureComponent {
   }
 
   handleSkuSelect = (sku) => {
-    sku.spu = this.state.selectedSpu
-    console.log(sku)
+    const resultSku = {...sku}
+    resultSku.spu = this.state.selectedSpu
+    this.props.callback(resultSku)
+  }
+
+  handleCancel = () => {
+    this.setState({
+      step: 1,
+      selectedSpu: {}
+    })
+    this.props.onCancel()
   }
 
   render () {
     return (
-      <div className="goods-select-demo">
-        <Button onClick={this.setState({ editVisible: true })}>选择</Button>
-
+      <div className="commodity-selection">
         <Modal
-          visible={this.state.editVisible}
-          title="选择商品"
-          width={800}>
+          visible={this.props.visible}
+          title={ this.state.step === 1 ? '选择商品' : '选择商品-选择SKU' }
+          width={800}
+          footer={null}
+          onCancel={this.handleCancel}>
           { this.state.step === 1 && <SpuList select={this.handleSpuSelect}></SpuList> }
 
           { this.state.step === 2 && <SkuList list={this.state.selectedSpu.sku} select={this.handleSkuSelect}></SkuList> }

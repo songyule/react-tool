@@ -26,7 +26,7 @@ class SkuList extends PureComponent {
         title: '操作',
         dataIndex: '',
         render: (text, record) => (
-          <Button onClick={() => this.props.select(record)}>选择</Button>
+          <Button type="primary" onClick={() => this.props.select(record)}>选择</Button>
         )
       }
     ]
@@ -35,7 +35,7 @@ class SkuList extends PureComponent {
   render () {
     return (
       <div className="page_goods-list">
-        <Table rowKey="id" columns={this.getColumns()} dataSource={this.props.list}></Table>
+        <Table rowKey="id" columns={this.getColumns()} dataSource={this.props.list} pagination={false}></Table>
       </div>
     )
   }
