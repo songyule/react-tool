@@ -75,6 +75,7 @@ export default class extends PureComponent {
     this.setState({statusValue: e.target.value})
   }
   getReq () {
+    console.log(this.refs.what)
     let data = {
       offset: (this.state.page - 1) * 10,
       state: this.state.statusValue,
@@ -87,7 +88,10 @@ export default class extends PureComponent {
       samplingData.sampling.map(item => {
         return item.created_at = format(item.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')
       })
-      this.setState({reqResult: samplingData})
+      console.log({...this.state})
+      this.setState({reqResult: samplingData}, () => {
+        console.log(this.state)
+      })
     })
   }
 
@@ -101,6 +105,7 @@ export default class extends PureComponent {
       data.name_cn = this.state.kw
       data.name_official = this.state.kw
     }
+
     clientOrgSearch(data).then(res => {
       if (res.code === 200) this.setState({reqOrgMes: res.data.org})
     })
@@ -109,13 +114,11 @@ export default class extends PureComponent {
     this.getReq()
   }
   selectOrg = (e) => {
-    console.log(e)
     let index = this.state.reqOrgMes.findIndex(item => item.id === e)
-    console.log(index)
     if (index >= 0) {
       this.setState({selectOrgValue: this.state.reqOrgMes[index].name_cn, kw: e}, () => {
-        this.getClentOrg()
         this.getReq()
+        this.getClentOrg()
       })
     } else {
       this.setState({selectOrgValue: e, kw: e}, () => {
@@ -130,8 +133,8 @@ export default class extends PureComponent {
     this.getClentOrg()
   }
   render () {
-    const { selectedRowKeys } = this.state;
-
+    const { selectedRowKeys, selectOrgValue } = this.state;
+    console.log(selectOrgValue)
     const columns = [{
       title: '图片',
       render: (text, record) => (<img style={{width: 50}} src={record.img_arr[0]}/>)

@@ -60,6 +60,10 @@ class newEnquiry extends PureComponent {
   callbackParent = (val) => { // 选择需求单的回调
     console.log(val)
     if (val.name === 'req') {
+      console.log(val.reqMes)
+      if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
+      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      console.log(2333)
       this.setState({
         reqVisible: val.visible,
         reqNumber: val.select[0] || '',
@@ -83,18 +87,25 @@ class newEnquiry extends PureComponent {
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       console.log(values)
-      values.custom_commodity_class_id = 0
       creatSampling(values).then(res => {
         console.log(res)
       })
     })
   }
-
   getLv1Class () {
     getClass({level: 1}).then(res => {
       console.log(res)
       this.setState({lv1ClassArr: res.data})
     })
+  }
+  classify (val) {
+    if (!val) return
+    let classArr = []
+    val.map(item => {
+      return classArr.push(item.name_cn)
+    })
+    console.log(classArr)
+    return classArr.join(',')
   }
   componentWillMount() {
     this.getLv1Class()
@@ -229,7 +240,7 @@ class newEnquiry extends PureComponent {
               </FormItem>
               <FormItem label="类目">
                 {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: ''
+                  initialValue: (reqMes && reqMes.classify) || ''
                 })(
                   <Select className={style.inputTitle} disabled={this.state.isType !== 3}>
                     {
