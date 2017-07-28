@@ -24,3 +24,13 @@ export const closeEnquiry = async (body) => {
   const response = await fetch.post('/sampling/inquiry/seller/cancel', { body })
   return response
 }
+
+export const getOfferList = async (body) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/search', { body })
+  return response
+}
+
+export const claimOffer = async (id) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/claim', { body: { id } })
+  return response
+}
