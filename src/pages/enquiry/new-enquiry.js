@@ -6,8 +6,10 @@ import MyUpload from '../../pages/topic/components/img-upload'
 import SelectReq from 'components/enquiry/select-req'
 import SelectClient from 'components/enquiry/select-client'
 import CommoditySelection from './components/commodity-selection/index'
+import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
+import { toRemoteBom } from './utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
@@ -25,10 +27,12 @@ class newEnquiry extends PureComponent {
     reqVisible: false,
     clientVisible: false,
     commodityVisible: false,
+    bomVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
-    selectSku: {}
+    selectSku: {},
+    bom: {}
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -134,6 +138,11 @@ class newEnquiry extends PureComponent {
       commodityVisible: true
     })
   }
+  showBomCreate = () => {
+    this.setState({
+      bomVisible: true
+    })
+  }
   commodityCancel = () => {
     this.setState({
       commodityVisible: false
@@ -146,6 +155,13 @@ class newEnquiry extends PureComponent {
       commodityVisible: false,
       reqMes: newReqMes,
       selectSku: sku
+    })
+  }
+  bomCallback = (localBom) => {
+    console.log(toRemoteBom(localBom))
+    this.setState({
+      bomVisible: false,
+      bom: localBom
     })
   }
   handleReset = () => {
@@ -360,7 +376,7 @@ class newEnquiry extends PureComponent {
                 </RadioGroup>
                 {
                   !this.state.isMaterial && <div className={style.flex}>
-                                        <Button type="primary" className={style.btn}>BOM管理</Button>
+                                        <Button type="primary" className={style.btn} onClick={this.showBomCreate}>BOM管理</Button>
                                         <p>BOM中没有物料</p>
                                       </div>
                 }
@@ -455,6 +471,7 @@ class newEnquiry extends PureComponent {
         <SelectReq visible={this.state.reqVisible} callbackParent={this.callbackParent}></SelectReq>
         <SelectClient visible={this.state.clientVisible} callbackParent={this.callbackParent}></SelectClient>
         <CommoditySelection visible={this.state.commodityVisible} onCancel={this.commodityCancel} callback={this.commodityCallback}></CommoditySelection>
+        <BomCreate visible={this.state.bomVisible} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
       </div>
     )
   }
