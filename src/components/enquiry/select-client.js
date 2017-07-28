@@ -136,8 +136,6 @@ export default class extends PureComponent {
 
   }
 
-  clientSearch () {
-  }
   componentWillMount() {
     this.getClientOrgSearch('', 1)
   }
