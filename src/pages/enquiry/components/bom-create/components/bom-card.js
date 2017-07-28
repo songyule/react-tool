@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react'
-import { Form, Row, Col, Input, Cascader } from 'antd'
+import { Form, Row, Col, Input, Cascader, Icon, Tag } from 'antd'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as commodityActions from 'actions/commodity'
-import AttributesPlane from './components/attributes-plane'
+import AttributesPlane from './attributes-plane'
 import './bom-card.css'
 import arrayToTree from 'array-to-tree'
 import { uniqBy, find } from 'lodash'
@@ -68,6 +68,7 @@ export default class extends PureComponent {
       attrOptions,
       attributeList
     })
+    this.props.changeBom({ attributes: existAttrs })
   }
 
   selectAttributes = () => {}
@@ -96,6 +97,7 @@ export default class extends PureComponent {
 
     return (
       <div className="bom-card">
+        { this.props.onRemove && <Icon className="bom-card__close" type="close-circle" onClick={this.props.onRemove} /> }
         <Form className="bom-card__form">
           <Row gutter={40}>
             <Col span={12}>
@@ -110,9 +112,7 @@ export default class extends PureComponent {
             </Col>
             <Col span={24}>
               <FormItem {...rowFormItemLayout} label="商品描述">
-                {
-                  // <Button>添加</Button>
-                }
+                { this.props.bom.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
               </FormItem>
               <AttributesPlane attrOptions={this.state.attrOptions} attributesObj={this.state.attributesObj} changeAttributes={this.changeAttributes}></AttributesPlane>
             </Col>
