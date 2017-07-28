@@ -28,7 +28,7 @@ class newEnquiry extends PureComponent {
     reqVisible: false,
     clientVisible: false,
     commodityVisible: false,
-    bomVisible: false,
+    bomVisible: true,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
