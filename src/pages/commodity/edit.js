@@ -22,7 +22,7 @@ class CommodityEdit extends Component {
   constructor () {
     super()
     this.state = {
-      spu: {...emptySpu},
+      spu: {...JSON.parse(JSON.stringify(emptySpu))},
       skuAttributes: [{ name: { value: '' }, children: [{ value: '' }] }],
       fileList: [],
       skuTypes: [],
