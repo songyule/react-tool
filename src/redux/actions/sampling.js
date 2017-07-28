@@ -14,3 +14,13 @@ export const creatSampling = async (body) => {
   const response = await fetch.post('/sampling/inquiry', { body })
   return response
 }
+
+export const sellerInquirySearch = async (body) => {
+  const response = await fetch.post('/sampling/inquiry/seller/search', { body })
+  return response
+}
+
+export const closeEnquiry = async (body) => {
+  const response = await fetch.post('/sampling/inquiry/seller/cancel', { body })
+  return response
+}

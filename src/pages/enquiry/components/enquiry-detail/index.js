@@ -1,11 +1,8 @@
 import React, { PureComponent } from 'react'
-import { Input, Radio, Button, Table, Form, Select, Modal } from 'antd'
+import { Input, Radio, Button, Table, Form, Select } from 'antd'
 import Title from 'components/title'
-import style from './css/new-enquiry.css'
-import MyUpload from '../../pages/topic/components/img-upload'
-import SelectReq from 'components/enquiry/select-req'
-import SelectClient from 'components/enquiry/select-client'
-import CommoditySelection from './components/commodity-selection/index'
+import style from '../../css/new-enquiry.css'
+import MyUpload from 'pages/topic/components/img-upload'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
 
@@ -22,81 +19,28 @@ class newEnquiry extends PureComponent {
     isReq: true,
     isType: '',
     isMaterial: true,
-    modalVisible: false,
-    reqVisible: false,
-    clientVisible: false,
-    commodityVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
     selectSku: {}
-  }
-  showModal = (val) => { // 需求单模态框
-    if (val === 'req') {
-      this.setState({
-        reqVisible: true,
-      });
-    } else if (val === 'client') {
-      this.setState({
-        clientVisible: true,
-      })
-    }
-
   }
   onChangeWd = (e) => { // 数据来源
     if (!e.target.value) this.handleReset()
     this.setState({
       isReq: e.target.value
     })
-    console.log(e.target.value)
   }
   onChangeMaterial = (e) => { // 是否需要拆分商品
     this.setState({
       isMaterial: e.target.value
     })
-    console.log(e.target.value)
   }
   onChangeType = (e) => { // 选择商品类型
     this.setState({
       isType: e.target.value
     })
   }
-  callbackParent = (val) => { // 选择需求单的回调
-    console.log(val)
-    if (val.name === 'req') {
-      if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
-      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
-      let fileArr = []
-      val.reqMes.img_arr.map((item, index) => {
-        let obj ={
-                    uid: index,
-                    name: '233',
-                    status: 'done',
-                    url: item || '',
-                    response: item || '',
-                    thumbUrl: item || ''
-                  }
-        return fileArr.push(obj)
-      })
-      console.log(fileArr)
-      this.setState({
-        reqVisible: val.visible,
-        reqNumber: val.select[0] || '',
-        reqMes: val.reqMes,
-        skuData: val.reqMes.sku_snapshot.attribute,
-        spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
-        fileList: fileArr
-      })
-    } else if (val.name === 'client') {
-      this.setState({
-        clientVisible: val.visible,
-        clientOrgMes: val.clientOrgMes
-      })
-    }
-  }
   handleChange = (fileList) => { // 图片上传
-    console.log(fileList)
-    console.log(this.props.form.getFieldsValue())
     this.setState({ fileList })
   }
   handleSubmit = (e) => { // 表单提交按钮
@@ -112,13 +56,11 @@ class newEnquiry extends PureComponent {
       if (this.state.isType !== 3) values.custom_commodity_class_id = 0
       creatSampling(values).then(res => {
         console.log(res)
-        if (res.code === 200) this.setState({modalVisible: true})
       })
     })
   }
   getLv1Class () {
     getClass({level: 1}).then(res => {
-      console.log(res)
       this.setState({lv1ClassArr: res.data})
     })
   }
@@ -128,42 +70,10 @@ class newEnquiry extends PureComponent {
     val.map(item => {
       return classArr.push(item.name_cn)
     })
-    console.log(classArr)
     return classArr.join(',')
-  }
-  showGoodsSelect = () => {
-    this.setState({
-      commodityVisible: true
-    })
-  }
-  commodityCancel = () => {
-    this.setState({
-      commodityVisible: false
-    })
-  }
-  commodityCallback = (sku) => {
-    let newReqMes = this.state.reqMes
-    newReqMes.sku_snapshot = sku
-    this.setState({
-      commodityVisible: false,
-      reqMes: newReqMes,
-      selectSku: sku
-    })
   }
   handleReset = () => {
     this.setState({reqMes: {}, skuData: [], spuData: []})
-  }
-  handleOk = (e) => {
-    this.setState({
-      modalVisible: false,
-    }, () => {
-      this.props.history.push('/main/enquiry-list')
-    });
-  }
-  handleCancel = (e) => {
-    this.setState({
-      modalVisible: false,
-    });
   }
   componentWillMount() {
     this.getLv1Class()
@@ -222,13 +132,13 @@ class newEnquiry extends PureComponent {
             className={style.tier}
           >
             <div>
-              <RadioGroup onChange={this.onChangeWd} value={this.state.isReq}>
+              <RadioGroup onChange={this.onChangeWd} value={this.state.isReq} disabled>
                 <Radio value={true}>需求单</Radio>
                 <Radio value={false}>其他来源</Radio>
               </RadioGroup>
               {
                 this.state.isReq && <div className={style.flex}>
-                                      <Button type="primary" className={style.btn} style={{height: 32}} onClick={() => this.showModal('req')}>选择需求单</Button>
+                                      <Button type="primary" className={style.btn} style={{height: 32, display: 'none'}} onClick={() => this.showModal('req')}>选择需求单</Button>
                                       <p>需求单号：{reqMes.id}</p>
                                     </div>
               }
@@ -239,7 +149,7 @@ class newEnquiry extends PureComponent {
             className={style.tier}
           >
             {
-              !this.state.isReq && <Button type="primary" onClick={() => this.showModal('client')}>选择客户</Button>
+              !this.state.isReq && <Button style={{display: 'none'}} type="primary" onClick={() => this.showModal('client')}>选择客户</Button>
             }
             <div>
               <div className={style.flex}>
@@ -280,7 +190,7 @@ class newEnquiry extends PureComponent {
             {getFieldDecorator('sampling_type', {
               initialValue: (reqMes && reqMes.classification) || 1
             })(
-              <RadioGroup onChange={this.onChangeType} disabled={this.state.isReq}>
+              <RadioGroup onChange={this.onChangeType} disabled>
                 <Radio value={1}>原版</Radio>
                 <Radio value={2}>改版</Radio>
                 <Radio value={3}>定制</Radio>
@@ -293,14 +203,14 @@ class newEnquiry extends PureComponent {
                 {getFieldDecorator('custom_commodity_name', {
                   initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || ''
                 })(
-                  <Input disabled={this.state.isType !== 3} className={style.inputTitle}></Input>
+                  <Input disabled className={style.inputTitle}></Input>
                 )}
               </FormItem>
               <FormItem label="类目">
                 {getFieldDecorator('custom_commodity_class_id', {
                   initialValue: (reqMes && reqMes.classify) || ''
                 })(
-                  <Select className={style.inputTitle} disabled={this.state.isType !== 3}>
+                  <Select className={style.inputTitle} disabled>
                     {
                       this.state.lv1ClassArr.map((item, index) => {
                         return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
@@ -316,9 +226,9 @@ class newEnquiry extends PureComponent {
                                                 {getFieldDecorator('sku_id', {
                                                   initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || ''
                                                 })(
-                                                    <Input className={style.inputTitle}></Input>
+                                                    <Input className={style.inputTitle} disabled></Input>
                                                 )}
-                                                <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
+                                                <Button type="primary" style={{marginLeft: 10, display: 'none'}} onClick={this.showGoodsSelect}>选择商品</Button>
                                               </FormItem>
                                               <FormItem label="SKU描述">
                                                 <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
@@ -351,7 +261,7 @@ class newEnquiry extends PureComponent {
                             {getFieldDecorator(item.filed, {
                               initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || ''
                             })(
-                              <Input className={style.inputTitle}></Input>
+                              <Input disabled className={style.inputTitle}></Input>
                             )}
                           </FormItem>
                         </div>)
@@ -361,20 +271,20 @@ class newEnquiry extends PureComponent {
               {getFieldDecorator('other_req', {
                 initialValue: (reqMes && reqMes.applicant_comment) || ''
               })(
-                <Input type="textarea" className={style.inputTitle}></Input>
+                <Input disabled type="textarea" className={style.inputTitle}></Input>
               )}
             </FormItem>
             <FormItem
               label="拆分商品"
             >
               <div>
-                <RadioGroup onChange={this.onChangeMaterial} value={this.state.isMaterial}>
+                <RadioGroup disabled onChange={this.onChangeMaterial} value={this.state.isMaterial}>
                   <Radio value={true}>不需要</Radio>
                   <Radio value={false}>需要</Radio>
                 </RadioGroup>
                 {
                   !this.state.isMaterial && <div className={style.flex}>
-                                        <Button type="primary" className={style.btn}>BOM管理</Button>
+                                        <Button type="primary" className={style.btn} style={{display: 'none'}}>BOM管理</Button>
                                         <p>BOM中没有物料</p>
                                       </div>
                 }
@@ -385,7 +295,7 @@ class newEnquiry extends PureComponent {
               {getFieldDecorator('has_sampling', {
                 initialValue: true,
               })(
-                <RadioGroup>
+                <RadioGroup disabled>
                   <Radio value={true}>无</Radio>
                   <Radio value={false}>有</Radio>
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
@@ -402,12 +312,12 @@ class newEnquiry extends PureComponent {
                   {getFieldDecorator('sampling_amount', {
                     initialValue: reqMes && reqMes.sample_amount
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="打样单位">
                   {getFieldDecorator('sampling_unit')(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
               </div>
@@ -416,7 +326,7 @@ class newEnquiry extends PureComponent {
                   {getFieldDecorator('custom_commodity_name', {
                     initialValue: reqMes && reqMes.sample_deadline
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
               </div>
@@ -432,14 +342,14 @@ class newEnquiry extends PureComponent {
                   {getFieldDecorator('bulk_estimate_amount', {
                     initialValue: reqMes && reqMes.bulk_production_amount
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="大货单位">
                   {getFieldDecorator('bulk_unit', {
                     initialValue: reqMes && reqMes.bulk_production_price
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
               </div>
@@ -448,35 +358,24 @@ class newEnquiry extends PureComponent {
                   {getFieldDecorator('bulk_expectation_deliver_time', {
                     initialValue: reqMes && reqMes.bulk_production_deadline
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="期望大货价">
                   {getFieldDecorator('bulk_expectation_price', {
                     initialValue: reqMes && reqMes.bulk_production_price
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
               </div>
             </div>
           </FormItem>
-          <FormItem className={style.enquiryBottom}>
+          <FormItem className={style.enquiryBottom} style={{display: 'none'}}>
             <Button type="primary" htmlType="submit" onClick={e => this.handleSubmit(e)}>提交</Button>
             <Button>取消</Button>
           </FormItem>
         </Form>
-        <SelectReq visible={this.state.reqVisible} callbackParent={this.callbackParent}></SelectReq>
-        <SelectClient visible={this.state.clientVisible} callbackParent={this.callbackParent}></SelectClient>
-        <CommoditySelection visible={this.state.commodityVisible} onCancel={this.commodityCancel} callback={this.commodityCallback}></CommoditySelection>
-        <Modal
-          title="提示"
-          visible={this.state.modalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          创建成功，是否跳往询价列表
-        </Modal>
       </div>
     )
   }
