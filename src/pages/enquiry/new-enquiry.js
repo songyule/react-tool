@@ -6,8 +6,10 @@ import MyUpload from '../../pages/topic/components/img-upload'
 import SelectReq from 'components/enquiry/select-req'
 import SelectClient from 'components/enquiry/select-client'
 import CommoditySelection from './components/commodity-selection/index'
+import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
+import { toRemoteBom } from './utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
@@ -21,15 +23,17 @@ class newEnquiry extends PureComponent {
     fileList: [],
     isReq: true,
     isType: '',
-    isMaterial: true,
+    isMaterial: false,
     modalVisible: false,
     reqVisible: false,
     clientVisible: false,
     commodityVisible: false,
+    bomVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
-    selectSku: {}
+    selectSku: {},
+    bom: {}
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -78,7 +82,6 @@ class newEnquiry extends PureComponent {
                   }
         return fileArr.push(obj)
       })
-      console.log(fileArr)
       this.setState({
         reqVisible: val.visible,
         reqNumber: val.select[0] || '',
@@ -104,12 +107,14 @@ class newEnquiry extends PureComponent {
     this.props.form.validateFieldsAndScroll((err, values) => {
       console.log(values)
       let arr = []
-      values.img.map(item => {
+      this.state.fileList.map(item => {
         arr.push(item.response)
         return arr
       })
+      console.log(arr)
       values.img = arr
       if (this.state.isType !== 3) values.custom_commodity_class_id = 0
+      if (this.state.isMaterial) values.material_arr = this.state.bom
       creatSampling(values).then(res => {
         console.log(res)
         if (res.code === 200) this.setState({modalVisible: true})
@@ -136,6 +141,11 @@ class newEnquiry extends PureComponent {
       commodityVisible: true
     })
   }
+  showBomCreate = () => {
+    this.setState({
+      bomVisible: true
+    })
+  }
   commodityCancel = () => {
     this.setState({
       commodityVisible: false
@@ -148,6 +158,13 @@ class newEnquiry extends PureComponent {
       commodityVisible: false,
       reqMes: newReqMes,
       selectSku: sku
+    })
+  }
+  bomCallback = (localBom) => {
+    console.log([toRemoteBom(localBom)])
+    this.setState({
+      bomVisible: false,
+      bom: [toRemoteBom(localBom)]
     })
   }
   handleReset = () => {
@@ -369,12 +386,12 @@ class newEnquiry extends PureComponent {
             >
               <div>
                 <RadioGroup onChange={this.onChangeMaterial} value={this.state.isMaterial}>
-                  <Radio value={true}>不需要</Radio>
-                  <Radio value={false}>需要</Radio>
+                  <Radio value={false}>不需要</Radio>
+                  <Radio value={true}>需要</Radio>
                 </RadioGroup>
                 {
-                  !this.state.isMaterial && <div className={style.flex}>
-                                        <Button type="primary" className={style.btn}>BOM管理</Button>
+                  this.state.isMaterial && <div className={style.flex}>
+                                        <Button type="primary" className={style.btn} onClick={this.showBomCreate}>BOM管理</Button>
                                         <p>BOM中没有物料</p>
                                       </div>
                 }
@@ -477,6 +494,7 @@ class newEnquiry extends PureComponent {
         >
           创建成功，是否跳往询价列表
         </Modal>
+        <BomCreate visible={this.state.bomVisible} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
       </div>
     )
   }

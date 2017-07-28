@@ -6,7 +6,7 @@ import SkuList from './components/sku-list'
 /**
  * @export
  * @page
- * @module 商品选择demo页
+ * @module 商品选择弹框
  */
 export default class extends PureComponent {
   constructor () {

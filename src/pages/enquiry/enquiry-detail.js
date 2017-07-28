@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Button } from 'antd'
 import { closeEnquiry } from 'actions/sampling'
+import { sellerInquirySearch } from 'actions/sampling'
 import EnquiryDeatil from './components/enquiry-detail/index'
 
 export default class extends PureComponent {
@@ -15,6 +16,9 @@ export default class extends PureComponent {
   }
   componentWillMount () {
     this.setState({id: this.props.match.params.id})
+    sellerInquirySearch({id: this.props.match.params.id}).then(res => {
+      console.log(res)
+    })
   }
   render () {
     return (
