@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Modal, Select, Input, Radio, Button, Table, Pagination } from 'antd'
+import { Modal, Select, Input, Button, Table, Pagination } from 'antd'
 import { clientOrgSearch, searchClientUser } from 'actions/org'
 import style from './css/selectReq.css'
 const Option = Select.Option
@@ -23,12 +23,10 @@ export default class extends PureComponent {
     client_id: ''
   }
   onSelectChange = (selectedRowKeys) => {
-    console.log(selectedRowKeys)
     selectedRowKeys = selectedRowKeys.splice(selectedRowKeys.length - 1, 1)
     this.setState({ selectedRowKeys });
   }
   onSelectChangeA = (selectedRowKeysA) => {
-    console.log(selectedRowKeysA)
     selectedRowKeysA = selectedRowKeysA.splice(selectedRowKeysA.length - 1, 1)
     this.setState({ selectedRowKeysA });
   }
@@ -89,11 +87,9 @@ export default class extends PureComponent {
     }, () => {
       this.getClientOrgSearch(this.state.searchData.kw, 1)
     })
-    console.log(value)
   }
   // 修改搜索的类型
   changeSearchType = (e) => {
-    console.log(e)
     this.setState({
       search: {
         ...this.state.search,
@@ -105,7 +101,6 @@ export default class extends PureComponent {
     document.querySelector('.ant-input-search').value = ''
   }
   pagClick = (index) => {
-    console.log(index)
     this.setState({page: index, selectedRowKeys: []}, () => {
       this.getClientOrgSearch(this.state.searchData.kw, this.state.page)
     })
@@ -116,9 +111,8 @@ export default class extends PureComponent {
         'offset': (current - 1) * 10,
         'limit': 10
       }
-      kw ? data[this.state.clientNameType] = kw : data
+      data[this.state.clientNameType] = kw ? kw : data
       clientOrgSearch(data).then(res => {
-        console.log(res)
         if (res.code === 200) this.setState({clientData: res.data.org, total: res.data.total})
       })
     } else {
@@ -127,9 +121,8 @@ export default class extends PureComponent {
         'limit': 10,
         'client_id': this.state.client_id
       }
-      kw ? data[this.state.clientNameType] = kw : data
+      data[this.state.clientNameType] = kw ? kw : data
       searchClientUser(data).then(res => {
-        console.log(res)
         if (res.code === 200) this.setState({staffData: res.data.user, total: res.data.total})
       })
     }

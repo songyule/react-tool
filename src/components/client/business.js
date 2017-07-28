@@ -88,6 +88,7 @@ export default class extends PureComponent {
             }]
           })
         }
+        return 1
       })
       this.setState({
         arrIds: arrId
