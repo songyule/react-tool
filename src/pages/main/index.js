@@ -270,7 +270,11 @@ export default class extends Component {
 
               <Route path='/main/enquiry-detail/:id' component={EnquiryDetail} />
               <Route path='/main/offer-list' component={OfferList} />
+<<<<<<< HEAD
               <Route path='/main/create-offer/:id' component={CreateOffer} />
+=======
+              <Route path='/main/offer-info/:id' component={OfferInfo} />
+>>>>>>> :sparkles: finish offer info page style
             </div>
         </div>
       </div>
@@ -310,3 +314,4 @@ const EnquiryList = asyncComponent(() => import('pages/enquiry/enquiry-list'))
 const EnquiryDetail = asyncComponent(() => import('pages/enquiry/enquiry-detail'))
 const OfferList = asyncComponent(() => import('pages/enquiry/offer-list'))
 const CreateOffer = asyncComponent(() => import('pages/enquiry/create-offer'))
+const OfferInfo = asyncComponent(() => import('pages/enquiry/offer-info'))

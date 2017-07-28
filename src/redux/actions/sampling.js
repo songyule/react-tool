@@ -34,3 +34,8 @@ export const claimOffer = async (id) => {
   const response = await fetch.post('/sampling/inquiry/buyer/claim', { body: { id } })
   return response
 }
+
+export const buyerWithdraw = async (data) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/withdraw', { body: data })
+  return response
+}
