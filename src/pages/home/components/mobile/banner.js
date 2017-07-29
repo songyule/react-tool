@@ -18,14 +18,14 @@ class HomeBanner extends Component {
         <Slider {...bannerSettings}>
           { this.props.list.map((item, index) => (
           <div key={index}>
-            <div className="mobile-home-banner__item" onClick={() => this.props.editImage('pc_index_top_banner', index)}>
+            <div className="mobile-home-banner__item">
               <div className="mobile-home-banner__carousel-slide-content" style={{ backgroundImage: `url(${item.image_url})` }}></div>
             </div>
           </div>
           )) }
           <div>
             <div className="mobile-home-banner__item">
-              <div className="home-box__image-edit" onClick={() => this.props.editImage('pc_index_top_banner', -1)}>
+              <div className="home-box__image-edit">
               +
               </div>
             </div>
