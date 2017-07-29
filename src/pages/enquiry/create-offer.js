@@ -19,6 +19,7 @@ export default class CreateOffer extends PureComponent {
     super(props)
 
     this.state = {
+      isExpand: false,
       id: '170728-16247'
     }
   }
@@ -26,6 +27,10 @@ export default class CreateOffer extends PureComponent {
   componentWillMount () {
     this.getDetail()
     this.props.getOrgList({ limit: 10000 })
+  }
+
+  handleExpand = (e) => {
+    this.setState({ isExpand : !this.state.isExpand })
   }
 
   handleSubmit = () => {
@@ -70,7 +75,8 @@ export default class CreateOffer extends PureComponent {
         })
 
         data['material_arr'] = Object.keys(BOMData).map(key => BOMData[key])
-        console.log(data)
+      } else {
+        if (!this.state.isExpand) this.setState({ isExpand: true })
       }
     })
   }
@@ -92,7 +98,7 @@ export default class CreateOffer extends PureComponent {
   }
 
   render () {
-    const { id, data } = this.state
+    const { id, data, isExpand } = this.state
     const { getFieldDecorator } = this.props.form
     const { orgList } = this.props
 
@@ -235,7 +241,7 @@ export default class CreateOffer extends PureComponent {
               </FormItem>
             </Col>
             <Col span={24}>
-              <Collapse bordered={false} style={{ marginBottom: '30px' }}>
+              <Collapse bordered={false} style={{ marginBottom: '30px' }} activeKey={isExpand ? '1' : ''} onChange={this.handleExpand}>
                 <Panel header={`BOM中有${data['material_arr'].length}个物料(点击展开)`} key="1">
                   {data.material_arr.map(item => (
                     <Card title="物料" key={item.serial} style={{ marginBottom: '15px' }}>
