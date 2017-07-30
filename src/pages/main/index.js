@@ -174,6 +174,12 @@ export default class extends Component {
             title: '新建报价单',
             router: '/main/new-enquiry',
             icon: 'solution'
+          },
+          {
+            key: 'offer-list',
+            title: '报价单列表',
+            router: '/main/offer-list',
+            icon: 'solution'
           }
         ]
       }
@@ -261,7 +267,11 @@ export default class extends Component {
               {/* 询价单相关 */}
               <Route path='/main/new-enquiry' component={NewEnquiry} />
               <Route path='/main/enquiry-list' component={EnquiryList} />
+
               <Route path='/main/enquiry-detail/:id' component={EnquiryDetail} />
+              <Route path='/main/offer-list' component={OfferList} />
+              <Route path='/main/create-offer/:id' component={CreateOffer} />
+              <Route path='/main/offer-info/:id' component={OfferInfo} />
             </div>
         </div>
       </div>
@@ -299,3 +309,6 @@ const HomeSettings = asyncComponent(() => import('pages/home/settings'))
 const NewEnquiry = asyncComponent(() => import('pages/enquiry/new-enquiry'))
 const EnquiryList = asyncComponent(() => import('pages/enquiry/enquiry-list'))
 const EnquiryDetail = asyncComponent(() => import('pages/enquiry/enquiry-detail'))
+const OfferList = asyncComponent(() => import('pages/enquiry/offer-list'))
+const CreateOffer = asyncComponent(() => import('pages/enquiry/create-offer'))
+const OfferInfo = asyncComponent(() => import('pages/enquiry/offer-info'))

@@ -1,0 +1,15 @@
+.offer-card {
+  margin: 8px 0;
+  border: 1px solid #333;
+
+  &__header {
+    padding: 8px;
+    background: #ddd;
+  }
+  &__row {
+    margin-bottom: 16px;
+  }
+  &__content {
+    padding: 8px;
+  }
+}

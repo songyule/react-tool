@@ -34,3 +34,22 @@ export const sellComplete = async (body) => {
   const response = await fetch.post('/sampling/inquiry/seller/complete', { body })
   return response
 }
+export const getOfferList = async (body) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/search', { body })
+  return response
+}
+
+export const claimOffer = async (id) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/claim', { body: { id } })
+  return response
+}
+
+export const buyerWithdraw = async (data) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/withdraw', { body: data })
+  return response
+}
+
+export const buyerOffer = async (data) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/offer', { body: data })
+  return response
+}
