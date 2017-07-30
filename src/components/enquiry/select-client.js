@@ -111,7 +111,7 @@ export default class extends PureComponent {
         'offset': (current - 1) * 10,
         'limit': 10
       }
-      data[this.state.clientNameType] = kw ? kw : data
+      kw ? data[this.state.clientNameType] = kw : data
       clientOrgSearch(data).then(res => {
         if (res.code === 200) this.setState({clientData: res.data.org, total: res.data.total})
       })
@@ -121,7 +121,7 @@ export default class extends PureComponent {
         'limit': 10,
         'client_id': this.state.client_id
       }
-      data[this.state.clientNameType] = kw ? kw : data
+      kw ? data[this.state.clientNameType] = kw : data
       searchClientUser(data).then(res => {
         if (res.code === 200) this.setState({staffData: res.data.user, total: res.data.total})
       })

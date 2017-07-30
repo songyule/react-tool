@@ -6,12 +6,18 @@ const TextArea = Input
 export default class extends PureComponent {
   state = {
     test: '32131312',
+    isBomHide: true,
     quoMes: {}
+  }
+  isHide = () => {
+    this.setState({isBomHide: !this.state.isBomHide})
   }
   componentWillMount () {
     console.log(this.props.quoMes)
+    this.setState({quoMes: this.props.quoMes})
   }
   render () {
+    const { quoMes } = this.state
     const columns = [{
       title: '属性',
       dataIndex: 'lv1_name_cn',
@@ -22,12 +28,12 @@ export default class extends PureComponent {
       dataIndex: 'name_cn',
       key: 'name_cn',
     }]
-    const Bom = ({item}) => (
+    const Bom = ({bomItem}) => (
                   <div style={{border: '1px solid #ccc', paddingTop: 10, marginBottom: 10}}>
                     <div className={style.row}>
                       <div className={style.col}>
                         <p className={style.lable}>BOM行号</p>
-                        <Input style={{width: 300}} value={item} disabled></Input>
+                        <Input style={{width: 300}} value={bomItem.material_serial} disabled></Input>
                       </div>
                       <div className={style.col}>
                         <p className={style.lable}>名称</p>
@@ -56,17 +62,17 @@ export default class extends PureComponent {
                     <div className={style.row}>
                       <div className={style.col}>
                         <p className={style.lable}>使用数量</p>
-                        <Input style={{width: 300}} value='111' disabled></Input>
+                        <Input style={{width: 300}} value={bomItem.bulk_estimate_amount} disabled></Input>
                       </div>
                       <div className={style.col}>
                         <p className={style.lable}>数量单位</p>
-                        <Input style={{width: 300}} value='111' disabled></Input>
+                        <Input style={{width: 300}} value={bomItem.bulk_unit_price} disabled></Input>
                       </div>
                     </div>
                     <div className={style.row}>
                       <div className={style.col}>
                         <p className={style.lable}>磨损率</p>
-                        <Input style={{width: 300}} value='111' disabled></Input>
+                        <Input style={{width: 300}} disabled></Input>
                         <span>%</span>
                       </div>
                       <div className={style.col}>
@@ -82,7 +88,7 @@ export default class extends PureComponent {
                       </div>
                       <div className={style.col}>
                         <p className={style.lable}>单价</p>
-                        <Input style={{width: 300}} value='100' disabled></Input>
+                        <Input style={{width: 300}} value={bomItem.bulk_unit_price} disabled></Input>
                         <span>元</span>
                       </div>
                     </div>
@@ -106,24 +112,24 @@ export default class extends PureComponent {
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>报价员</p>
-              <Input style={{width: 300}} value='syl' disabled></Input>
+              <Input style={{width: 300}} disabled value={quoMes.sampling_price}></Input>
             </div>
           </div>
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>打样价格</p>
-              <Input style={{width: 300}} value='100' disabled></Input>
+              <Input style={{width: 300}} disabled value={quoMes.sampling_price}></Input>
               <span>元</span>
             </div>
           </div>
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>大货预计数量</p>
-              <Input style={{width: 300}} value='111' disabled></Input>
+              <Input style={{width: 300}} disabled value={quoMes.bulk_estimate_amount}></Input>
             </div>
             <div className={style.col}>
               <p className={style.lable}>大货预计价格</p>
-              <Input style={{width: 300}} value='100' disabled></Input>
+              <Input style={{width: 300}} disabled value={quoMes.bulk_unit_price}></Input>
               <span>元</span>
             </div>
           </div>
@@ -131,13 +137,13 @@ export default class extends PureComponent {
             <div className={style.col}>
               <p className={style.lable}>是否拆分</p>
               <p>需要</p>
-              <p>BOM中有三个物料</p>
-              <Button>折叠</Button>
+              <p>BOM中有{quoMes.material_offer_arr.length}个物料</p>
+              <Button style={{marginLeft: 10}} onClick={this.isHide}>{this.state.isBomHide ? '折叠' : '展开'}</Button>
             </div>
           </div>
           {
-            [1, 2].map((item, index) => {
-              return <Bom key={index} item={item}/>
+            this.state.isBomHide && quoMes.material_offer_arr.map((bomItem, index) => {
+              return <Bom key={index} bomItem={bomItem}/>
             })
           }
           <div className={style.row}>

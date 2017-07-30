@@ -9,7 +9,8 @@ import QuoMessageT from './components/enquiry-detail/quo-message-t'
 export default class extends PureComponent {
   state = {
     id: '',
-    enquiryMes: {}
+    enquiryMes: {},
+    isEnqShow: true
   }
   // this.props.match.params.id
   closeEnquiry = () => {
@@ -27,9 +28,12 @@ export default class extends PureComponent {
       console.log(res)
     })
   }
+  isShow = () => {
+    this.setState({isEnqShow: !this.state.isEnqShow})
+  }
   componentWillMount () {
     this.setState({id: this.props.match.params.id}, () => {
-      sellerInquirySearch({id: this.state.id}).then(res => {
+      sellerInquirySearch({id: this.state.id, get_snapshot: 1}).then(res => {
         if (res.code === 200) this.setState({enquiryMes: res.data.inquiry[0]})
       })
     })
@@ -66,7 +70,10 @@ export default class extends PureComponent {
       <div style={{paddingBottom: 20}}>
 
         <EnquiryDeatil enquiryMes={enquiryMes}></EnquiryDeatil>
-        { enquiryMes.status === 4 ? offerArr() : ''}
+        <div style={{borderTop: '1px solid #ccc', display: 'flex', justifyContent: 'center', marginBottom: 10}}>
+          <p style={{border: '1px solid #ccc', padding: '5px 20px', marginTop: -1, cursor: 'pointer'}} onClick={this.isShow}>{this.state.isEnqShow ? '折叠' : '展开'}</p>
+        </div>
+        { enquiryMes.status === 4 && this.state.isEnqShow ? offerArr() : ''}
         {/* 待认领 */}
         {
           enquiryMes.status === 0 &&  Shelters
