@@ -10,21 +10,30 @@ export const editRequirement = async (body) => {
   return response
 }
 
-export const creatSampling = async (body) => {
+export const creatSampling = async (body) => { // 创建询价单
   const response = await fetch.post('/sampling/inquiry', { body })
   return response
 }
 
-export const sellerInquirySearch = async (body) => {
+export const sellerInquirySearch = async (body) => { // 询价列表
   const response = await fetch.post('/sampling/inquiry/seller/search', { body })
   return response
 }
 
-export const closeEnquiry = async (body) => {
+export const closeEnquiry = async (body) => { // 销售取消报价
   const response = await fetch.post('/sampling/inquiry/seller/cancel', { body })
   return response
 }
 
+export const sellerWithdraw = async (body) => { //销售退回报价单
+  const response = await fetch.post('/sampling/inquiry/seller/withdraw', { body })
+  return response
+}
+
+export const sellComplete = async (body) => {
+  const response = await fetch.post('/sampling/inquiry/seller/complete', { body })
+  return response
+}
 export const getOfferList = async (body) => {
   const response = await fetch.post('/sampling/inquiry/buyer/search', { body })
   return response

@@ -1,11 +1,10 @@
 import React, { PureComponent } from 'react'
-import { Modal, Select, Input, Radio, Button, Table, Pagination } from 'antd'
+import { Modal, Select, Radio, Button, Table, Pagination } from 'antd'
 import style from './css/selectReq.css'
 import { getRequirementList } from 'actions/sampling'
 import { clientOrgSearch } from 'actions/org'
 import { format } from 'utils'
 const Option = Select.Option
-const Search = Input.Search
 const RadioGroup = Radio.Group
 export default class extends PureComponent {
   state = {
@@ -19,7 +18,6 @@ export default class extends PureComponent {
     reqResult: {}
   }
   onSelectChange = (selectedRowKeys) => {
-    console.log(selectedRowKeys)
     selectedRowKeys = selectedRowKeys.splice(selectedRowKeys.length - 1, 1)
     this.setState({ selectedRowKeys });
   }
@@ -75,7 +73,6 @@ export default class extends PureComponent {
     this.setState({statusValue: e.target.value})
   }
   getReq () {
-    console.log(this.refs.what)
     let data = {
       offset: (this.state.page - 1) * 10,
       state: this.state.statusValue,
@@ -88,10 +85,7 @@ export default class extends PureComponent {
       samplingData.sampling.map(item => {
         return item.created_at = format(item.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')
       })
-      console.log({...this.state})
-      this.setState({reqResult: samplingData}, () => {
-        console.log(this.state)
-      })
+      this.setState({reqResult: samplingData})
     })
   }
 
@@ -133,11 +127,10 @@ export default class extends PureComponent {
     this.getClentOrg()
   }
   render () {
-    const { selectedRowKeys, selectOrgValue } = this.state;
-    console.log(selectOrgValue)
+    const { selectedRowKeys } = this.state;
     const columns = [{
       title: '图片',
-      render: (text, record) => (<img style={{width: 50}} src={record.img_arr[0]}/>)
+      render: (text, record) => (<img alt='just a img' style={{width: 50}} src={record.img_arr[0]}/>)
     }, {
       title: '需求单号',
       dataIndex: 'id',
