@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
-import { getOfferList } from 'actions/sampling'
+import { getOfferList, buyerOffer } from 'actions/sampling'
 import Title from 'components/title'
 import MaterialForm from './components/material-form'
 import { Form, Input, Row, Col, Radio, Switch, Select, Collapse, Card, Button } from 'antd'
@@ -20,7 +20,7 @@ export default class CreateOffer extends PureComponent {
 
     this.state = {
       isExpand: false,
-      id: '170728-16247'
+      id: this.props.match.params.id
     }
   }
 
@@ -68,13 +68,18 @@ export default class CreateOffer extends PureComponent {
             const fieldResolve = key.split('__')
             const [ ,realKey, serial] = fieldResolve
             if (fieldMapping.indexOf(realKey) !== -1) {
-              if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
+              if(realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
+              else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
               else BOMData[serial] = { [realKey]: values[key] || '' }
             }
           }
         })
 
-        data['material_arr'] = Object.keys(BOMData).map(key => BOMData[key])
+        data['material_offer_arr'] = Object.keys(BOMData).map(key => {
+          BOMData[key]['material_serial'] = Number(key)
+          return BOMData[key]
+        })
+        buyerOffer({ id: this.props.match.params.id, offer_arr: [data] })
       } else {
         if (!this.state.isExpand) this.setState({ isExpand: true })
       }

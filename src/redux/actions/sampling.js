@@ -39,3 +39,8 @@ export const buyerWithdraw = async (data) => {
   const response = await fetch.post('/sampling/inquiry/buyer/withdraw', { body: data })
   return response
 }
+
+export const buyerOffer = async (data) => {
+  const response = await fetch.post('/sampling/inquiry/buyer/offer', { body: data })
+  return response
+}

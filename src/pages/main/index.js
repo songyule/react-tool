@@ -270,11 +270,8 @@ export default class extends Component {
 
               <Route path='/main/enquiry-detail/:id' component={EnquiryDetail} />
               <Route path='/main/offer-list' component={OfferList} />
-<<<<<<< HEAD
               <Route path='/main/create-offer/:id' component={CreateOffer} />
-=======
               <Route path='/main/offer-info/:id' component={OfferInfo} />
->>>>>>> :sparkles: finish offer info page style
             </div>
         </div>
       </div>
