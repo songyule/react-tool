@@ -1,0 +1,11 @@
+.offer-info {
+  &__button-operate-header {
+    margin-bottom: 8px;
+  }
+  &__button-operate {
+    display: block;
+  }
+  &__button {
+    margin-right: 8px;
+  }
+}

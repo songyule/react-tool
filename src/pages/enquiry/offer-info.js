@@ -3,6 +3,8 @@ import { Row, Col, Input, Button, Modal } from 'antd'
 import { Link } from 'react-router-dom'
 import { getOfferList, buyerWithdraw, claimOffer } from 'actions/sampling'
 import Title from 'components/title'
+import OfferCard from './components/offer-card'
+import style from './offer-info.css'
 const [ { TextArea } ] = [ Input ]
 
 export default class OfferInfo extends PureComponent {
@@ -65,6 +67,16 @@ export default class OfferInfo extends PureComponent {
     const offer = this.state.offer
     const sku = offer.sku_snapshot || {}
     const classes = (sku.spu && sku.spu.commodity_class) || []
+    const statusMapping = {
+      0: '待认领',
+      1: '报价中',
+      2: '已完成',
+      3: '销售退回报价',
+      4: '采购有报价提供',
+      [-1]: '销售关闭了询价单',
+      [-2]: '采购退回询价单'
+    }
+    const statusText = statusMapping[offer.status]
 
     return (
       <div className="page_offer-info">
@@ -84,42 +96,18 @@ export default class OfferInfo extends PureComponent {
             </Row>
           </Col>
         </Row>
-        {
-          offer.status === 0 &&
-          <Row>
-            <Col span={24}>待认领</Col>
-            <Col span={24}>
-              <Button onClick={this.handleClaim}>抢</Button>
-              <Link to="/main/offer-list">
-                <Button>返回</Button>
-              </Link>
-            </Col>
-          </Row>
-        }
-        {
-          offer.status === 1 &&
-          <Row>
-            <Col span={24}>报价中</Col>
-            <Col span={24}>
-              <Button>提交工单</Button>
-              <Button onClick={this.showReturn}>退回工单</Button>
-              <Link to="/main/offer-list">
-                <Button>返回</Button>
-              </Link>
-            </Col>
-          </Row>
-        }
-        {
-          offer.status === 2 &&
-          <Row>
-            <Col span={24}>已完成</Col>
-            <Col span={24}>
-              <Link to="/main/offer-list">
-                <Button>返回</Button>
-              </Link>
-            </Col>
-          </Row>
-        }
+        <OfferCard></OfferCard>
+        <Row>
+          <Col span={24} className={style['offer-info__button-operate-header']}>{ statusText }</Col>
+          <Col span={24} className={style['offer-info__button-operate']}>
+            { offer.status === 0 && <Button className={style['offer-info__button']} onClick={this.handleClaim}>抢</Button> }
+            { offer.status === 1 && <Button className={style['offer-info__button']}>提交工单</Button> }
+            { offer.status === 1 && <Button className={style['offer-info__button']} onClick={this.showReturn}>退回工单</Button> }
+            <Link to="/main/offer-list">
+              <Button>返回</Button>
+            </Link>
+          </Col>
+        </Row>
 
         <Modal
           visible={this.state.returnVisible}
