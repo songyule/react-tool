@@ -68,17 +68,20 @@ export default class CreateOffer extends PureComponent {
             const fieldResolve = key.split('__')
             const [ ,realKey, serial] = fieldResolve
             if (fieldMapping.indexOf(realKey) !== -1) {
-              if(realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
+              if (realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
               else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
               else BOMData[serial] = { [realKey]: values[key] || '' }
             }
           }
         })
+        console.log(this.state.data.material_arr.length)
+        if (this.state.data.material_arr.length > 0) {
+          data['material_offer_arr'] = Object.keys(BOMData).map(key => {
+            BOMData[key]['material_serial'] = Number(key)
+            return BOMData[key]
+          })
+        }
 
-        data['material_offer_arr'] = Object.keys(BOMData).map(key => {
-          BOMData[key]['material_serial'] = Number(key)
-          return BOMData[key]
-        })
         buyerOffer({ id: this.props.match.params.id, offer_arr: [data] })
       } else {
         if (!this.state.isExpand) this.setState({ isExpand: true })
@@ -217,7 +220,7 @@ export default class CreateOffer extends PureComponent {
         valid: 'comment'
       }
     ]
-
+    console.log(data && data['material_arr'].length > 0)
     return data ? (
       <div>
         <Title title={`报价单号${id}`} />
@@ -245,80 +248,90 @@ export default class CreateOffer extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={24}>
-              <Collapse bordered={false} style={{ marginBottom: '30px' }} activeKey={isExpand ? '1' : ''} onChange={this.handleExpand}>
-                <Panel header={`BOM中有${data['material_arr'].length}个物料(点击展开)`} key="1">
-                  {data.material_arr.map(item => (
-                    <Card title="物料" key={item.serial} style={{ marginBottom: '15px' }}>
-                      {materialItemConfig.map(config => (
-                        <Col key={config.valid} span={12}>
-                          <FormItem {...formItemLayout} label={config.label}>
-                            {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
-                              <Input disabled />
-                            )}
-                          </FormItem>
-                        </Col>
-                      ))}
-                      <Col span={12}>
-                        <FormItem {...formItemLayout} label="包含运费">
-                          {getFieldDecorator('BOM__include_express_fee__' + item.serial, { initialValue: item.include_express_fee || 1 })(
-                            <RadioGroup >
-                              <Radio value={1}> 包含运费 </Radio>
-                              <Radio value={0}> 不包含运费 </Radio>
-                            </RadioGroup>
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={12}>
-                        <FormItem {...formItemLayout} label="供应商选择">
-                          {getFieldDecorator('BOM__supplier_id__' + item.serial, { rules: [{ required: true, message: '请选择供应商'}] })(
-                            <Select placeholder="请选择">
-                              {
-                                orgList.map(item => (
-                                  <Option key={item.id} value={item.id}> {item.name_official || item.name_cn} </Option>
-                                ))
-                              }
-                            </Select>
-                          )}
-                        </FormItem>
-                      </Col>
-                      {materialItemWithUnitConfig.map(config => (
-                        <Col key={config.valid} span={12}>
-                          <FormItem {...formItemLayout} label={config.label}>
-                            {getFieldDecorator(
-                              `BOM__${config.valid}__${item.serial}`,
-                              { initialValue: item[config.valid], rules: config.rules }
-                            )(
-                              <Input
-                                disabled={config.disabled}
-                                addonAfter={config.unit && <span>{config.unit}</span>}
-                                onChange={(e, _config, _item) => this.handleCalcEstimatedQuantity(e, config, item)}
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      ))}
-                      {materialItemFullColConfig.map(config => (
-                        <Col key={config.valid} span={24}>
-                          <FormItem {...formItemFullColLayout} label={config.label}>
-                            {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
-                              <Input disabled />
-                            )}
-                          </FormItem>
-                        </Col>
-                      ))}
-                      <Col span={24}>
-                        <FormItem {...formItemFullColLayout} label="备注">
-                          {getFieldDecorator('BOM__comment__'+ item.serial, { initialValue: item['comment'] })(
-                            <TextArea rows={4}/>
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Card>
-                  ))}
-                </Panel>
-              </Collapse>
-            </Col>
+            {
+              data['material_arr'].length > 0
+                ? (
+                  <Col span={24}>
+                    <Collapse bordered={false} style={{ marginBottom: '30px' }} activeKey={isExpand ? '1' : ''} onChange={this.handleExpand}>
+                      <Panel header={`BOM中有${data['material_arr'].length}个物料(点击展开)`} key="1">
+                        {data.material_arr.map(item => (
+                          item.status !== '0'
+                           ? (
+                             <Card title="物料" key={item.serial} style={{ marginBottom: '15px' }}>
+                               {materialItemConfig.map(config => (
+                                 <Col key={config.valid} span={12}>
+                                   <FormItem {...formItemLayout} label={config.label}>
+                                     {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
+                                       <Input disabled />
+                                     )}
+                                   </FormItem>
+                                 </Col>
+                               ))}
+                               <Col span={12}>
+                                 <FormItem {...formItemLayout} label="包含运费">
+                                   {getFieldDecorator('BOM__include_express_fee__' + item.serial, { initialValue: item.include_express_fee || 1 })(
+                                     <RadioGroup >
+                                       <Radio value={1}> 包含运费 </Radio>
+                                       <Radio value={0}> 不包含运费 </Radio>
+                                     </RadioGroup>
+                                   )}
+                                 </FormItem>
+                               </Col>
+                               <Col span={12}>
+                                 <FormItem {...formItemLayout} label="供应商选择">
+                                   {getFieldDecorator('BOM__supplier_id__' + item.serial, { rules: [{ required: true, message: '请选择供应商'}] })(
+                                     <Select placeholder="请选择">
+                                       {
+                                         orgList.map(item => (
+                                           <Option key={item.id} value={item.id}> {item.name_official || item.name_cn} </Option>
+                                         ))
+                                       }
+                                     </Select>
+                                   )}
+                                 </FormItem>
+                               </Col>
+                               {materialItemWithUnitConfig.map(config => (
+                                 <Col key={config.valid} span={12}>
+                                   <FormItem {...formItemLayout} label={config.label}>
+                                     {getFieldDecorator(
+                                       `BOM__${config.valid}__${item.serial}`,
+                                       { initialValue: item[config.valid], rules: config.rules }
+                                     )(
+                                       <Input
+                                         disabled={config.disabled}
+                                         addonAfter={config.unit && <span>{config.unit}</span>}
+                                         onChange={(e, _config, _item) => this.handleCalcEstimatedQuantity(e, config, item)}
+                                       />
+                                     )}
+                                   </FormItem>
+                                 </Col>
+                               ))}
+                               {materialItemFullColConfig.map(config => (
+                                 <Col key={config.valid} span={24}>
+                                   <FormItem {...formItemFullColLayout} label={config.label}>
+                                     {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
+                                       <Input disabled />
+                                     )}
+                                   </FormItem>
+                                 </Col>
+                               ))}
+                               <Col span={24}>
+                                 <FormItem {...formItemFullColLayout} label="备注">
+                                   {getFieldDecorator('BOM__comment__'+ item.serial, { initialValue: item['comment'] })(
+                                     <TextArea rows={4}/>
+                                   )}
+                                 </FormItem>
+                               </Col>
+                             </Card>
+                           )
+                           : null
+                        ))}
+                      </Panel>
+                    </Collapse>
+                  </Col>
+                )
+                : null
+            }
             {formItemTextareaConfig.map(item => (
               <Col key={item.valid} span={24}>
                 <FormItem {...formItemFullColLayout} label={item.label}>
