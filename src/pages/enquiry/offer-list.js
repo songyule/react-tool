@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { format } from 'utils'
 import { getOfferList, claimOffer } from 'actions/sampling'
+import { Link } from 'react-router-dom'
 import Title from 'components/title'
 import { Tabs, Table, Button, Select, Input, message } from 'antd'
 const [Option, Search, ButtonGroup, TabPane] = [Select.Option, Input.Search, Button.Group, Tabs.TabPane]
@@ -126,7 +127,9 @@ export default class OfferList extends PureComponent {
         key: 'action',
         render: (text, record) => (
           <ButtonGroup>
-            <Button>查看</Button>
+            <Link to={`/main/offer-info/${record.id}`}>
+              <Button>查看</Button>
+            </Link>
             {
               text === STATUS_WAITING_FOR_CLAIM
                 ? <Button type="primary" onClick={(id) => this.handleClaim(record.id)}>抢</Button>
