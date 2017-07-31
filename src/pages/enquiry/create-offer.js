@@ -6,6 +6,7 @@ import * as samplingActions from 'actions/sampling'
 import { getOfferList } from 'actions/sampling'
 import { Link } from 'react-router-dom'
 import Title from 'components/title'
+import { accMul } from 'utils'
 // import MaterialForm from './components/material-form'
 import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button } from 'antd'
 const [FormItem, RadioGroup, Option, Panel, TextArea] = [Form.Item, Radio.Group, Select.Option, Collapse.Panel, Input.TextArea]
@@ -42,11 +43,23 @@ export default class CreateOffer extends PureComponent {
         const {
           sampling_price,
           bulk_unit_price,
+          bulk_estimate_amount,
+          bulk_expectation_price,
           predictable_risk = '',
           comment = ''
         } = values
 
-        const data = {
+        const {
+          include_express_fee,
+          supplier_id,
+          bulk_wear_rate,
+          bulk_mould_fee,
+          bulk_examine_fee,
+          quality_req,
+          quality_testing_req
+        } = values
+
+        let data = {
           sampling_price,
           bulk_unit_price,
           predictable_risk,
@@ -68,6 +81,17 @@ export default class CreateOffer extends PureComponent {
             BOMData[key]['material_serial'] = Number(key)
             return BOMData[key]
           })
+        } else {
+          data = {
+            ...data,
+            include_express_fee,
+            supplier_id,
+            bulk_wear_rate,
+            bulk_mould_fee,
+            bulk_examine_fee,
+            quality_req,
+            quality_testing_req
+          }
         }
         const id = this.props.match.params.id
         this.props.saveOffer({ id, offer: data })
@@ -81,10 +105,10 @@ export default class CreateOffer extends PureComponent {
   handleCalcEstimatedQuantity = (e, config, item) => {
     if (config.valid !== 'bulk_wear_rate') return
     const val = e.target.value
-    const amount = item.per_bom_amount * (1 + val * 0.01)
+    const amount = accMul(item.per_bom_amount, (1 + val * 0.01))
 
     this.props.form.setFieldsValue({
-      [`BOM__bulk_estimate_amount__${item.serial}`]: Math.ceil(amount)
+      [`BOM__bulk_estimate_amount__${item.serial}`]: String(amount)
     })
   }
 
@@ -236,6 +260,62 @@ export default class CreateOffer extends PureComponent {
                 )}
               </FormItem>
             </Col>
+            {
+              data['material_arr'].length === 0
+                ? (
+                  <div>
+                    <Col span={12}>
+                      <FormItem {...formItemLayout} label="包含运费">
+                        {getFieldDecorator('include_express_fee', { initialValue: data.include_express_fee || 1 })(
+                          <RadioGroup >
+                            <Radio value={1}> 包含运费 </Radio>
+                            <Radio value={0}> 不包含运费 </Radio>
+                          </RadioGroup>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={12}>
+                      <FormItem {...formItemLayout} label="供应商选择">
+                        {getFieldDecorator('supplier_id', { rules: [{ required: true, message: '请选择供应商'}] })(
+                          <Select placeholder="请选择">
+                            {
+                              orgList.map(item => (
+                                <Option key={item.id} value={item.id}> {item.name_official || item.name_cn} </Option>
+                              ))
+                            }
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    {materialItemWithUnitConfig.slice(0, 3).map(item => (
+                      <Col key={item.valid} span={12}>
+                        <FormItem {...formItemLayout} label={item.label}>
+                          {getFieldDecorator(
+                            item.valid,
+                            { initialValue: data[item.valid], rules: item.rules }
+                          )(
+                            <Input
+                              disabled={item.disabled}
+                              addonAfter={item.unit && <span>{item.unit}</span>}
+                              onChange={(e, _config, _item) => this.handleCalcEstimatedQuantity(e, item, data)}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    ))}
+                    {materialItemFullColConfig.map(item => (
+                      <Col key={item.valid} span={24}>
+                        <FormItem {...formItemFullColLayout} label={item.label}>
+                          {getFieldDecorator(item.valid, { initialValue: data[item.valid] })(
+                            <Input disabled />
+                          )}
+                        </FormItem>
+                      </Col>
+                    ))}
+                  </div>
+                )
+                : null
+            }
             {
               data['material_arr'].length > 0
                 ? (
