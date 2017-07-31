@@ -28,7 +28,11 @@ export default class OfferInfo extends PureComponent {
     }
   }
 
-  async componentWillMount () {
+  componentWillMount () {
+    this.getInquiryDetail()
+  }
+
+  getInquiryDetail = async() => {
     const id = this.props.match.params.id
     const res = await getOfferList({ id })
     const inquiry = res.data.inquiry[0]
@@ -73,9 +77,35 @@ export default class OfferInfo extends PureComponent {
     buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason })
   }
 
+  handleOffers = (offer) => {
+    const fieldMapping = [
+      'include_express_fee',
+      'bulk_wear_rate',
+      'bulk_mould_fee',
+      'bulk_examine_fee',
+      'bulk_estimate_amount',
+      'bulk_unit_price',
+      'supplier_id',
+      'comment',
+      'material_serial'
+    ]
+
+    offer.material_offer_arr = offer.material_offer_arr.map(material => {
+      const saveMaterial = {}
+      Object.keys(material).forEach(key => {
+        if (fieldMapping.indexOf(key) !== -1) saveMaterial[key] = material[key]
+      })
+      return saveMaterial
+    })
+    return offer
+  }
+
   handleSubmit = () => {
     const id = this.props.match.params.id
-    buyerOffer({ id, offer_arr: this.state.inquiry.offer_arr })
+    let { offer_arr, material_arr } = this.state.inquiry
+    if (material_arr.length) offer_arr = offer_arr.map(offer => this.handleOffers(offer))
+    buyerOffer({ id, offer_arr })
+    this.getInquiryDetail()
     this.props.saveOffer({ id: '', offer: [] })
   }
 
@@ -97,7 +127,7 @@ export default class OfferInfo extends PureComponent {
 
     return (
       <div className="page_offer-info">
-        <Title title={`询价工单：${this.state.inquiry.id}`}></Title>
+        <Title title={`询价工单：${inquiry.id}`}></Title>
         <Row gutter={32} className={style['offer-info__row']}>
           <Col span="2">商品详情</Col>
           <Col span="22">
@@ -113,11 +143,11 @@ export default class OfferInfo extends PureComponent {
             </Row>
           </Col>
         </Row>
-        <OrderCollapse></OrderCollapse>
-        { this.state.inquiry.offer_arr && this.state.inquiry.offer_arr.map(item => (
-          <OfferCard offer={item}></OfferCard>
+        <OrderCollapse reqMes={inquiry}></OrderCollapse>
+        { inquiry.offer_arr && inquiry.offer_arr.map(item => (
+          <OfferCard offer={item} materials={inquiry.material_arr}></OfferCard>
         )) }
-        { this.state.inquiry.status === 1 &&
+        { inquiry.status === 1 &&
           <Row className={style['offer-info__row']}>
             <Link to={`/main/create-offer/${id}`}>
               <Button type="primary">新增报价</Button>

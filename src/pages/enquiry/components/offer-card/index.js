@@ -3,6 +3,8 @@ import { Row, Col, Input } from 'antd'
 import BomCollapse from '../bom-collapse'
 import style from './index.css'
 import { format } from 'utils'
+import { find } from 'lodash'
+const [ TextArea ] = [ Input.TextArea ]
 
 export default class OfferCard extends PureComponent {
   constructor (props) {
@@ -13,8 +15,15 @@ export default class OfferCard extends PureComponent {
     }
   }
   render () {
-    const offer = this.props.offer
-    console.log(offer)
+    const { offer, materials } = this.props
+    const supplierValue = materials.length ? offer.material_offer_arr.map(offer => offer.supplier_id).join(',') : offer.supplier_id
+    if (materials.length) {
+      offer.material_offer_arr = offer.material_offer_arr.map(item => {
+        const matchMaterial = find(materials, { serial: item.material_serial })
+        return {...item, ...matchMaterial}
+      })
+    }
+
     return (
       <div className={style['offer-card']}>
         <div className={style['offer-card__header']}>
@@ -26,7 +35,7 @@ export default class OfferCard extends PureComponent {
               供应商编码
             </Col>
             <Col span={9}>
-              <Input disabled value={ offer.supplier_id }></Input>
+              <Input disabled value={ supplierValue }></Input>
             </Col>
             <Col span={3}>
               报价员
@@ -63,9 +72,9 @@ export default class OfferCard extends PureComponent {
               是否需要拆分
             </Col>
             <Col span={21}>
-              { offer.material_offer_arr.length ?
+              { materials.length ?
                 <div>
-                  需要  BOM中有{ offer.material_offer_arr.length }个物料
+                  需要  BOM中有{ materials.length }个物料
                   <BomCollapse material={offer.material_offer_arr[0]}></BomCollapse>
                 </div> : '不需要' }
             </Col>
@@ -84,7 +93,7 @@ export default class OfferCard extends PureComponent {
             </Col>
             <Col span={21}>
               { /* 无返回 */ }
-              <Input disabled value={ offer.comment }></Input>
+              <TextArea rows={4} disabled value={ offer.comment }></TextArea>
             </Col>
           </Row>
         </div>
