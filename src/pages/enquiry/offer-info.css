@@ -8,4 +8,16 @@
   &__button {
     margin-right: 8px;
   }
+  &__row {
+    margin-bottom: 16px;
+  }
+}
+
+:global {
+  .page_offer-info {
+    .ant-row {
+      display: flex;
+      align-items: center;
+    }
+  }
 }
