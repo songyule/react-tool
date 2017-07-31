@@ -76,7 +76,7 @@ export default class extends PureComponent {
           visible={this.props.visible}
           title="新建 BOM"
           width={800}
-          onOk={() => this.props.callback(this.state.bom)}
+          onOk={() => this.props.callback(this.state.boms)}
           onCancel={this.props.onCancel}>
           { this.state.boms.map((bom, index) =>
           index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index}></BomCard>:

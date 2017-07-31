@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 import { Input, Radio, Button, Table, Form, Select } from 'antd'
 import Title from 'components/title'
 import style from '../../css/new-enquiry.css'
-import MyUpload from 'pages/topic/components/img-upload'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
 
@@ -15,29 +14,22 @@ class newEnquiry extends PureComponent {
     defaultSource: true,
     skuData: [],
     spuData: [],
-    fileList: [],
-    isReq: true,
     isType: '',
     isMaterial: true,
     reqNumber: '',
     lv1ClassArr: [],
-    reqMes: {},
+    reqMes: {
+      img_url_arr: []
+    },
     selectSku: {}
   }
 
-  onChangeMaterial = (e) => { // 是否需要拆分商品
-    this.setState({
-      isMaterial: e.target.value
-    })
-  }
   onChangeType = (e) => { // 选择商品类型
     this.setState({
       isType: e.target.value
     })
   }
-  handleChange = (fileList) => { // 图片上传
-    this.setState({ fileList })
-  }
+
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -70,7 +62,9 @@ class newEnquiry extends PureComponent {
   }
   history = (e) => {
     console.log(e)
-    this.setState({reqMes: this.state.reqMes.snapshot_arr[e]})
+    this.setState({reqMes: this.state.reqMes.snapshot_arr[e]}, () => {
+      console.log(this.state.reqMes)
+    })
   }
   componentWillMount() {
     this.getLv1Class()
@@ -85,7 +79,7 @@ class newEnquiry extends PureComponent {
   }
   render () {
     const { getFieldDecorator } = this.props.form
-    const { clientOrgMes, reqMes } = this.state
+    const { reqMes } = this.state
     const columns = [{
       title: '属性',
       dataIndex: 'lv1_name_cn',
@@ -138,7 +132,7 @@ class newEnquiry extends PureComponent {
                                                                             return (<Option  key={index} value={index}>{item.updated_at}</Option>)
                                                                           })
                                                                         }
-                                                                      </Select>) 
+                                                                      </Select>)
           }
         </Title>
         <Form>
@@ -147,13 +141,13 @@ class newEnquiry extends PureComponent {
             className={style.tier}
           >
             <div>
-              <RadioGroup value={this.state.isReq} disabled>
+              <RadioGroup value={reqMes.sampling_id ? true : false} disabled>
                 <Radio value={true}>需求单</Radio>
                 <Radio value={false}>其他来源</Radio>
               </RadioGroup>
               {
-                this.state.isReq && <div className={style.flex}>
-                                      <p>需求单号：{reqMes.id}</p>
+                reqMes.sampling_id && <div className={style.flex}>
+                                      <p>需求单号：{reqMes.sampling_id}</p>
                                     </div>
               }
             </div>
@@ -173,7 +167,7 @@ class newEnquiry extends PureComponent {
                 </FormItem>
                 <FormItem label="客户编码">
                   {getFieldDecorator('sn', {
-                    initialValue: (clientOrgMes && 'SN' + clientOrgMes.org.sn) || (reqMes.client_org && 'SN' + reqMes.client_org.sn)
+                    initialValue: (reqMes.client_org && 'SN' + reqMes.client_org.sn) || ''
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
@@ -182,14 +176,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="客户级别">
                   {getFieldDecorator('level', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.client_level.name) || (reqMes.client_org && reqMes.client_org.client_level.name)
+                    initialValue: '' || (reqMes.client_org && reqMes.client_org.client_level && reqMes.client_org.client_level.name)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="提交人">
                   {getFieldDecorator('name', {
-                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.client_org && reqMes.client_org.client_source.name)
+                    initialValue: '' || (reqMes.client_org && reqMes.client_org.client_source && reqMes.client_org.client_source.name)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
@@ -257,13 +251,12 @@ class newEnquiry extends PureComponent {
                                             </div>
             }
             <FormItem label="商品补充描述">
-              {getFieldDecorator('img', {
-                initialValue: (reqMes && reqMes.img_arr) || ''
-              })(
-                <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
-              )}
+              {
+                reqMes.img_url_arr.map((item, index) => {
+                  return (<img key={index} src={item} alt="img" className={style.originImg}/>)
+                })
+              }
             </FormItem>
-
           </FormItem>
           <FormItem label="商品要求" className={style.tier}>
             {
@@ -290,29 +283,22 @@ class newEnquiry extends PureComponent {
               label="拆分商品"
             >
               <div>
-                <RadioGroup disabled onChange={this.onChangeMaterial} value={this.state.isMaterial}>
-                  <Radio value={true}>不需要</Radio>
-                  <Radio value={false}>需要</Radio>
+                <RadioGroup disabled value={reqMes && reqMes.material_arr && reqMes.material_arr.length ? 0 : 1}>
+                  <Radio value={1}>不需要</Radio>
+                  <Radio value={0}>需要</Radio>
                 </RadioGroup>
                 {
-                  !this.state.isMaterial && <div className={style.flex}>
-                                        <Button type="primary" className={style.btn} style={{display: 'none'}}>BOM管理</Button>
-                                        <p>BOM中没有物料</p>
-                                      </div>
+                  reqMes.material_arr && <p>BOM中有{reqMes.material_arr.length}物料</p>
                 }
               </div>
             </FormItem>
           </FormItem>
           <FormItem label="实物样" className={style.tier}>
-              {getFieldDecorator('has_sampling', {
-                initialValue: true,
-              })(
-                <RadioGroup disabled>
-                  <Radio value={true}>无</Radio>
-                  <Radio value={false}>有</Radio>
-                  <span>(请在工单被供应链同事响应后给到具体同事)</span>
-                </RadioGroup>
-              )}
+            <RadioGroup disabled value={reqMes && reqMes.has_sampling}>
+              <Radio value={0}>无</Radio>
+              <Radio value={1}>有</Radio>
+              <span>(请在工单被供应链同事响应后给到具体同事)</span>
+            </RadioGroup>
           </FormItem>
           <FormItem
             label="打样要求"

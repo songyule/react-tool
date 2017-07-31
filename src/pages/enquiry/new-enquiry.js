@@ -8,8 +8,9 @@ import SelectClient from 'components/enquiry/select-client'
 import CommoditySelection from './components/commodity-selection/index'
 import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
-import { creatSampling } from 'actions/sampling'
+import { creatSampling, sellerInquirySearch, getRequirementList, enquiryUpdata } from 'actions/sampling'
 import { toRemoteBom } from './utils'
+import { format } from 'utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
@@ -28,12 +29,13 @@ class newEnquiry extends PureComponent {
     reqVisible: false,
     clientVisible: false,
     commodityVisible: false,
-    bomVisible: true,
+    bomVisible: false,
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
     selectSku: {},
-    bom: {}
+    bom: {},
+    boms: []
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -46,6 +48,11 @@ class newEnquiry extends PureComponent {
       })
     }
 
+  }
+  bomCancel = () => {
+    this.setState({
+      bomVisible: false
+    })
   }
   onChangeWd = (e) => { // 数据来源
     if (!e.target.value) this.handleReset()
@@ -68,6 +75,7 @@ class newEnquiry extends PureComponent {
   callbackParent = (val) => { // 选择需求单的回调
     console.log(val)
     if (val.name === 'req') {
+      console.log(val.reqMes)
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
       val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
       let fileArr = []
@@ -95,6 +103,28 @@ class newEnquiry extends PureComponent {
         clientVisible: val.visible,
         clientOrgMes: val.clientOrgMes
       })
+    } else if (val.name === 'getReq') {
+      if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
+      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      let fileArr = []
+      val.reqMes.img_arr.map((item, index) => {
+        let obj ={
+                    uid: index,
+                    name: '233',
+                    status: 'done',
+                    url: item || '',
+                    response: item || '',
+                    thumbUrl: item || ''
+                  }
+        return fileArr.push(obj)
+      })
+      this.setState({
+        reqMes: val.reqMes,
+        skuData: val.reqMes.sku_snapshot.attribute,
+        spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
+        fileList: fileArr,
+        isReq: false
+      })
     }
   }
   handleChange = (fileList) => { // 图片上传
@@ -102,23 +132,39 @@ class newEnquiry extends PureComponent {
     console.log(this.props.form.getFieldsValue())
     this.setState({ fileList })
   }
+  checkNumber = (value) => {
+    let reg = /^[0-9]+.?[0-9]*$/
+    if (reg.test(value)) {
+      return true
+    }
+    return false
+  }
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       console.log(values)
-      let arr = []
-      this.state.fileList.map(item => {
-        arr.push(item.response)
-        return arr
-      })
-      console.log(arr)
-      values.img = arr
-      if (this.state.isType !== 3) values.custom_commodity_class_id = 0
-      if (this.state.isMaterial) values.material_arr = this.state.bom
-      creatSampling(values).then(res => {
-        console.log(res)
-        if (res.code === 200) this.setState({modalVisible: true})
-      })
+      if (!err && this.checkNumber(values.bulk_estimate_amount)) {
+        let arr = []
+        this.state.fileList.map(item => {
+          arr.push(item.response)
+          return arr
+        })
+        console.log(arr)
+        values.img = arr
+        if (this.state.isType !== 3) values.custom_commodity_class_id = 0
+        if (this.state.isMaterial) values.material_arr = this.state.bom
+        if (this.props.location.state) {
+          console.log(2333)
+          values.id = this.props.location.state
+          enquiryUpdata(values).then(res => {
+            if (res.code === 200) this.setState({modalVisible: true})
+          })
+        } else {
+          creatSampling(values).then(res => {
+            if (res.code === 200) this.setState({modalVisible: true})
+          })
+        }
+      }
     })
   }
   getLv1Class () {
@@ -160,11 +206,12 @@ class newEnquiry extends PureComponent {
       selectSku: sku
     })
   }
-  bomCallback = (localBom) => {
-    console.log([toRemoteBom(localBom)])
+  bomCallback = (boms) => {
+    console.log(boms.map(item => toRemoteBom(item)))
     this.setState({
       bomVisible: false,
-      bom: [toRemoteBom(localBom)]
+      boms: boms,
+      bom: boms.map(item => toRemoteBom(item))
     })
   }
   handleReset = () => {
@@ -182,8 +229,36 @@ class newEnquiry extends PureComponent {
       modalVisible: false,
     });
   }
+  getEnqDetail = () => {
+    sellerInquirySearch({id: this.props.location.state}).then(res => {
+      console.log(res.data.inquiry[0])
+      if (res.code === 200) {
+        this.setState({
+          enquiryMes: res.data.inquiry[0],
+          isMaterial: res.data.inquiry[0].material_arr.length ? true : false,
+          boms: res.data.inquiry[0].material_arr
+        })
+        let id_arr = []
+        id_arr.push(res.data.inquiry[0].sampling_id)
+        getRequirementList({'id_arr': id_arr}).then(res => {
+          console.log(res)
+          let val = {}
+          val.name = 'getReq'
+          val.reqMes = res.data.sampling[0]
+          this.callbackParent(val)
+        })
+      }
+    })
+  }
+  setInputType = (e) => {
+    this.props.form.setFieldsValue({'bulk_estimate_amount': 1})
+    console.log(this.props.form)
+  }
   componentWillMount() {
     this.getLv1Class()
+    console.log(this.props.location.state, 23343242343432432)
+    if (!this.props.location.state) return
+    this.getEnqDetail()
   }
   render () {
     const { getFieldDecorator } = this.props.form
@@ -392,7 +467,7 @@ class newEnquiry extends PureComponent {
                 {
                   this.state.isMaterial && <div className={style.flex}>
                                         <Button type="primary" className={style.btn} onClick={this.showBomCreate}>BOM管理</Button>
-                                        <p>BOM中没有物料</p>
+                                        <p>{!this.state.boms.length ? 'BOM中没有物料' : 'BOM中有' + this.state.boms.length + '物料'}</p>
                                       </div>
                 }
               </div>
@@ -400,11 +475,11 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="实物样" className={style.tier}>
               {getFieldDecorator('has_sampling', {
-                initialValue: true,
+                initialValue: 0,
               })(
                 <RadioGroup>
-                  <Radio value={true}>无</Radio>
-                  <Radio value={false}>有</Radio>
+                  <Radio value={0}>无</Radio>
+                  <Radio value={1}>有</Radio>
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
                 </RadioGroup>
               )}
@@ -430,7 +505,7 @@ class newEnquiry extends PureComponent {
               </div>
               <div className={style.flex}>
                 <FormItem label="样品交期">
-                  {getFieldDecorator('custom_commodity_name', {
+                  {getFieldDecorator('sample_deadline', {
                     initialValue: reqMes && reqMes.sample_deadline
                   })(
                     <Input className={style.inputTitle}></Input>
@@ -447,9 +522,10 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="预计大货数量">
                   {getFieldDecorator('bulk_estimate_amount', {
-                    initialValue: reqMes && reqMes.bulk_production_amount
+                    initialValue: null,
+                    rules: [{required: true, message: '请检查此项是否为纯数字，若不是，请输入数字' }]
                   })(
-                    <Input className={style.inputTitle}></Input>
+                    <Input onChange={this.setInputType} className={style.inputTitle} placeholder={reqMes && reqMes.bulk_production_amount + '(请将此项写成数字)'}></Input>
                   )}
                 </FormItem>
                 <FormItem label="大货单位">
