@@ -53,30 +53,16 @@ export default class CreateOffer extends PureComponent {
           comment
         }
 
-        const fieldMapping = [
-          'include_express_fee',
-          'bulk_wear_rate',
-          'bulk_mould_fee',
-          'bulk_examine_fee',
-          'bulk_estimate_amount',
-          'bulk_unit_price',
-          'supplier_id',
-          'comment'
-        ]
-
         const BOMData = {}
         Object.keys(values).forEach(key => {
           if (key.indexOf('BOM__') !== -1) {
             const fieldResolve = key.split('__')
             const [ ,realKey, serial] = fieldResolve
-            if (fieldMapping.indexOf(realKey) !== -1) {
-              if (realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
-              else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
-              else BOMData[serial] = { [realKey]: values[key] || '' }
-            }
+            if (realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
+            else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
+            else BOMData[serial] = { [realKey]: values[key] || '' }
           }
         })
-        console.log(this.state.data.material_arr.length)
         if (this.state.data.material_arr.length > 0) {
           data['material_offer_arr'] = Object.keys(BOMData).map(key => {
             BOMData[key]['material_serial'] = Number(key)
@@ -263,7 +249,7 @@ export default class CreateOffer extends PureComponent {
                                {materialItemConfig.map(config => (
                                  <Col key={config.valid} span={12}>
                                    <FormItem {...formItemLayout} label={config.label}>
-                                     {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
+                                     {getFieldDecorator(`BOM__${config.valid}__${item.serial}`, { initialValue: item[config.valid] })(
                                        <Input disabled />
                                      )}
                                    </FormItem>
@@ -311,7 +297,7 @@ export default class CreateOffer extends PureComponent {
                                {materialItemFullColConfig.map(config => (
                                  <Col key={config.valid} span={24}>
                                    <FormItem {...formItemFullColLayout} label={config.label}>
-                                     {getFieldDecorator(config.valid + item.serial, { initialValue: item[config.valid] })(
+                                     {getFieldDecorator(`BOM__${config.valid}__${item.serial}`, { initialValue: item[config.valid] })(
                                        <Input disabled />
                                      )}
                                    </FormItem>
