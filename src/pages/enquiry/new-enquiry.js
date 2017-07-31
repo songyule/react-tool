@@ -142,7 +142,7 @@ class newEnquiry extends PureComponent {
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(values)
+      console.log(this.state.reqMes.id)
       if (!err && this.checkNumber(values.bulk_estimate_amount)) {
         let arr = []
         this.state.fileList.map(item => {
@@ -153,6 +153,7 @@ class newEnquiry extends PureComponent {
         values.img = arr
         if (this.state.isType !== 3) values.custom_commodity_class_id = 0
         if (this.state.isMaterial) values.material_arr = this.state.bom
+        if (this.state.isReq) values.sampling_id = this.state.reqMes.id
         if (this.props.location.state) {
           console.log(2333)
           values.id = this.props.location.state

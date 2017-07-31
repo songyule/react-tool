@@ -264,7 +264,7 @@ class newEnquiry extends PureComponent {
                 return (<div className={style.mBottom} key={index}>
                           <FormItem label={item.name}>
                             {getFieldDecorator(item.filed, {
-                              initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || ''
+                              initialValue: (reqMes && reqMes[item.filed]) || ''
                             })(
                               <Input disabled className={style.inputTitle}></Input>
                             )}
