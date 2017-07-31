@@ -16,7 +16,6 @@ export default class BomCollapse extends PureComponent {
 
   render () {
     const { orgList, material } = this.props
-    console.log(material)
 
     const formItemLayout = {
       labelCol: { span: 6 },

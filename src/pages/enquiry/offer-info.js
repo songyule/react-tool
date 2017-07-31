@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { getOfferList, buyerWithdraw, claimOffer, buyerOffer } from 'actions/sampling'
 import Title from 'components/title'
 import OfferCard from './components/offer-card'
+import OrderCollapse from './components/order-collapse'
 import style from './offer-info.css'
 const [ { TextArea } ] = [ Input ]
 
@@ -112,6 +113,7 @@ export default class OfferInfo extends PureComponent {
             </Row>
           </Col>
         </Row>
+        <OrderCollapse></OrderCollapse>
         { this.state.inquiry.offer_arr && this.state.inquiry.offer_arr.map(item => (
           <OfferCard offer={item}></OfferCard>
         )) }

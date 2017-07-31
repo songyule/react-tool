@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Row, Col, Input, Button } from 'antd'
+import { Row, Col, Input } from 'antd'
 import BomCollapse from '../bom-collapse'
 import style from './index.css'
 import { format } from 'utils'
@@ -18,7 +18,7 @@ export default class OfferCard extends PureComponent {
     return (
       <div className={style['offer-card']}>
         <div className={style['offer-card__header']}>
-          <h3>{ format(offer.created_at * 1000, 'yyyy年MM月dd日HH:mm:ss') }</h3>
+          <h3>{ offer.created_at ? format(offer.created_at * 1000, 'yyyy年MM月dd日HH:mm:ss') : '未保存' }</h3>
         </div>
         <div className={style['offer-card__content']}>
           <Row gutter={32} className={style['offer-card__row']}>

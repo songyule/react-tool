@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
 import * as samplingActions from 'actions/sampling'
 import { getOfferList } from 'actions/sampling'
+import { Link } from 'react-router-dom'
 import Title from 'components/title'
 // import MaterialForm from './components/material-form'
 import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button } from 'antd'
@@ -52,27 +53,27 @@ export default class CreateOffer extends PureComponent {
           comment
         }
 
-        // const fieldMapping = [
-        //   'include_express_fee',
-        //   'bulk_wear_rate',
-        //   'bulk_mould_fee',
-        //   'bulk_examine_fee',
-        //   'bulk_estimate_amount',
-        //   'bulk_unit_price',
-        //   'supplier_id',
-        //   'comment'
-        // ]
+        const fieldMapping = [
+          'include_express_fee',
+          'bulk_wear_rate',
+          'bulk_mould_fee',
+          'bulk_examine_fee',
+          'bulk_estimate_amount',
+          'bulk_unit_price',
+          'supplier_id',
+          'comment'
+        ]
 
         const BOMData = {}
         Object.keys(values).forEach(key => {
           if (key.indexOf('BOM__') !== -1) {
             const fieldResolve = key.split('__')
             const [ ,realKey, serial] = fieldResolve
-            // if (fieldMapping.indexOf(realKey) !== -1) {
+            if (fieldMapping.indexOf(realKey) !== -1) {
               if (realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
               else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
               else BOMData[serial] = { [realKey]: values[key] || '' }
-            // }
+            }
           }
         })
         console.log(this.state.data.material_arr.length)
@@ -222,7 +223,6 @@ export default class CreateOffer extends PureComponent {
         valid: 'comment'
       }
     ]
-    console.log(data && data['material_arr'].length > 0)
     return data ? (
       <div>
         <Title title={`报价单号${id}`} />
@@ -347,7 +347,9 @@ export default class CreateOffer extends PureComponent {
         </Form>
         <div style={{textAlign: 'center', maxWidth: '1000px', margin: '10px 0'}}>
           <Button type="primary" onClick={this.handleSubmit}> 保存报价 </Button>
-          <Button> 返回 </Button>
+          <Link to={`/main/offer-info/${id}`}>
+            <Button> 返回 </Button>
+          </Link>
         </div>
       </div>
     ) : null
