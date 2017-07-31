@@ -196,6 +196,7 @@ export default class extends Component {
                 mode="inline"
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
+                style={{ overflowY: 'auto', paddingBottom: '42px' }}
               >
                 {
                   menuArr.map(sub => (

@@ -3,6 +3,11 @@ import * as constants from 'constants'
 import { routerReducer } from 'react-router-redux'
 import arrayToTree from 'array-to-tree'
 
+let offerObj = { list: [], id: '' }
+let localOffer = localStorage.getItem('SAVE_OFFER')
+if (localOffer) localOffer = JSON.parse(localOffer)
+if (localOffer) offerObj = {...offerObj, ...localOffer}
+
 const resultNumber = (state = 1, action) => {
   switch (action.type) {
     case constants.ADD_NUMBER:
@@ -87,6 +92,22 @@ const currentAttributeDetail = (state = {}, action) => {
   }
 }
 
+const offers = (state = { list: [] }, action) => {
+  switch (action.type) {
+    case constants.SAVE_OFFER:
+      if (offerObj.id === action.id) {
+        offerObj.list.push(action.offer)
+      } else {
+        offerObj.id = action.id
+        offerObj.list = [action.offer]
+      }
+      localStorage.setItem('SAVE_OFFER', JSON.stringify(offerObj))
+      return offerObj
+    default:
+      return offerObj
+  }
+}
+
 function handleAttribute (attributes) {
   const skuAttributes = filterSkuAttributes(attributes)
   return {
@@ -151,6 +172,7 @@ const rootReducer = combineReducers({
   commodityAttributeObj,
   commodityClasses,
   currentAttributeDetail,
+  offers,
   // 路由
   routing: routerReducer
 })
