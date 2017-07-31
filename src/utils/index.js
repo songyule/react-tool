@@ -277,3 +277,10 @@ export function mergeSpuAttr (spuArr) {
   return newSpuArr
 }
 
+export function accMul(arg1, arg2) {
+  let m = 0
+  const [s1, s2] = [arg1.toString(), arg2.toString()]
+  try { m += s1.split('.')[1].length } catch (e) {}
+  try { m += s2.split('.')[1].length } catch (e) {}
+  return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
+}
