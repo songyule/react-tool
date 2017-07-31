@@ -306,6 +306,7 @@ class newEnquiry extends PureComponent {
         getFiled: ''
       }
     ]
+
     return (
       <div className={style.newContent}>
         <Title title='新建询价工单'></Title>
@@ -571,7 +572,7 @@ class newEnquiry extends PureComponent {
         >
           创建成功，是否跳往询价列表
         </Modal>
-        <BomCreate visible={this.state.bomVisible} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
+        <BomCreate visible={this.state.bomVisible} boms={this.state.boms} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
       </div>
     )
   }
