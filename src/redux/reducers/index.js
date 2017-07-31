@@ -103,6 +103,11 @@ const offers = (state = { list: [] }, action) => {
       }
       localStorage.setItem('SAVE_OFFER', JSON.stringify(offerObj))
       return offerObj
+    case constants.EDIT_OFFERS:
+      offerObj.id = action.id
+      offerObj.list = [...action.offers]
+      localStorage.setItem('SAVE_OFFER', JSON.stringify(offerObj))
+      return offerObj
     default:
       return offerObj
   }

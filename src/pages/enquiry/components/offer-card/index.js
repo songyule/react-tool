@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Row, Col, Input } from 'antd'
+import { Row, Col, Input, Icon } from 'antd'
 import BomCollapse from '../bom-collapse'
 import style from './index.css'
 import { format } from 'utils'
@@ -14,8 +14,10 @@ export default class OfferCard extends PureComponent {
       returnVisible: true
     }
   }
+
   render () {
     const { offer, materials } = this.props
+    console.log(offer)
     const supplierValue = materials.length ? offer.material_offer_arr.map(offer => offer.supplier_id).join(',') : offer.supplier_id
     if (materials.length) {
       offer.material_offer_arr = offer.material_offer_arr.map(item => {
@@ -28,6 +30,7 @@ export default class OfferCard extends PureComponent {
       <div className={style['offer-card']}>
         <div className={style['offer-card__header']}>
           <h3>{ offer.created_at ? format(offer.created_at * 1000, 'yyyy年MM月dd日HH:mm:ss') : '未保存' }</h3>
+          { this.props.hasRemove && <Icon className={style['offer-card__close']} type="close-circle" onClick={this.props.onRemove} /> }
         </div>
         <div className={style['offer-card__content']}>
           <Row gutter={32} className={style['offer-card__row']}>

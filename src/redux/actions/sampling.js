@@ -63,3 +63,7 @@ export const buyerOffer = async (data) => {
 export const saveOffer = ({ id, offer }) => async (dispatch, getState) => {
   dispatch({ type: constants.SAVE_OFFER, offer, id })
 }
+
+export const editOffers = ({ id, offers }) => async (dispatch, getState) => {
+  dispatch({ type: constants.EDIT_OFFERS, offers, id })
+}
