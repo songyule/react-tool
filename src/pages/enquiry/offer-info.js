@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as samplingActions from 'actions/sampling'
-import { Row, Col, Input, Button, Modal } from 'antd'
+import { Row, Col, Input, Button, Modal, Popconfirm, message } from 'antd'
 import { Link } from 'react-router-dom'
 import { getOfferList, buyerWithdraw, claimOffer, buyerOffer } from 'actions/sampling'
 import Title from 'components/title'
@@ -103,10 +103,25 @@ export default class OfferInfo extends PureComponent {
   handleSubmit = () => {
     const id = this.props.match.params.id
     let { offer_arr, material_arr } = this.state.inquiry
+    if (!offer_arr.length) return message.warning('必须填写一个报价')
     if (material_arr.length) offer_arr = offer_arr.map(offer => this.handleOffers(offer))
     buyerOffer({ id, offer_arr })
     this.getInquiryDetail()
-    this.props.saveOffer({ id: '', offer: [] })
+    this.props.editOffers({ id: '', offers: [] })
+  }
+
+  removeOffer = (index) => {
+    const id = this.props.match.params.id
+    let { offer_arr } = this.state.inquiry
+    offer_arr.splice(index, 1)
+    console.log(offer_arr)
+    this.setState({
+      inquiry: {
+        ...this.state.inquiry,
+        offer_arr
+      }
+    })
+    this.props.editOffers({ id, offers: offer_arr })
   }
 
   render () {
@@ -144,8 +159,8 @@ export default class OfferInfo extends PureComponent {
           </Col>
         </Row>
         <OrderCollapse reqMes={inquiry}></OrderCollapse>
-        { inquiry.offer_arr && inquiry.offer_arr.map(item => (
-          <OfferCard offer={item} materials={inquiry.material_arr}></OfferCard>
+        { inquiry.offer_arr && inquiry.offer_arr.map((item, index) => (
+          <OfferCard key={index} offer={item} materials={inquiry.material_arr} hasRemove={inquiry.status === 1 ? true : false} onRemove={() => this.removeOffer(index)}></OfferCard>
         )) }
         { inquiry.status === 1 &&
           <Row className={style['offer-info__row']}>
@@ -160,7 +175,11 @@ export default class OfferInfo extends PureComponent {
         <Row className={style['offer-info__row']}>
           <Col span={24} className={style['offer-info__button-operate']}>
             { inquiry.status === 0 && <Button className={style['offer-info__button']} onClick={this.handleClaim}>抢</Button> }
-            { inquiry.status === 1 && <Button className={style['offer-info__button']} onClick={this.handleSubmit}>提交工单</Button> }
+            { inquiry.status === 1 &&
+              <Popconfirm title="确认提交工单？" okText="确认" cancelText="取消" onConfirm={this.handleSubmit}>
+                <Button className={style['offer-info__button']}>提交工单</Button>
+              </Popconfirm>
+            }
             { inquiry.status === 1 && <Button className={style['offer-info__button']} onClick={this.showReturn}>退回工单</Button> }
             <Link to="/main/offer-list">
               <Button>返回</Button>
