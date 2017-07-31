@@ -12,7 +12,9 @@ export default class extends PureComponent {
     enquiryMes: {},
     isEnqShow: false,
     visible: false,
-    returnCauseText: ''
+    returnVisible: false,
+    returnCauseText: '',
+    offer_id: -1
   }
   // this.props.match.params.id
   closeEnquiry = () => {
@@ -25,8 +27,10 @@ export default class extends PureComponent {
 
   }
   confirmResult = () => {
-    sellComplete().then(res => {
+    if (this.state.offer_id === -1) return
+    sellComplete({id: this.state.id, offer_id: this.state.offer_id}).then(res => {
       console.log(res)
+      if (res.code === 200) this.props.history.push({pathname: '/main/enquiry-list'})
     })
   }
   isShow = () => {
@@ -44,18 +48,39 @@ export default class extends PureComponent {
       })
     })
   }
+  returnHandleOk = (e) => {
+    this.setState({
+      returnVisible: false,
+    })
+  }
   handleCancel = (e) => {
     this.setState({
       visible: false,
     })
   }
+  returnHandleCancel = (e) => {
+    this.setState({
+      returnVisible: false,
+    })
+  }
   returnCause = (e) => {
     this.setState({returnCauseText: e.target.value})
+  }
+  callBack = (val) => {
+    console.log(val)
+    this.setState({
+      offer_id: val.id
+    })
   }
   componentWillMount () {
     this.setState({id: this.props.match.params.id}, () => {
       sellerInquirySearch({id: this.state.id, get_snapshot: 1}).then(res => {
-        if (res.code === 200) this.setState({enquiryMes: res.data.inquiry[0]})
+        if (res.code === 200) {
+          this.setState({
+            enquiryMes: res.data.inquiry[0],
+            returnVisible: res.data.inquiry[0].status === -2 && res.data.inquiry[0].no_supplier_withdraw_reason
+          })
+        }
       })
     })
   }
@@ -82,9 +107,9 @@ export default class extends PureComponent {
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (
                                 item.material_offer_arr.length ?
-                                <QuoMessageT material_arr={enquiryMes.material_arr} quoMes={item} key={index}></QuoMessageT>
+                                <QuoMessageT material_arr={enquiryMes.material_arr} quoMes={item} key={index} callBack={this.callBack}></QuoMessageT>
                                  :
-                                <QuoMessageF quoMes={item} key={index}></QuoMessageF>
+                                <QuoMessageF quoMes={item} key={index} callBack={this.callBack}></QuoMessageF>
                               ))}
                             </div>)
     return (
@@ -122,6 +147,14 @@ export default class extends PureComponent {
           onCancel={this.handleCancel}
         >
           <Input placeholder="请填写退回原因" onChange={this.returnCause}></Input>
+        </Modal>
+        <Modal
+          title="是否退回报价"
+          visible={this.state.returnVisible}
+          onOk={this.returnHandleOk}
+          onCancel={this.returnHandleCancel}
+        >
+          <p>{enquiryMes.no_supplier_withdraw_reason}</p>
         </Modal>
       </div>
     )

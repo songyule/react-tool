@@ -23,6 +23,10 @@ export default class extends PureComponent {
       }
     })
   }
+  clickCard = (index) => {
+    console.log(this.state.quoMes)
+    this.props.callBack(this.state.quoMes)
+  }
   componentWillMount () {
     console.log(this.props.material_arr)
     this.setState({quoMes: this.props.quoMes, material_arr: this.props.material_arr})
@@ -123,7 +127,7 @@ export default class extends PureComponent {
     )
     return (
       <div>
-        <Card className={style.card} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} >
+        <Card className={style.card} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} onClick={this.clickCard}>
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>报价员</p>

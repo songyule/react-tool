@@ -128,7 +128,7 @@ export default class extends PureComponent {
         <div>
           <Button type="primary" onClick={() => this.checkDetail(index)}>查看详情</Button>
           {
-            Number(this.state.statusValue) === 3 && (<Button type="primary">催促</Button>)
+            // Number(this.state.statusValue) === 3 && (<Button type="primary">催促</Button>)
           }
         </div>
       )
