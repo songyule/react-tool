@@ -31,6 +31,11 @@ export const sellerWithdraw = async (body) => { //销售退回报价单
   return response
 }
 
+export const enquiryUpdata = async (body) => { //销售重新编辑询价单
+  const response = await fetch.post('/sampling/inquiry/seller/update', { body })
+  return response
+}
+
 export const sellComplete = async (body) => {
   const response = await fetch.post('/sampling/inquiry/seller/complete', { body })
   return response

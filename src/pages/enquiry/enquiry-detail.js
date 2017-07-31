@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from 'antd'
+import { Button, Modal, Input } from 'antd'
 import { sellerInquirySearch, sellerWithdraw, sellComplete, closeEnquiry } from 'actions/sampling'
 import EnquiryDeatil from './components/enquiry-detail/index'
 import QuoMessageF from './components/enquiry-detail/quo-message-f'
@@ -10,7 +10,9 @@ export default class extends PureComponent {
   state = {
     id: '',
     enquiryMes: {},
-    isEnqShow: true
+    isEnqShow: false,
+    visible: false,
+    returnCauseText: ''
   }
   // this.props.match.params.id
   closeEnquiry = () => {
@@ -19,9 +21,8 @@ export default class extends PureComponent {
     })
   }
   returnQuote = () => {
-    sellerWithdraw({id: this.state.id}).then(res => {
-      console.log(res)
-    })
+    this.setState({visible: true})
+
   }
   confirmResult = () => {
     sellComplete().then(res => {
@@ -30,6 +31,26 @@ export default class extends PureComponent {
   }
   isShow = () => {
     this.setState({isEnqShow: !this.state.isEnqShow})
+  }
+  handleOk = (e) => {
+    if (!this.state.returnCauseText) return
+    this.setState({
+      visible: false,
+    }, () => {
+      console.log(this.state.returnCauseText)
+      sellerWithdraw({id: this.state.id, offer_withdraw_reason: this.state.returnCauseText}).then(res => {
+        console.log(res)
+        if (res.code === 200) this.props.history.push({pathname: '/main/new-enquiry', state: this.state.id})
+      })
+    })
+  }
+  handleCancel = (e) => {
+    this.setState({
+      visible: false,
+    })
+  }
+  returnCause = (e) => {
+    this.setState({returnCauseText: e.target.value})
   }
   componentWillMount () {
     this.setState({id: this.props.match.params.id}, () => {
@@ -61,7 +82,7 @@ export default class extends PureComponent {
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (
                                 item.material_offer_arr.length ?
-                                <QuoMessageT quoMes={item} key={index}></QuoMessageT>
+                                <QuoMessageT material_arr={enquiryMes.material_arr} quoMes={item} key={index}></QuoMessageT>
                                  :
                                 <QuoMessageF quoMes={item} key={index}></QuoMessageF>
                               ))}
@@ -73,7 +94,7 @@ export default class extends PureComponent {
         <div style={{borderTop: '1px solid #ccc', display: 'flex', justifyContent: 'center', marginBottom: 10}}>
           <p style={{border: '1px solid #ccc', padding: '5px 20px', marginTop: -1, cursor: 'pointer'}} onClick={this.isShow}>{this.state.isEnqShow ? '折叠' : '展开'}</p>
         </div>
-        { enquiryMes.status === 4 && this.state.isEnqShow ? offerArr() : ''}
+        { enquiryMes && enquiryMes.offer_arr && enquiryMes.offer_arr.length && this.state.isEnqShow ? offerArr() : ''}
         {/* 待认领 */}
         {
           enquiryMes.status === 0 &&  Shelters
@@ -94,6 +115,14 @@ export default class extends PureComponent {
         {
           enquiryMes.status === -2 && ByReturned
         }
+        <Modal
+          title="是否退回报价"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <Input placeholder="请填写退回原因" onChange={this.returnCause}></Input>
+        </Modal>
       </div>
     )
   }
