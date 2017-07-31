@@ -2,16 +2,18 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
-import { getOfferList, buyerOffer } from 'actions/sampling'
+import * as samplingActions from 'actions/sampling'
+import { getOfferList } from 'actions/sampling'
+import { Link } from 'react-router-dom'
 import Title from 'components/title'
-import MaterialForm from './components/material-form'
-import { Form, Input, Row, Col, Radio, Switch, Select, Collapse, Card, Button } from 'antd'
+// import MaterialForm from './components/material-form'
+import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button } from 'antd'
 const [FormItem, RadioGroup, Option, Panel, TextArea] = [Form.Item, Radio.Group, Select.Option, Collapse.Panel, Input.TextArea]
 
 @Form.create()
 @connect(
   state => state,
-  dispatch => bindActionCreators({ ...managementActions }, dispatch)
+  dispatch => bindActionCreators({ ...managementActions, ...samplingActions }, dispatch)
 )
 
 export default class CreateOffer extends PureComponent {
@@ -81,8 +83,9 @@ export default class CreateOffer extends PureComponent {
             return BOMData[key]
           })
         }
-
-        buyerOffer({ id: this.props.match.params.id, offer_arr: [data] })
+        const id = this.props.match.params.id
+        this.props.saveOffer({ id, offer: data })
+        this.props.history.push(`/main/offer-info/${id}`)
       } else {
         if (!this.state.isExpand) this.setState({ isExpand: true })
       }
@@ -220,7 +223,6 @@ export default class CreateOffer extends PureComponent {
         valid: 'comment'
       }
     ]
-    console.log(data && data['material_arr'].length > 0)
     return data ? (
       <div>
         <Title title={`报价单号${id}`} />
@@ -345,7 +347,9 @@ export default class CreateOffer extends PureComponent {
         </Form>
         <div style={{textAlign: 'center', maxWidth: '1000px', margin: '10px 0'}}>
           <Button type="primary" onClick={this.handleSubmit}> 保存报价 </Button>
-          <Button> 返回 </Button>
+          <Link to={`/main/offer-info/${id}`}>
+            <Button> 返回 </Button>
+          </Link>
         </div>
       </div>
     ) : null

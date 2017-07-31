@@ -1,4 +1,5 @@
 import fetch from 'api/utils'
+import * as constants from '../constants/index'
 
 export const getRequirementList = async (body) => {
   const response = await fetch.post('/sampling/search', { body })
@@ -52,4 +53,8 @@ export const buyerWithdraw = async (data) => {
 export const buyerOffer = async (data) => {
   const response = await fetch.post('/sampling/inquiry/buyer/offer', { body: data })
   return response
+}
+
+export const saveOffer = ({ id, offer }) => async (dispatch, getState) => {
+  dispatch({ type: constants.SAVE_OFFER, offer, id })
 }
