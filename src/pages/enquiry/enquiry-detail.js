@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Modal, Input } from 'antd'
+import { Button, Modal, Input, message } from 'antd'
 import { sellerInquirySearch, sellerWithdraw, sellComplete, closeEnquiry } from 'actions/sampling'
 import EnquiryDeatil from './components/enquiry-detail/index'
 import QuoMessageF from './components/enquiry-detail/quo-message-f'
@@ -27,7 +27,7 @@ export default class extends PureComponent {
 
   }
   confirmResult = () => {
-    if (this.state.offer_id === -1) return
+    if (this.state.offer_id === -1) return message.warning('请选择一个报价')
     sellComplete({id: this.state.id, offer_id: this.state.offer_id}).then(res => {
       console.log(res)
       if (res.code === 200) this.props.history.push({pathname: '/main/enquiry-list'})
@@ -72,6 +72,7 @@ export default class extends PureComponent {
       offer_id: val.id
     })
   }
+
   componentWillMount () {
     this.setState({id: this.props.match.params.id}, () => {
       sellerInquirySearch({id: this.state.id, get_snapshot: 1}).then(res => {
@@ -130,7 +131,7 @@ export default class extends PureComponent {
         }
         {/* 报价中 */}
         {
-          enquiryMes.status === (1 || 3 || -1) && InTheQuotation
+          ([1, 3, -1].indexOf(enquiryMes.status) !== -1) && InTheQuotation
         }
         {/* 已完成 */}
         {

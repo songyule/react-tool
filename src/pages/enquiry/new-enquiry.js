@@ -35,7 +35,8 @@ class newEnquiry extends PureComponent {
     reqMes: {},
     selectSku: {},
     bom: {},
-    boms: []
+    boms: [],
+    enquiryMes: {}
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -122,8 +123,7 @@ class newEnquiry extends PureComponent {
         reqMes: val.reqMes,
         skuData: val.reqMes.sku_snapshot.attribute,
         spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
-        fileList: fileArr,
-        isReq: false
+        fileList: fileArr
       })
     }
   }
@@ -151,7 +151,7 @@ class newEnquiry extends PureComponent {
         })
         console.log(arr)
         values.img = arr
-        if (this.state.isType !== 3) values.custom_commodity_class_id = 0
+        if (this.state.isType !== 2) values.custom_commodity_class_id = 0
         if (this.state.isMaterial) values.material_arr = this.state.bom
         if (this.state.isReq) values.sampling_id = this.state.reqMes.id
         if (this.props.location.state) {
@@ -233,21 +233,41 @@ class newEnquiry extends PureComponent {
   getEnqDetail = () => {
     sellerInquirySearch({id: this.props.location.state}).then(res => {
       console.log(res.data.inquiry[0])
+      let inquiry = res.data.inquiry[0]
+      let fileArr = []
+      inquiry.img_url_arr.map((item, index) => {
+        let obj ={
+                    uid: index,
+                    name: '233',
+                    status: 'done',
+                    url: item || '',
+                    response: item || '',
+                    thumbUrl: item || ''
+                  }
+        return fileArr.push(obj)
+      })
       if (res.code === 200) {
         this.setState({
-          enquiryMes: res.data.inquiry[0],
-          isMaterial: res.data.inquiry[0].material_arr.length ? true : false,
-          boms: res.data.inquiry[0].material_arr
+          enquiryMes: inquiry,
+          isMaterial: inquiry.material_arr.length ? true : false,
+          boms: inquiry.material_arr,
+          isReq: inquiry.sampling_id ? true : false,
+          skuData: inquiry.sku_snapshot.attribute,
+          spuData: inquiry.sku_snapshot.spu.commodity_attribute,
+          fileList: fileArr
+        }, () => {
+          console.log(this.state.enquiryMes)
         })
-        let id_arr = []
-        id_arr.push(res.data.inquiry[0].sampling_id)
-        getRequirementList({'id_arr': id_arr}).then(res => {
-          console.log(res)
-          let val = {}
-          val.name = 'getReq'
-          val.reqMes = res.data.sampling[0]
-          this.callbackParent(val)
-        })
+        // if (!this.isReq) return
+        // let id_arr = []
+        // id_arr.push(res.data.inquiry[0].sampling_id)
+        // getRequirementList({'id_arr': id_arr}).then(res => {
+        //   console.log(res)
+        //   let val = {}
+        //   val.name = 'getReq'
+        //   val.reqMes = res.data.sampling[0]
+        //   this.callbackParent(val)
+        // })
       }
     })
   }
@@ -263,7 +283,7 @@ class newEnquiry extends PureComponent {
   }
   render () {
     const { getFieldDecorator } = this.props.form
-    const { clientOrgMes, reqMes } = this.state
+    const { clientOrgMes, reqMes, enquiryMes } = this.state
     const columns = [{
       title: '属性',
       dataIndex: 'lv1_name_cn',
@@ -278,32 +298,32 @@ class newEnquiry extends PureComponent {
       {
         name: '颜色要求',
         filed: 'color_req',
-        getFiled: 'color'
+        getFiled: 'color_req'
       },
       {
         name: '尺寸要求',
         filed: 'size_req',
-        getFiled: 'size'
+        getFiled: 'size_req'
       },
       {
         name: '形状要求',
         filed: 'shape_req',
-        getFiled: 'shape'
+        getFiled: 'shape_req'
       },
       {
         name: '材质要求',
         filed: 'material_req',
-        getFiled: 'material'
+        getFiled: 'material_req'
       },
       {
         name: '品质要求',
         filed: 'quality_req',
-        getFiled: ''
+        getFiled: 'quality_req'
       },
       {
         name: '质检要求',
         filed: 'quality_testing_req',
-        getFiled: ''
+        getFiled: 'quality_testing_req'
       }
     ]
     return (
@@ -322,7 +342,7 @@ class newEnquiry extends PureComponent {
               {
                 this.state.isReq && <div className={style.flex}>
                                       <Button type="primary" className={style.btn} style={{height: 32}} onClick={() => this.showModal('req')}>选择需求单</Button>
-                                      <p>需求单号：{reqMes.id}</p>
+                                      <p>需求单号：{enquiryMes.sampling_id}</p>
                                     </div>
               }
             </div>
@@ -338,14 +358,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="客户简称">
                   {getFieldDecorator('name_cn', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.name_cn)
+                    initialValue: (clientOrgMes && clientOrgMes.org.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.name_cn) || (enquiryMes.client_org && enquiryMes.client_org.name_cn)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="客户编码">
                   {getFieldDecorator('sn', {
-                    initialValue: (clientOrgMes && 'SN' + clientOrgMes.org.sn) || (reqMes.applicant_org && 'SN' + reqMes.applicant_org.sn)
+                    initialValue: (clientOrgMes && 'SN' + clientOrgMes.org.sn) || (reqMes.applicant_org && 'SN' + reqMes.applicant_org.sn) || (enquiryMes.client_org && 'SN' + enquiryMes.client_org.sn)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
@@ -354,14 +374,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="客户级别">
                   {getFieldDecorator('level', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level.name)
+                    initialValue: (clientOrgMes && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level.name)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="提交人">
                   {getFieldDecorator('name', {
-                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)
+                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller[0].name_cn)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
@@ -371,12 +391,12 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="商品类型" className={style.tier}>
             {getFieldDecorator('sampling_type', {
-              initialValue: (reqMes && reqMes.classification) || 1
+              initialValue: (reqMes && reqMes.classification) || ( enquiryMes && enquiryMes.sampling_type) || 0
             })(
               <RadioGroup onChange={this.onChangeType} disabled={this.state.isReq}>
-                <Radio value={1}>原版</Radio>
-                <Radio value={2}>改版</Radio>
-                <Radio value={3}>定制</Radio>
+                <Radio value={0}>原版</Radio>
+                <Radio value={1}>改版</Radio>
+                <Radio value={2}>定制</Radio>
               </RadioGroup>
             )}
           </FormItem>
@@ -384,19 +404,19 @@ class newEnquiry extends PureComponent {
             <div className={style.flex}>
               <FormItem label="商品名称">
                 {getFieldDecorator('custom_commodity_name', {
-                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || ''
+                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || ''
                 })(
-                  <Input disabled={this.state.isType !== 3} className={style.inputTitle}></Input>
+                  <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
                 )}
               </FormItem>
               <FormItem label="类目">
                 {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: (reqMes && reqMes.classify) || ''
+                  initialValue: (reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || ''
                 })(
-                  <Select className={style.inputTitle} disabled={this.state.isType !== 3}>
+                  <Select className={style.inputTitle} disabled={this.state.isType !== 2}>
                     {
                       this.state.lv1ClassArr.map((item, index) => {
-                        return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
+                        return (<Option  key={index} value={item.lv1_id}>{item.name_cn}</Option>)
                       })
                     }
                   </Select>
@@ -404,10 +424,10 @@ class newEnquiry extends PureComponent {
               </FormItem>
             </div>
             {
-              this.state.isType !== 3 &&  <div>
+              this.state.isType !== 2 &&  <div>
                                               <FormItem label="SKUID" className={style.mBottom}>
                                                 {getFieldDecorator('sku_id', {
-                                                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || ''
+                                                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id)|| ''
                                                 })(
                                                     <Input className={style.inputTitle}></Input>
                                                 )}
@@ -430,7 +450,7 @@ class newEnquiry extends PureComponent {
             }
             <FormItem label="商品补充描述">
               {getFieldDecorator('img', {
-                initialValue: (reqMes && reqMes.img_arr) || ''
+                initialValue: ''
               })(
                 <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
               )}
@@ -442,7 +462,7 @@ class newEnquiry extends PureComponent {
                 return (<div className={style.mBottom} key={index}>
                           <FormItem label={item.name}>
                             {getFieldDecorator(item.filed, {
-                              initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || ''
+                              initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || (enquiryMes && enquiryMes[item.getFiled]) || ''
                             })(
                               <Input className={style.inputTitle}></Input>
                             )}
@@ -452,7 +472,7 @@ class newEnquiry extends PureComponent {
             }
             <FormItem label="其他需求">
               {getFieldDecorator('other_req', {
-                initialValue: (reqMes && reqMes.applicant_comment) || ''
+                initialValue: (reqMes && reqMes.applicant_comment) || (enquiryMes && enquiryMes.other_req) || ''
               })(
                 <Input type="textarea" className={style.inputTitle}></Input>
               )}
@@ -476,11 +496,11 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="实物样" className={style.tier}>
               {getFieldDecorator('has_sampling', {
-                initialValue: 0,
+                initialValue:(enquiryMes && enquiryMes.has_sampling) || 0,
               })(
                 <RadioGroup>
-                  <Radio value={0}>无</Radio>
-                  <Radio value={1}>有</Radio>
+                  <Radio value={-1}>无</Radio>
+                  <Radio value={0}>有</Radio>
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
                 </RadioGroup>
               )}
@@ -493,13 +513,15 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="打样数量">
                   {getFieldDecorator('sampling_amount', {
-                    initialValue: reqMes && reqMes.sample_amount
+                    initialValue: (reqMes && reqMes.sample_amount) || (enquiryMes && enquiryMes.sampling_amount)
                   })(
                     <Input className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="打样单位">
-                  {getFieldDecorator('sampling_unit')(
+                  {getFieldDecorator('sampling_unit', {
+                    initialValue: (reqMes && reqMes.sampling_unit) || (enquiryMes && enquiryMes.sampling_unit)
+                  })(
                     <Input className={style.inputTitle}></Input>
                   )}
                 </FormItem>
@@ -507,7 +529,7 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="样品交期">
                   {getFieldDecorator('sample_deadline', {
-                    initialValue: reqMes && reqMes.sample_deadline
+                    initialValue: (reqMes && reqMes.sample_deadline) || (enquiryMes && enquiryMes.sampling_deliver_epoch)
                   })(
                     <Input className={style.inputTitle}></Input>
                   )}
@@ -531,7 +553,7 @@ class newEnquiry extends PureComponent {
                 </FormItem>
                 <FormItem label="大货单位">
                   {getFieldDecorator('bulk_unit', {
-                    initialValue: reqMes && reqMes.bulk_production_price
+                    initialValue: (reqMes && reqMes.bulk_unit) || (enquiryMes && enquiryMes.bulk_unit)
                   })(
                     <Input className={style.inputTitle}></Input>
                   )}
@@ -540,14 +562,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="预期大货交期">
                   {getFieldDecorator('bulk_expectation_deliver_time', {
-                    initialValue: reqMes && reqMes.bulk_production_deadline
+                    initialValue: (reqMes && reqMes.bulk_production_deadline) || (enquiryMes && enquiryMes.bulk_expectation_deliver_time)
                   })(
                     <Input className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="期望大货价">
                   {getFieldDecorator('bulk_expectation_price', {
-                    initialValue: reqMes && reqMes.bulk_production_price
+                    initialValue: (reqMes && reqMes.bulk_production_price) || (enquiryMes && enquiryMes.bulk_expectation_price)
                   })(
                     <Input className={style.inputTitle}></Input>
                   )}
