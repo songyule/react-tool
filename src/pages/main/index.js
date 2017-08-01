@@ -261,6 +261,7 @@ export default class extends Component {
               <Route path='/main/home-settings' component={HomeSettings} />
               {/* 询价单相关 */}
               <Route path='/main/new-enquiry' component={NewEnquiry} />
+              <Route path='/main/edit-enquiry/:id' component={NewEnquiry} />
               <Route path='/main/enquiry-list' component={EnquiryList} />
 
               <Route path='/main/enquiry-detail/:id' component={EnquiryDetail} />
