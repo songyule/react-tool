@@ -77,7 +77,7 @@ export default class OfferCard extends PureComponent {
               { materials.length ?
                 <div>
                   需要  BOM中有{ materials.length }个物料
-                  { offer.material_offer_arr.map(material => <BomCollapse material={material}></BomCollapse>) }
+                  { offer.material_offer_arr.map((material, index) => <BomCollapse key={index} material={material}></BomCollapse>) }
                 </div> : '不需要' }
             </Col>
           </Row>

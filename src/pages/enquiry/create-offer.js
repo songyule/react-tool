@@ -71,8 +71,7 @@ export default class CreateOffer extends PureComponent {
           if (key.indexOf('BOM__') !== -1) {
             const fieldResolve = key.split('__')
             const [ ,realKey, serial] = fieldResolve
-            if (realKey === 'bulk_wear_rate') BOMData[serial][realKey] = String(Number(values[key]) / 100) || ''
-            else if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
+            if (BOMData[serial]) BOMData[serial][realKey] = values[key] || ''
             else BOMData[serial] = { [realKey]: values[key] || '' }
           }
         })
