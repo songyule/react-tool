@@ -129,7 +129,7 @@ export default class OfferInfo extends PureComponent {
 
   render () {
     const id = this.props.match.params.id
-    const inquiry = this.state.inquiry
+    const inquiry = this.state.inquiry || {}
     const sku = inquiry.sku_snapshot || {}
     const classes = (sku.spu && sku.spu.commodity_class) || []
     const statusMapping = {
@@ -161,7 +161,7 @@ export default class OfferInfo extends PureComponent {
             </Row>
           </Col>
         </Row>
-        <OrderCollapse reqMes={inquiry}></OrderCollapse>
+        <OrderCollapse enquiryMes={inquiry}></OrderCollapse>
         { inquiry.offer_arr && inquiry.offer_arr.map((item, index) => (
           <OfferCard key={index} offer={item} materials={inquiry.material_arr} hasRemove={!item.id} onRemove={() => this.removeOffer(index)}></OfferCard>
         )) }

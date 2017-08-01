@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import { Input, Radio, Button, Table, Form, Select } from 'antd'
-import Title from 'components/title'
 import style from '../../css/new-enquiry.css'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
@@ -63,15 +62,22 @@ class newEnquiry extends PureComponent {
   }
   history = (e) => {
     console.log(e)
+    e = Number(e)
     this.setState({reqMes: this.state.reqMes.snapshot_arr[e]}, () => {
       console.log(this.state.reqMes)
     })
   }
   componentWillMount() {
     this.getLv1Class()
+    if (JSON.stringify(this.props.enquiryMes) === '{}') return
+    this.setState({
+      reqMes: this.props.enquiryMes,
+      skuData: this.props.enquiryMes.sku_snapshot.attribute,
+      spuData: this.props.enquiryMes.sku_snapshot.spu.commodity_attribute,
+    })
   }
   componentWillReceiveProps (nextProps) {
-    console.log(nextProps.enquiryMes)
+    console.log(nextProps.enquiryMes, 233333)
     this.setState({
       reqMes: nextProps.enquiryMes,
       skuData: nextProps.enquiryMes.sku_snapshot.attribute,
@@ -125,17 +131,6 @@ class newEnquiry extends PureComponent {
     ]
     return (
       <div className={style.newContent}>
-        <Title title={'询价单详情: ' + reqMes.id}>
-          {
-            (reqMes.snapshot_arr && reqMes.snapshot_arr.length) && ( <Select style={{width: 120}} defaultValue='历史版本' onChange={this.history}>
-                                                                        {
-                                                                          reqMes.snapshot_arr.map((item, index) => {
-                                                                            return (<Option  key={index} value={index}>{item.updated_at}</Option>)
-                                                                          })
-                                                                        }
-                                                                      </Select>)
-          }
-        </Title>
         <Form>
           <FormItem
             label="数据来源"
@@ -213,10 +208,10 @@ class newEnquiry extends PureComponent {
                 )}
               </FormItem>
               <FormItem label="类目">
-                <Select className={style.inputTitle} disabled value={reqMes.custom_commodity_class_id}>
+                <Select className={style.inputTitle} disabled value={`${reqMes.custom_commodity_class_id}`}>
                   {
                     this.state.lv1ClassArr.map((item, index) => {
-                      return (<Option  key={index} value={item.lv1_id}>{item.name_cn}</Option>)
+                      return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
                     })
                   }
                 </Select>
@@ -233,10 +228,10 @@ class newEnquiry extends PureComponent {
                                                 <Button type="primary" style={{marginLeft: 10, display: 'none'}} onClick={this.showGoodsSelect}>选择商品</Button>
                                               </FormItem>
                                               <FormItem label="SKU描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
+                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='skuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='321'></Table>
+                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='spuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
