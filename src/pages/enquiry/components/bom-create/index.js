@@ -16,41 +16,22 @@ import BomCard from './components/bom-card'
   dispatch => bindActionCreators(commodityActions, dispatch)
 )
 export default class extends PureComponent {
-  constructor () {
-    super()
-
-    this.state = {
-      boms: [{
-        name: '',
-        classesSelected: [],
-        amount: '',
-        unit: '',
-        quality_req: '',
-        quality_testing_req: '',
-        attributes: []
-      }]
-    }
-  }
 
   changeBom = (bomPart, index) => {
-    const boms = [...this.state.boms]
+    const boms = [...this.props.boms]
     const bom = {...boms[index], ...bomPart}
     boms[index] = bom
-    this.setState({
-      boms: [ ...boms ]
-    })
+    this.props.changeBoms(boms)
   }
 
   removeBom = (index) => {
-    const boms = [...this.state.boms]
+    const boms = [...this.props.boms]
     boms.splice(index, 1)
-    this.setState({
-      boms: [ ...boms ]
-    })
+    this.props.changeBoms(boms)
   }
 
   addBom = () => {
-    const boms = [...this.state.boms]
+    const boms = [...this.props.boms]
     boms.push({
       name: '',
       classesSelected: [],
@@ -60,9 +41,7 @@ export default class extends PureComponent {
       quality_testing_req: '',
       attributes: []
     })
-    this.setState({
-      boms: [ ...boms ]
-    })
+    this.props.changeBoms(boms)
   }
 
   componentWillMount = () => {
@@ -76,9 +55,9 @@ export default class extends PureComponent {
           visible={this.props.visible}
           title="新建 BOM"
           width={800}
-          onOk={() => this.props.callback(this.state.boms)}
+          onOk={() => this.props.callback(this.props.boms)}
           onCancel={this.props.onCancel}>
-          { this.state.boms.map((bom, index) =>
+          { this.props.boms.map((bom, index) =>
           index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index}></BomCard>:
           <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} onRemove={() => this.removeBom(index)}></BomCard>) }
           <Button onClick={this.addBom}>添加</Button>
