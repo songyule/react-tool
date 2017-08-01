@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import Title from 'components/title'
-import { Input, Table, Button, Switch, Select, Modal, message, Menu, Tag } from 'antd'
+import { Input, Table, Button, Switch, Select, Modal, message, Menu, Tag, Radio } from 'antd'
 import { Link } from 'react-router-dom'
 import { getArticles, changeArticle, getUpdator } from 'actions/article'
 import CopyToClipboard from 'react-copy-to-clipboard'
@@ -11,6 +11,7 @@ const ButtonGroup = Button.Group
 const Option = Select.Option
 const Search = Input.Search
 const confirm = Modal.confirm
+const RadioGroup = Radio.Group
 
 // get /user/editor/list 获取所有编辑er列表
 // post /article/list 创建文章
@@ -41,7 +42,8 @@ export default class extends PureComponent {
         current: 1,
         pageSize: 10,
         onChange: this.changePage
-      }
+      },
+      type: 1
     }
   }
 
@@ -50,7 +52,7 @@ export default class extends PureComponent {
     let tag = (val.article_tag && val.article_tag.map(item => item.id)) || []
     let data = {
       ...val,
-      'article_type': 1,
+      'article_type': this.state.type,
       'status': e ? 2 : 1,
       spu: spu,
       article_tag: tag
@@ -90,7 +92,7 @@ export default class extends PureComponent {
     const { current, pageSize } = this.state.pagination
     const { type, content, updator_id } = this.state.search
     let params = {
-      article_type_arr: [1],
+      article_type_arr: [this.state.type],
       limit: pageSize,
       offset: (current - 1) * pageSize
     }
@@ -160,6 +162,14 @@ export default class extends PureComponent {
         updator_id: e.key
       }
     }, this.getArticleList)
+  }
+
+  changeType = (e) => {
+    this.setState({
+      type: e.target.value,
+    }, () => {
+      this.getArticleList()
+    })
   }
 
   componentWillMount() {
@@ -286,10 +296,18 @@ export default class extends PureComponent {
       <div>
         <Title title="专题文章列表">
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <div>
           <Search addonBefore={selectBefore} placeholder='搜索' onSearch={value => this.onSearch(value)} />
+          <RadioGroup onChange={this.changeType} value={this.state.type} style={{paddingLeft: '20px', lineHeight: '28px' }}>
+            <Radio value={1}>PC端</Radio>
+            <Radio value={3}>微信端</Radio>
+          </RadioGroup>
+        </div>
           <Button type="primary"><Link to="/main/add-topic">创建文章</Link></Button>
         </div>
         </Title>
+
+
         <Table columns={columns} dataSource={data} pagination={pagination} />
       </div>
     )
