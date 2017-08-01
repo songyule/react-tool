@@ -126,8 +126,9 @@ export default class OfferInfo extends PureComponent {
     if (!offer_arr.length) return message.warning('必须填写一个报价')
     offer_arr = offer_arr.map(offer => this.handleOffer(offer))
     offer_arr = offer_arr.filter(item => !item.id)
-    buyerOffer({ id, offer_arr })
-    this.getInquiryDetail()
+    buyerOffer({ id, offer_arr }).then(res => {
+      this.getInquiryDetail()
+    })
     this.props.editOffers({ id: '', offers: [] })
   }
 
