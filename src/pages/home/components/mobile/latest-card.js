@@ -4,7 +4,7 @@ import './latest-card.css'
 class Topic extends Component {
   render () {
     return (
-      <div className="latest-card">
+      <div className="latest-card" onClick={this.props.onClick}>
         <img src={this.props.item.image_url} alt="图片" />
         <div className="latest-card__wrapper">
           <div className="latest-card__introduce">

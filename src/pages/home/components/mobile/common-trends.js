@@ -5,7 +5,7 @@ import './common-trends.css'
 
 class Topic extends Component {
   render () {
-    const cardList = this.props.list.map(item => <CommonCard item={item}></CommonCard>)
+    const cardList = this.props.list.map((item, index) => <CommonCard item={item} onClick={() => this.props.editImage(this.props.label, index)}></CommonCard>)
 
     return (
       <div className="common-trends">

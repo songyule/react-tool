@@ -1,8 +1,11 @@
 :global {
+  .mobile-home-banner__item {
+    height: 210px;
+  }
 
   .mobile-home-banner__carousel-slide-content {
     width: 100%;
-    height: 210px;
+    height: 100%;
     cursor: pointer;
     background-size: cover;
     background-repeat: no-repeat;

@@ -73,8 +73,8 @@ export default class extends PureComponent {
           onOk={this.handleOk}
           onCancel={this.props.onCancel}>
           { this.props.boms.map((bom, index) =>
-          index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} ref={ref => this.boms[index] = ref}></BomCard>:
-          <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} onRemove={() => this.removeBom(index)} ref={ref => this.boms[index] = ref}></BomCard>) }
+          // index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} ref={ref => this.boms[index] = ref}></BomCard>:
+          <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} onRemove={index === 0 ? null : (() => this.removeBom(index))} ref={ref => this.boms[index] = ref}></BomCard>) }
           <Button onClick={this.addBom}>添加</Button>
         </Modal>
       </div>

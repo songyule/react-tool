@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
 import { Modal, Form, Input, DatePicker, Button } from 'antd'
 import { groupBy, find } from 'lodash'
-import { emptyItem, numberObj, dataObj as indexObj } from './utils'
+import { emptyItem, mobileNumberObj, mobileDataObj as indexObj } from './utils'
 import Banner from './components/mobile/banner.js'
 import Nav from './components/mobile/nav.js'
 import Topic from './components/mobile/topic'
@@ -170,12 +170,12 @@ class HomeSettings extends Component {
   }
 
   renderData = () => {
-    this.props.getIndexConfig({ section_code: ['pc_index_top_banner', 'pc_index_latest_trends', 'pc_index_top_topic', 'pc_index_category_trend_1', 'pc_index_category_trend_2', 'pc_index_category_trend_3', 'pc_index_category_trend_4', 'pc_index_recommend_product'], limit: 9999 }).then(res => {
+    this.props.getIndexConfig({ section_code: ['mobile_index_top_banner', 'mobile_index_latest_trends', 'mobile_index_top_topic', 'mobile_index_category_trend_1', 'mobile_index_category_trend_2', 'mobile_index_category_trend_3', 'mobile_index_category_trend_4', 'mobile_index_recommend_product'], limit: 9999 }).then(res => {
       const groupObj = groupBy(res.data.index_config, 'section_code')
 
-      Object.keys(numberObj).forEach(key => {
+      Object.keys(mobileNumberObj).forEach(key => {
         if (!groupObj[key]) groupObj[key] = []
-        let count = numberObj[key]
+        let count = mobileNumberObj[key]
         if (count === -1) {
           indexObj[key] = groupObj[key]
         } else {
@@ -211,21 +211,21 @@ class HomeSettings extends Component {
 
     return (
       <div className="mobile-home-settings">
-        <Banner list={this.state.indexObj.pc_index_top_banner}></Banner>
+        <Banner list={this.state.indexObj.mobile_index_top_banner} editImage={this.editImage}></Banner>
 
         <Nav></Nav>
 
-        <Topic list={this.state.indexObj.pc_index_top_topic}></Topic>
+        <Topic list={this.state.indexObj.mobile_index_top_topic} editImage={this.editImage}></Topic>
 
-        <LatestTrends list={this.state.indexObj.pc_index_latest_trends}></LatestTrends>
+        <LatestTrends list={this.state.indexObj.mobile_index_latest_trends} editImage={this.editImage}></LatestTrends>
 
-        <CommonTrends title="贴布绣趋势" list={this.state.indexObj.pc_index_category_trend_1}></CommonTrends>
+        <CommonTrends title="贴布绣趋势" label="mobile_index_category_trend_1" list={this.state.indexObj.mobile_index_category_trend_1} editImage={this.editImage}></CommonTrends>
 
-        <CommonTrends title="纽扣趋势" list={this.state.indexObj.pc_index_category_trend_2}></CommonTrends>
+        <CommonTrends title="纽扣趋势" label="mobile_index_category_trend_2" list={this.state.indexObj.mobile_index_category_trend_2} editImage={this.editImage}></CommonTrends>
 
-        <CommonTrends title="织带趋势" list={this.state.indexObj.pc_index_category_trend_3}></CommonTrends>
+        <CommonTrends title="织带趋势" label="mobile_index_category_trend_3" list={this.state.indexObj.mobile_index_category_trend_3} editImage={this.editImage}></CommonTrends>
 
-        <Recommended list={this.state.indexObj.pc_index_recommend_product}></Recommended>
+        <Recommended list={this.state.indexObj.mobile_index_recommend_product} editImage={this.editImage}></Recommended>
 
         <Modal visible={this.state.editVisible} title={this.state.edit.id ? '编辑内容' : '创建内容'} width={800} onOk={this.handleOk} onCancel={this.handleCancel}>
           { this.state.edit.id && <Button type="danger" onClick={this.handleDelete}>删除</Button> }
@@ -259,7 +259,7 @@ class HomeSettings extends Component {
             </FormItem>
           </Form>
 
-          { this.state.edit.section_code !== 'pc_index_top_banner' && this.state.edit.section_code !== 'pc_index_recommend_product' && <Button onClick={() => this.setState({ articleVisible: true })}>选择文章</Button> }
+          { this.state.edit.section_code !== 'mobile_index_top_banner' && this.state.edit.section_code !== 'mobile_index_recommend_product' && <Button onClick={() => this.setState({ articleVisible: true })}>选择文章</Button> }
 
           { this.state.articleVisible && <TrendList select={this.handleSelect}></TrendList> }
         </Modal>

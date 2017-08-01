@@ -11,6 +11,17 @@ export const numberObj = {
   pc_index_recommend_product: -1
 }
 
+export const mobileNumberObj = {
+  mobile_index_top_banner: -1,
+  mobile_index_top_topic: 4,
+  mobile_index_latest_trends: 3,
+  mobile_index_category_trend_1: 3,
+  mobile_index_category_trend_2: 3,
+  mobile_index_category_trend_3: 4,
+  mobile_index_category_trend_4: 4,
+  mobile_index_recommend_product: -1
+}
+
 export const emptyItem = {
   id: '',
   title: '',
@@ -40,6 +51,24 @@ Object.keys(numberObj).forEach(key => {
   originDataObj[key] = list
 })
 export const dataObj = originDataObj
+
+const originMobileDataObj = {}
+Object.keys(mobileNumberObj).forEach(key => {
+  let number = mobileNumberObj[key]
+  const list = []
+  if (number !== -1) {
+    while (number--) {
+      list.push({
+        ...emptyItem,
+        weight: mobileNumberObj[key] - number,
+        link: '',
+        section_code: key
+      })
+    }
+  }
+  originMobileDataObj[key] = list
+})
+export const mobileDataObj = originMobileDataObj
 
 /* 计算首页数据 */
 export function caclDataObj (groupObj) {

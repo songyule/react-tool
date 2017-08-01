@@ -3,6 +3,7 @@
     position: relative;
     width: 165px;
     margin-right: 8px;
+    flex-shrink: 0;
 
     &__title {
       margin-top: 11px;

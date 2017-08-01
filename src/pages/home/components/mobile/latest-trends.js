@@ -5,7 +5,7 @@ import './latest-trends.css'
 
 class Topic extends Component {
   render () {
-    const cardList = this.props.list.map(item => <LatestCard item={item}></LatestCard>)
+    const cardList = this.props.list.map((item, index) => <LatestCard item={item} onClick={() => this.props.editImage('mobile_index_latest_trends', index)}></LatestCard>)
 
     return (
       <div className="latest-trends">

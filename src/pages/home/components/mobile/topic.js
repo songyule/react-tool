@@ -5,7 +5,7 @@ import './topic.css'
 
 class Topic extends Component {
   render () {
-    const $cardList = this.props.list.map((item, index) => <GoodsTopicCard className="goods-topic-card" key={index} item={item}></GoodsTopicCard>)
+    const $cardList = this.props.list.map((item, index) => <GoodsTopicCard key={index} className="goods-topic-card" item={item} onClick={() => this.props.editImage('mobile_index_top_topic', index)}></GoodsTopicCard>)
 
     return (
       <div className="goods-topic">

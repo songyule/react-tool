@@ -1,0 +1,49 @@
+:global {
+  .goods-card {
+    width: 167px;
+    height: 220px;
+    border: 1px solid #f5f5f5;
+
+    .img {
+      width: 162px;
+      height: 162px;
+      overflow: hidden;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .title {
+      padding: 5px;
+      color: #4a4a4a;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .price {
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 0 5px;
+
+      span {
+        font-size: 12px;
+        font-weight: normal;
+      }
+
+      &__action {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 5px;
+      }
+
+      i {
+        font-weight: normal;
+        color: #4a4a4a;
+        font-size: 14px;
+      }
+    }
+  }
+}
