@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Card, Input, Radio, Button, Table } from 'antd'
 import style from './quo-message.css'
+import cs from 'classnames'
 import { format } from 'utils'
 const RadioGroup = Radio.Group
 const TextArea = Input
@@ -13,9 +14,7 @@ export default class extends PureComponent {
   isHide = () => {
     this.setState({isBomHide: !this.state.isBomHide})
   }
-  selectCard = (e) => {
-    console.log(e)
-  }
+
   findBomMes = (value, filed) => {
     return this.state.material_arr.map(item => {
       if (item.serial === value) {
@@ -24,7 +23,6 @@ export default class extends PureComponent {
     })
   }
   clickCard = (index) => {
-    console.log(this.state.quoMes)
     this.props.callBack(this.state.quoMes)
   }
   componentWillMount () {
@@ -125,9 +123,14 @@ export default class extends PureComponent {
                     </div>
                   </div>
     )
+
+    const cardClass = cs({
+      [style.card]: true,
+      [style.what]: (this.state.quoMes === this.props.borderStyle) ? true : false
+    })
     return (
       <div>
-        <Card className={style.card} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} onClick={this.clickCard}>
+        <Card className={cardClass} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} onClick={this.clickCard}>
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>报价员</p>

@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Modal, Input, message } from 'antd'
+import { Button, Modal, Input, message, Select } from 'antd'
+import Title from 'components/title'
 import { sellerInquirySearch, sellerWithdraw, sellComplete, closeEnquiry } from 'actions/sampling'
 import EnquiryDeatil from './components/enquiry-detail/index'
 import QuoMessageF from './components/enquiry-detail/quo-message-f'
 import QuoMessageT from './components/enquiry-detail/quo-message-t'
 
+const Option = Select.Option
 export default class extends PureComponent {
   state = {
     id: '',
@@ -14,7 +16,8 @@ export default class extends PureComponent {
     visible: false,
     returnVisible: false,
     returnCauseText: '',
-    offer_id: -1
+    offer_id: -1,
+    borderStyle: false
   }
   // this.props.match.params.id
   closeEnquiry = () => {
@@ -108,14 +111,24 @@ export default class extends PureComponent {
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (
                                 item.material_offer_arr.length ?
-                                <QuoMessageT material_arr={enquiryMes.material_arr} quoMes={item} key={index} callBack={this.callBack}></QuoMessageT>
+                                <QuoMessageT material_arr={enquiryMes.material_arr} borderStyle={this.state.offer_id} quoMes={item} key={index} callBack={this.callBack}></QuoMessageT>
                                  :
                                 <QuoMessageF quoMes={item} key={index} callBack={this.callBack}></QuoMessageF>
                               ))}
                             </div>)
     return (
       <div style={{paddingBottom: 20}}>
-
+        <Title title={'询价单详情: ' + enquiryMes.id}>
+          {
+            (enquiryMes.snapshot_arr && enquiryMes.snapshot_arr.length) && ( <Select style={{width: 120}} defaultValue='历史版本' onChange={this.history}>
+                                                                        {
+                                                                          enquiryMes.snapshot_arr.map((item, index) => {
+                                                                            return (<Option  key={index} value={index.toString()}>{item.updated_at}</Option>)
+                                                                          })
+                                                                        }
+                                                                      </Select>)
+          }
+        </Title>
         <EnquiryDeatil enquiryMes={enquiryMes}></EnquiryDeatil>
         <div style={{borderTop: '1px solid #ccc', display: 'flex', justifyContent: 'center', marginBottom: 10}}>
           <p style={{border: '1px solid #ccc', padding: '5px 20px', marginTop: -1, cursor: 'pointer'}} onClick={this.isShow}>{this.state.isEnqShow ? '折叠' : '展开'}</p>
