@@ -42,7 +42,8 @@ class HomeSettings extends Component {
 
   handleUpload = (fileList) => {
     this.setState({
-      fileList: fileList
+      fileList: fileList,
+      edit: { ...this.state.edit, image_url: fileList.length ? fileList[0].response : '' }
     })
   }
 

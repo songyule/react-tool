@@ -40,7 +40,8 @@ class HomeSettings extends Component {
 
   handleUpload = (fileList) => {
     this.setState({
-      fileList: fileList
+      fileList: fileList,
+      edit: { ...this.state.edit, image_url: fileList.length ? fileList[0].response : '' }
     })
   }
 
@@ -208,6 +209,7 @@ class HomeSettings extends Component {
         sm: { span: 14 },
       }
     }
+    console.log(this.state.edit)
 
     return (
       <div className="mobile-home-settings">
