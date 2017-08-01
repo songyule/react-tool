@@ -39,7 +39,8 @@ export default class extends PureComponent {
       unit: '',
       quality_req: '',
       quality_testing_req: '',
-      attributes: []
+      attributes: [],
+      attributesObj: {}
     })
     this.props.changeBoms(boms)
   }

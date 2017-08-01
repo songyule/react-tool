@@ -27,7 +27,7 @@ export default class extends PureComponent {
   changeClass = (value) => {
     this.setState({
       bom: {
-        ...this.state.bom,
+        ...this.props.bom,
         classesSelected: value
       }
     })
