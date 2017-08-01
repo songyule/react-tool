@@ -77,9 +77,28 @@ export default class OfferInfo extends PureComponent {
     buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason })
   }
 
+  handleOfferSelf = (offer) => {
+    const saveOffer = {}
+    const fieldMapping = ['sampling_price',
+                  'bulk_unit_price',
+                  'supplier_id',
+                  'bulk_wear_rate',
+                  'include_express_fee',
+                  'bulk_mould_fee',
+                  'bulk_examine_fee',
+                  'predictable_risk',
+                  'comment']
+    fieldMapping.forEach(key => {
+      if (fieldMapping.indexOf(key) !== -1) saveOffer[key] = offer[key]
+    })
+    if (offer['material_offer_arr']) saveOffer['material_offer_arr'] = offer['material_offer_arr']
+    return saveOffer
+  }
+
   handleOffer = (offer) => {
     if (offer.material_offer_arr && offer.material_offer_arr.length) offer.material_offer_arr = offer.material_offer_arr.map(material => this.handleMaterial(material))
-    return offer
+    const offers = this.handleOfferSelf(offer)
+    return offers
   }
 
   handleMaterial = (material) => {
@@ -108,9 +127,8 @@ export default class OfferInfo extends PureComponent {
     if (!offer_arr.length) return message.warning('必须填写一个报价')
     offer_arr = offer_arr.map(offer => this.handleOffer(offer))
     offer_arr = offer_arr.filter(item => !item.id)
-    buyerOffer({ id, offer_arr }).then(res => {
-      this.getInquiryDetail()
-    })
+    buyerOffer({ id, offer_arr })
+    this.getInquiryDetail()
     this.props.editOffers({ id: '', offers: [] })
   }
 
@@ -118,7 +136,6 @@ export default class OfferInfo extends PureComponent {
     const id = this.props.match.params.id
     let { offer_arr } = this.state.inquiry
     offer_arr.splice(index, 1)
-    console.log(offer_arr)
     this.setState({
       inquiry: {
         ...this.state.inquiry,
