@@ -33,7 +33,6 @@ class newEnquiry extends PureComponent {
     reqNumber: '',
     lv1ClassArr: [],
     reqMes: {},
-    selectSku: {},
     bom: {},
     boms: [],
     enquiryMes: {}
@@ -78,7 +77,7 @@ class newEnquiry extends PureComponent {
     if (val.name === 'req') {
       console.log(val.reqMes)
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
-      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      if (val.reqMes.spu) val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
       let fileArr = []
       val.reqMes.img_arr.map((item, index) => {
         let obj ={
@@ -95,8 +94,8 @@ class newEnquiry extends PureComponent {
         reqVisible: val.visible,
         reqNumber: val.select[0] || '',
         reqMes: val.reqMes,
-        skuData: val.reqMes.sku_snapshot.attribute,
-        spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
+        skuData: val.reqMes.sku_snapshot.attribute || '',
+        spuData: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.commodity_attribute) || '',
         fileList: fileArr
       })
     } else if (val.name === 'client') {
@@ -199,12 +198,14 @@ class newEnquiry extends PureComponent {
     })
   }
   commodityCallback = (sku) => {
+    console.log(sku)
     let newReqMes = this.state.reqMes
     newReqMes.sku_snapshot = sku
     this.setState({
       commodityVisible: false,
       reqMes: newReqMes,
-      selectSku: sku
+      skuData: sku.attribute,
+      spuData: sku.spu.commodity_attribute,
     })
   }
   bomCallback = (boms) => {
@@ -428,7 +429,7 @@ class newEnquiry extends PureComponent {
               this.state.isType !== 2 &&  <div>
                                               <FormItem label="SKUID" className={style.mBottom}>
                                                 {getFieldDecorator('sku_id', {
-                                                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id)|| ''
+                                                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id) || ''
                                                 })(
                                                     <Input className={style.inputTitle}></Input>
                                                 )}
@@ -442,7 +443,7 @@ class newEnquiry extends PureComponent {
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
-                                                  reqMes.sku_snapshot && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
+                                                  reqMes.sku_snapshot && reqMes.sku_snapshot.spu && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
                                                     return (<img key={index} src={item} alt="img" className={style.originImg}/>)
                                                   })
                                                 }
@@ -549,7 +550,7 @@ class newEnquiry extends PureComponent {
                     initialValue: null,
                     rules: [{required: true, message: '请检查此项是否为纯数字，若不是，请输入数字' }]
                   })(
-                    <Input onChange={this.setInputType} className={style.inputTitle} placeholder={reqMes && reqMes.bulk_production_amount + '(请将此项写成数字)'}></Input>
+                    <Input onChange={this.setInputType} className={style.inputTitle} placeholder={ (reqMes && reqMes.bulk_production_amount) || '' + '(请将此项写成数字)'}></Input>
                   )}
                 </FormItem>
                 <FormItem label="大货单位">
