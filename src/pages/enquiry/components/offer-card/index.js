@@ -17,7 +17,6 @@ export default class OfferCard extends PureComponent {
 
   render () {
     const { offer, materials } = this.props
-    console.log(offer)
     const supplierValue = materials.length ? offer.material_offer_arr.map(offer => offer.supplier_id).join(',') : offer.supplier_id
     if (materials.length) {
       offer.material_offer_arr = offer.material_offer_arr.map(item => {
@@ -78,7 +77,7 @@ export default class OfferCard extends PureComponent {
               { materials.length ?
                 <div>
                   需要  BOM中有{ materials.length }个物料
-                  <BomCollapse material={offer.material_offer_arr[0]}></BomCollapse>
+                  { offer.material_offer_arr.map(material => <BomCollapse material={material}></BomCollapse>) }
                 </div> : '不需要' }
             </Col>
           </Row>

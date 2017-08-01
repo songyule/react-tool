@@ -9,7 +9,7 @@ import CommoditySelection from './components/commodity-selection/index'
 import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
 import { creatSampling, sellerInquirySearch, getRequirementList, enquiryUpdata } from 'actions/sampling'
-import { toRemoteBom } from './utils'
+import { toRemoteBom, toLocalBom } from './utils'
 import { format } from 'utils'
 
 const RadioGroup = Radio.Group
@@ -250,7 +250,7 @@ class newEnquiry extends PureComponent {
         this.setState({
           enquiryMes: inquiry,
           isMaterial: inquiry.material_arr.length ? true : false,
-          boms: inquiry.material_arr,
+          boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom)),
           isReq: inquiry.sampling_id ? true : false,
           skuData: inquiry.sku_snapshot.attribute,
           spuData: inquiry.sku_snapshot.spu.commodity_attribute,
@@ -284,6 +284,7 @@ class newEnquiry extends PureComponent {
   render () {
     const { getFieldDecorator } = this.props.form
     const { clientOrgMes, reqMes, enquiryMes } = this.state
+    const boms = this.state.boms
     const columns = [{
       title: '属性',
       dataIndex: 'lv1_name_cn',
@@ -374,14 +375,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="客户级别">
                   {getFieldDecorator('level', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level.name)
+                    initialValue: (clientOrgMes && clientOrgMes.org && clientOrgMes.org.client_level && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level && enquiryMes.client_org.client_level.name)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="提交人">
                   {getFieldDecorator('name', {
-                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller[0].name_cn)
+                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller && enquiryMes.client_org.seller[0].name_cn)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
@@ -593,7 +594,7 @@ class newEnquiry extends PureComponent {
         >
           创建成功，是否跳往询价列表
         </Modal>
-        <BomCreate visible={this.state.bomVisible} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
+        <BomCreate visible={this.state.bomVisible} boms={boms} onCancel={this.bomCancel} changeBoms={boms => this.setState({ boms })} callback={this.bomCallback}></BomCreate>
       </div>
     )
   }

@@ -6,9 +6,10 @@ import * as commodityActions from 'actions/commodity'
 import AttributesPlane from './attributes-plane'
 import './bom-card.css'
 import arrayToTree from 'array-to-tree'
-import { uniqBy, find } from 'lodash'
+import { uniqBy, find, groupBy } from 'lodash'
 const FormItem = Form.Item
 
+@Form.create()
 @connect(
   state => state,
   dispatch => bindActionCreators(commodityActions, dispatch)
@@ -18,7 +19,7 @@ export default class extends PureComponent {
     super()
 
     this.state = {
-      attributesObj: {},
+      // attributesObj: {},
       attrOptions: [],
       attributeList: []
     }
@@ -27,7 +28,7 @@ export default class extends PureComponent {
   changeClass = (value) => {
     this.setState({
       bom: {
-        ...this.state.bom,
+        ...this.props.bom,
         classesSelected: value
       }
     })
@@ -64,24 +65,24 @@ export default class extends PureComponent {
       existAttrs.push(...matchAttrs)
     })
     this.setState({
-      attributesObj,
+      // attributesObj,
       attrOptions,
       attributeList
     })
-    this.props.changeBom({ attributes: existAttrs })
+    this.props.changeBom({ attributes: existAttrs, attributesObj })
   }
 
-  selectAttributes = () => {}
 
   changeAttributes = (value, id) => {
-    const attributesObj = {...this.state.attributesObj}
+    const attributesObj = {...this.props.bom.attributesObj}
     attributesObj[id] = value
-    this.setState({
-      attributesObj
-    })
+    // this.setState({
+    //   attributesObj
+    // })
     const list = []
-    Object.keys(attributesObj).forEach(item => list.push(...attributesObj[item]))
-    this.props.changeBom({ attributes: list.map(id => find([...this.state.attributeList], { id })) })
+    Object.keys(groupBy(this.state.attributeList, 'lv1_id')).forEach(item => list.push(...(attributesObj[item] || [])))
+    this.props.form.setFieldsValue({ attributes: value })
+    this.props.changeBom({ attributes: list.map(id => find([...this.state.attributeList], { id })), attributesObj })
   }
 
   render () {
@@ -94,6 +95,7 @@ export default class extends PureComponent {
       labelCol: { span: 3 },
       wrapperCol: { span: 21 }
     }
+    const { getFieldDecorator } = this.props.form
 
     return (
       <div className="bom-card">
@@ -102,38 +104,54 @@ export default class extends PureComponent {
           <Row gutter={40}>
             <Col span={12}>
               <FormItem {...formItemLayout} label="名称">
-                <Input placeholder="placeholder" value={this.props.bom.name} onChange={e => changeBom({ name: e.target.value })} />
+                {getFieldDecorator('name', { rules: [{ required: true, message: '请输入名称' }], initialValue: this.props.bom.name })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ name: e.target.value })} />
+                )}
               </FormItem>
             </Col>
             <Col span={12}>
               <FormItem {...formItemLayout} label="类目">
-                <Cascader value={this.props.bom.classesSelected} options={this.props.commodityClasses.sortClasses} onChange={value => changeBom({ classesSelected: value })} placeholder="请选择商品分类"></Cascader>
+                {getFieldDecorator('classesSelected', { rules: [{ required: true, message: '请选择类目' }], initialValue: this.props.bom.classesSelected })(
+                  <Cascader options={this.props.commodityClasses.sortClasses} onChange={value => changeBom({ classesSelected: value })} placeholder="请选择商品分类"></Cascader>
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...rowFormItemLayout} label="商品描述">
-                { this.props.bom.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
+                {getFieldDecorator('attributes', { rules: [{ required: true, message: '请选择描述' }], initialValue: this.props.bom.attributes })(
+                  <div>
+                   { this.props.bom.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
+                  </div>
+                )}
               </FormItem>
-              <AttributesPlane attrOptions={this.state.attrOptions} attributesObj={this.state.attributesObj} changeAttributes={this.changeAttributes}></AttributesPlane>
+              <AttributesPlane attrOptions={this.state.attrOptions} attributesObj={this.props.bom.attributesObj} changeAttributes={this.changeAttributes}></AttributesPlane>
             </Col>
             <Col span={12}>
               <FormItem {...formItemLayout} label="使用数量">
-                <Input placeholder="placeholder" value={this.props.bom.amount} onChange={e => changeBom({ amount: e.target.value })} />
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请填写使用数量' }, { pattern: /^\d+(\.\d+)?$/, message: '必须为数字' }], initialValue: this.props.bom.amount })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ amount: e.target.value })} />
+                )}
               </FormItem>
             </Col>
             <Col span={12}>
               <FormItem {...formItemLayout} label="数量单位">
-                <Input placeholder="placeholder" value={this.props.bom.unit} onChange={e => changeBom({ unit: e.target.value })} />
+                {getFieldDecorator('unit', { rules: [{ required: true, message: '请填写数量单位' }], initialValue: this.props.bom.unit })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ unit: e.target.value })} />
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...rowFormItemLayout} label="品质要求">
-                <Input placeholder="placeholder" value={this.props.bom.quality_req} onChange={e => changeBom({ quality_req: e.target.value })} />
+                {getFieldDecorator('quality_req', { rules: [{ required: true, message: '请填写品质要求' }], initialValue: this.props.bom.quality_req })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ quality_req: e.target.value })} />
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...rowFormItemLayout} label="质检要求">
-                <Input placeholder="placeholder" value={this.props.bom.quality_testing_req} onChange={e => changeBom({ quality_testing_req: e.target.value })} />
+                {getFieldDecorator('quality_testing_req', { rules: [{ required: true, message: '请填写质检要求' }], initialValue: this.props.bom.quality_testing_req })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ quality_testing_req: e.target.value })} />
+                )}
               </FormItem>
             </Col>
           </Row>
