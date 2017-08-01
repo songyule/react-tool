@@ -9,7 +9,7 @@ class AttributesPlane extends PureComponent {
     return (
       <div className={style['attributes-plane']}>
         {this.props.attrOptions.map((attrOption, index) =>
-          <Row className={style['attributes-plane__row']}>
+          <Row key={index} className={style['attributes-plane__row']}>
             <Col span={4}>{ attrOption.name_cn }:</Col>
             <Col span={20}>
               <CheckboxGroup options={attrOption.children.map(attr => ({ label: attr.name_cn, value: attr.id }))} onChange={value => this.props.changeAttributes(value, attrOption.id)} value={this.props.attributesObj[attrOption.id]}/>

@@ -375,14 +375,14 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="客户级别">
                   {getFieldDecorator('level', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level.name)
+                    initialValue: (clientOrgMes && clientOrgMes.org && clientOrgMes.org.client_level && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level && enquiryMes.client_org.client_level.name)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}
                 </FormItem>
                 <FormItem label="提交人">
                   {getFieldDecorator('name', {
-                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller[0].name_cn)
+                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller && enquiryMes.client_org.seller[0].name_cn)
                   })(
                     <Input disabled className={style.inputTitle}></Input>
                   )}

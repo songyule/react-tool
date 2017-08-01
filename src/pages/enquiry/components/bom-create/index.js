@@ -16,6 +16,11 @@ import BomCard from './components/bom-card'
   dispatch => bindActionCreators(commodityActions, dispatch)
 )
 export default class extends PureComponent {
+  constructor () {
+    super()
+
+    this.boms = []
+  }
 
   changeBom = (bomPart, index) => {
     const boms = [...this.props.boms]
@@ -45,6 +50,15 @@ export default class extends PureComponent {
     this.props.changeBoms(boms)
   }
 
+  handleOk = () => {
+    let bool = true
+    this.boms.forEach(bom => bom.validateFields(err => {
+      if (err) bool = false
+    }))
+    if (!bool) return
+    this.props.callback(this.props.boms)
+  }
+
   componentWillMount = () => {
     this.props.getClasses()
   }
@@ -56,11 +70,11 @@ export default class extends PureComponent {
           visible={this.props.visible}
           title="新建 BOM"
           width={800}
-          onOk={() => this.props.callback(this.props.boms)}
+          onOk={this.handleOk}
           onCancel={this.props.onCancel}>
           { this.props.boms.map((bom, index) =>
-          index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index}></BomCard>:
-          <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} onRemove={() => this.removeBom(index)}></BomCard>) }
+          index === 0 ? <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} ref={ref => this.boms[index] = ref}></BomCard>:
+          <BomCard bom={bom} changeBom={bomPart => this.changeBom(bomPart, index)} key={index} onRemove={() => this.removeBom(index)} ref={ref => this.boms[index] = ref}></BomCard>) }
           <Button onClick={this.addBom}>添加</Button>
         </Modal>
       </div>
