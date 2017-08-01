@@ -4,6 +4,7 @@ import Title from 'components/title'
 import style from '../../css/new-enquiry.css'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
+import { format } from 'utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
@@ -94,32 +95,32 @@ class newEnquiry extends PureComponent {
       {
         name: '颜色要求',
         filed: 'color_req',
-        getFiled: 'color'
+        getFiled: 'color_req'
       },
       {
         name: '尺寸要求',
         filed: 'size_req',
-        getFiled: 'size'
+        getFiled: 'size_req'
       },
       {
         name: '形状要求',
         filed: 'shape_req',
-        getFiled: 'shape'
+        getFiled: 'shape_req'
       },
       {
         name: '材质要求',
         filed: 'material_req',
-        getFiled: 'material'
+        getFiled: 'material_req'
       },
       {
         name: '品质要求',
         filed: 'quality_req',
-        getFiled: ''
+        getFiled: 'quality_req'
       },
       {
         name: '质检要求',
         filed: 'quality_testing_req',
-        getFiled: ''
+        getFiled: 'quality_testing_req'
       }
     ]
     return (
@@ -212,17 +213,13 @@ class newEnquiry extends PureComponent {
                 )}
               </FormItem>
               <FormItem label="类目">
-                {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: (reqMes && reqMes.classify) || ''
-                })(
-                  <Select className={style.inputTitle} disabled>
-                    {
-                      this.state.lv1ClassArr.map((item, index) => {
-                        return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
-                      })
-                    }
-                  </Select>
-                )}
+                <Select className={style.inputTitle} disabled value={reqMes.custom_commodity_class_id}>
+                  {
+                    this.state.lv1ClassArr.map((item, index) => {
+                      return (<Option  key={index} value={item.lv1_id}>{item.name_cn}</Option>)
+                    })
+                  }
+                </Select>
               </FormItem>
             </div>
             {
@@ -264,7 +261,7 @@ class newEnquiry extends PureComponent {
                 return (<div className={style.mBottom} key={index}>
                           <FormItem label={item.name}>
                             {getFieldDecorator(item.filed, {
-                              initialValue: (reqMes && reqMes[item.filed]) || ''
+                              initialValue: (reqMes && reqMes[item.getFiled]) || ''
                             })(
                               <Input disabled className={style.inputTitle}></Input>
                             )}
@@ -307,25 +304,15 @@ class newEnquiry extends PureComponent {
             <div>
               <div className={style.flex}>
                 <FormItem label="打样数量">
-                  {getFieldDecorator('sampling_amount', {
-                    initialValue: reqMes && reqMes.sample_amount
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.sampling_amount} className={style.inputTitle}></Input>
                 </FormItem>
                 <FormItem label="打样单位">
-                  {getFieldDecorator('sampling_unit')(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.sampling_unit} className={style.inputTitle}></Input>
                 </FormItem>
               </div>
               <div className={style.flex}>
                 <FormItem label="样品交期">
-                  {getFieldDecorator('custom_commodity_name', {
-                    initialValue: reqMes && reqMes.sample_deadline
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={format(reqMes.sampling_deliver_epoch * 1000, 'yyyy-MM-dd HH:mm:ss')} className={style.inputTitle}></Input>
                 </FormItem>
               </div>
             </div>
@@ -337,34 +324,18 @@ class newEnquiry extends PureComponent {
             <div>
               <div className={style.flex}>
                 <FormItem label="预计大货数量">
-                  {getFieldDecorator('bulk_estimate_amount', {
-                    initialValue: reqMes && reqMes.bulk_production_amount
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.bulk_estimate_amount} className={style.inputTitle}></Input>
                 </FormItem>
                 <FormItem label="大货单位">
-                  {getFieldDecorator('bulk_unit', {
-                    initialValue: reqMes && reqMes.bulk_production_price
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.bulk_unit} className={style.inputTitle}></Input>
                 </FormItem>
               </div>
               <div className={style.flex}>
                 <FormItem label="预期大货交期">
-                  {getFieldDecorator('bulk_expectation_deliver_time', {
-                    initialValue: reqMes && reqMes.bulk_production_deadline
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.bulk_expectation_deliver_time} className={style.inputTitle}></Input>
                 </FormItem>
                 <FormItem label="期望大货价">
-                  {getFieldDecorator('bulk_expectation_price', {
-                    initialValue: reqMes && reqMes.bulk_production_price
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
+                  <Input disabled value={reqMes.bulk_expectation_price} className={style.inputTitle}></Input>
                 </FormItem>
               </div>
             </div>
