@@ -88,10 +88,9 @@ export default class OfferInfo extends PureComponent {
                   'bulk_examine_fee',
                   'predictable_risk',
                   'comment']
-    fieldMapping.forEach(key => {
+    Object.keys(offer).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveOffer[key] = offer[key]
     })
-    if (offer['material_offer_arr']) saveOffer['material_offer_arr'] = offer['material_offer_arr']
     return saveOffer
   }
 
