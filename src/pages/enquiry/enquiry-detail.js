@@ -17,7 +17,8 @@ export default class extends PureComponent {
     returnVisible: false,
     returnCauseText: '',
     offer_id: -1,
-    borderStyle: false
+    borderStyle: false,
+    version: {}
   }
   // this.props.match.params.id
   closeEnquiry = () => {
@@ -75,21 +76,25 @@ export default class extends PureComponent {
       offer_id: val.id
     })
   }
-
+  history = (e) => {
+    console.log(this.state.version.snapshot_arr[e])
+    this.setState({enquiryMes: this.state.version.snapshot_arr[e]})
+  }
   componentWillMount () {
     this.setState({id: this.props.match.params.id}, () => {
       sellerInquirySearch({id: this.state.id, get_snapshot: 1}).then(res => {
         if (res.code === 200) {
           this.setState({
             enquiryMes: res.data.inquiry[0],
-            returnVisible: res.data.inquiry[0].status === -2 && res.data.inquiry[0].no_supplier_withdraw_reason
+            returnVisible: res.data.inquiry[0].status === -2 && res.data.inquiry[0].no_supplier_withdraw_reason,
+            version: res.data.inquiry[0]
           })
         }
       })
     })
   }
   render () {
-    const { enquiryMes } = this.state
+    const { enquiryMes, version } = this.state
     const Shelters = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                         <Button type="primary" onClick={this.closeEnquiry}>关闭工单</Button>
                       </div>)
@@ -102,11 +107,11 @@ export default class extends PureComponent {
                               <Button type="primary" onClick={this.closeEnquiry}>关闭工单</Button>
                           </div>)
     const OffTheStocks = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
-                            <Button type="primary">重新询价</Button>
+                            <Button type="primary" onClick={this.returnQuote}>退回重新报价</Button>
                           </div>)
     const ByReturned = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                           <Button type="primary" onClick={this.closeEnquiry} style={{marginRight: 10}}>关闭工单</Button>
-                          <Button type="primary">重新询价</Button>
+                          <Button type="primary" onClick={this.returnQuote}>退回重新报价</Button>
                         </div>)
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (
@@ -120,10 +125,10 @@ export default class extends PureComponent {
       <div style={{paddingBottom: 20}}>
         <Title title={'询价单详情: ' + enquiryMes.id}>
           {
-            (enquiryMes.snapshot_arr && enquiryMes.snapshot_arr.length) && ( <Select style={{width: 120}} defaultValue='历史版本' onChange={this.history}>
+            (version.snapshot_arr && version.snapshot_arr.length) && ( <Select style={{width: 120}} defaultValue='历史版本' onChange={this.history}>
                                                                         {
-                                                                          enquiryMes.snapshot_arr.map((item, index) => {
-                                                                            return (<Option  key={index} value={index.toString()}>{item.updated_at}</Option>)
+                                                                          version.snapshot_arr.map((item, index) => {
+                                                                            return (<Option  key={index} value={index.toString()}>{item.version}</Option>)
                                                                           })
                                                                         }
                                                                       </Select>)

@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react'
 import { Tabs, Input, Select, Button, Table, Pagination } from 'antd'
 import style from './css/enquiry-list.css'
+import { Link } from 'react-router-dom'
 import { sellerInquirySearch } from 'actions/sampling'
+import { format } from 'utils/index'
 
 const TabPane = Tabs.TabPane
 const Search = Input.Search
@@ -62,6 +64,19 @@ export default class extends PureComponent {
     let id = this.state.enquiryData.inquiry[index].id
     this.props.history.push(`/main/enquiry-detail/${id}`)
   }
+  statusText = (val) => {
+    if (val === 0) {
+      return '待认领'
+    } else if (val === 4) {
+      return '待确认'
+    } else if ([1,3,-1].indexOf(val) !== -1) {
+      return '报价中'
+    } else if (val === 2) {
+      return '已完成'
+    } else {
+      return '被退回'
+    }
+  }
   componentWillMount () {
     this.getEnquiryData()
   }
@@ -79,6 +94,7 @@ export default class extends PureComponent {
           style={{ width: 300 }}
           onSearch={value => this.searchChange(value)}
         />
+        <Button type="primary" style={{marginLeft: 20}}><Link to="/main/new-enquiry">新建工单</Link></Button>
       </div>
     )
     const status = [{
@@ -108,6 +124,9 @@ export default class extends PureComponent {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
+      render: (text) => (
+        <p>{format(text * 1000, 'yyyy-MM-dd HH:mm:ss')}</p>
+      )
     }, {
       title: '客户简称',
       dataIndex: 'client_org[name_cn]',
@@ -120,6 +139,9 @@ export default class extends PureComponent {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      render: (text) => (
+        <p>{this.statusText(text)}</p>
+      )
     }, {
       title: '操作',
       dataIndex: 'eidt',

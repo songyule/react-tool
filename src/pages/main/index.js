@@ -170,12 +170,6 @@ export default class extends Component {
             icon: 'solution'
           },
           {
-            key: 'new-enquiry',
-            title: '新建报价单',
-            router: '/main/new-enquiry',
-            icon: 'solution'
-          },
-          {
             key: 'offer-list',
             title: '报价单列表',
             router: '/main/offer-list',

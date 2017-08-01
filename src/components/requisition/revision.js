@@ -52,6 +52,7 @@ class revision extends PureComponent {
   }
 
   componentWillMount () {
+    console.log(this.props.samplingMes)
     this.props.samplingMes.sample_deadline = format(this.props.samplingMes.sample_deadline * 1000, 'yyyy/mm/dd HH:mm:ss')
     this.setState({
       samplingMes: this.props.samplingMes,
@@ -92,7 +93,7 @@ class revision extends PureComponent {
           <Row>
             <Col span={10}>
               <span className={style.inputTitle}>单位:</span>
-              <Input disabled style={{width: 300}} value={samplingMes.sku_snapshot.extra_attribute[0].name_cn}/>
+              <Input disabled style={{width: 300}} value={(samplingMes.sku_snapshot.extra_attribute && samplingMes.sku_snapshot.extra_attribute[0].name_cn) || ''}/>
             </Col>
           </Row>
           <Row>
