@@ -41,7 +41,9 @@ export default class extends PureComponent {
   }
 
   getLinkageAttributes = async () => {
-    let list = await this.props.getAttributeList({ class_id: this.props.bom.classesSelected })
+    const params = {}
+    if (this.props.bom.classesSelected.length) params.class_id = this.props.bom.classesSelected
+    let list = await this.props.getAttributeList(params)
     return list.data
   }
 

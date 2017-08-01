@@ -99,6 +99,7 @@ class newEnquiry extends PureComponent {
         fileList: fileArr
       })
     } else if (val.name === 'client') {
+      console.log(val.clientOrgMes)
       this.setState({
         clientVisible: val.visible,
         clientOrgMes: val.clientOrgMes
@@ -141,7 +142,7 @@ class newEnquiry extends PureComponent {
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log(this.state.reqMes.id)
+      if (this.state.isReq) return
       if (!err && this.checkNumber(values.bulk_estimate_amount)) {
         let arr = []
         this.state.fileList.map(item => {
@@ -149,17 +150,23 @@ class newEnquiry extends PureComponent {
           return arr
         })
         console.log(arr)
-        values.img = arr
+        values.img_url_arr = arr
         if (this.state.isType !== 2) values.custom_commodity_class_id = 0
         if (this.state.isMaterial) values.material_arr = this.state.bom
-        if (this.state.isReq) values.sampling_id = this.state.reqMes.id
-        if (this.props.location.state) {
-          console.log(2333)
-          values.id = this.props.location.state
+        if (this.state.isReq) {
+          values.sampling_id = this.state.reqMes.id
+        } else {
+          values.client_uid = this.state.clientOrgMes.id
+          values.client_org_id = this.state.clientOrgMes.org_id
+        }
+        if (this.props.match.params.id && this.state.enqSource === 'B') {
+          console.log('我是一个返回并修改报价哦')
+          values.id = this.state.enqId
           enquiryUpdata(values).then(res => {
             if (res.code === 200) this.setState({modalVisible: true})
           })
         } else {
+          console.log('这里是新建一个报价')
           creatSampling(values).then(res => {
             if (res.code === 200) this.setState({modalVisible: true})
           })
@@ -179,7 +186,6 @@ class newEnquiry extends PureComponent {
     val.map(item => {
       return classArr.push(item.name_cn)
     })
-    console.log(classArr)
     return classArr.join(',')
   }
   showGoodsSelect = () => {
@@ -224,15 +230,15 @@ class newEnquiry extends PureComponent {
       modalVisible: false,
     }, () => {
       this.props.history.push('/main/enquiry-list')
-    });
+    })
   }
   handleCancel = (e) => {
     this.setState({
       modalVisible: false,
-    });
+    })
   }
   getEnqDetail = () => {
-    sellerInquirySearch({id: this.props.location.state}).then(res => {
+    sellerInquirySearch({id: this.state.enqId}).then(res => {
       console.log(res.data.inquiry[0])
       let inquiry = res.data.inquiry[0]
       let fileArr = []
@@ -256,8 +262,6 @@ class newEnquiry extends PureComponent {
           skuData: inquiry.sku_snapshot.attribute,
           spuData: inquiry.sku_snapshot.spu.commodity_attribute,
           fileList: fileArr
-        }, () => {
-          console.log(this.state.enquiryMes)
         })
         // if (!this.isReq) return
         // let id_arr = []
@@ -276,10 +280,16 @@ class newEnquiry extends PureComponent {
     this.props.form.setFieldsValue({'bulk_estimate_amount': 1})
     console.log(this.props.form)
   }
+  checkBigImg = (img) => {
+    window.open(img)
+  }
   componentWillMount() {
     this.getLv1Class()
-    console.log(this.props.location.state, 23343242343432432)
-    if (!this.props.location.state) return
+    if (!this.props.match.params.id) return
+    this.setState({
+      enqId: this.props.match.params.id.substring(1),
+      enqSource: this.props.match.params.id.substring(-1,1)
+    })
     this.getEnqDetail()
   }
   render () {
@@ -300,32 +310,38 @@ class newEnquiry extends PureComponent {
       {
         name: '颜色要求',
         filed: 'color_req',
-        getFiled: 'color_req'
+        getFiled: 'color_req',
+        reqFilde: 'color'
       },
       {
         name: '尺寸要求',
         filed: 'size_req',
-        getFiled: 'size_req'
+        getFiled: 'size_req',
+        reqFilde: 'size'
       },
       {
         name: '形状要求',
         filed: 'shape_req',
-        getFiled: 'shape_req'
+        getFiled: 'shape_req',
+        reqFilde: 'shape'
       },
       {
         name: '材质要求',
         filed: 'material_req',
-        getFiled: 'material_req'
+        getFiled: 'material_req',
+        reqFilde: 'material'
       },
       {
         name: '品质要求',
         filed: 'quality_req',
-        getFiled: 'quality_req'
+        getFiled: 'quality_req',
+        reqFilde: ''
       },
       {
         name: '质检要求',
         filed: 'quality_testing_req',
-        getFiled: 'quality_testing_req'
+        getFiled: 'quality_testing_req',
+        reqFilde: 'standard'
       }
     ]
     return (
@@ -344,7 +360,7 @@ class newEnquiry extends PureComponent {
               {
                 this.state.isReq && <div className={style.flex}>
                                       <Button type="primary" className={style.btn} style={{height: 32}} onClick={() => this.showModal('req')}>选择需求单</Button>
-                                      <p>需求单号：{enquiryMes.sampling_id}</p>
+                                      <p>需求单号：<span ref='samplingID'>{enquiryMes.sampling_id || reqMes.id}</span></p>
                                     </div>
               }
             </div>
@@ -444,14 +460,14 @@ class newEnquiry extends PureComponent {
                                               <FormItem label="商品图片">
                                                 {
                                                   reqMes.sku_snapshot && reqMes.sku_snapshot.spu && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
-                                                    return (<img key={index} src={item} alt="img" className={style.originImg}/>)
+                                                    return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
                                                   })
                                                 }
                                               </FormItem>
                                             </div>
             }
             <FormItem label="商品补充描述">
-              {getFieldDecorator('img', {
+              {getFieldDecorator('img_url_arr', {
                 initialValue: ''
               })(
                 <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
@@ -464,7 +480,7 @@ class newEnquiry extends PureComponent {
                 return (<div className={style.mBottom} key={index}>
                           <FormItem label={item.name}>
                             {getFieldDecorator(item.filed, {
-                              initialValue: (reqMes.requirement && reqMes.requirement[item.getFiled]) || (enquiryMes && enquiryMes[item.getFiled]) || ''
+                              initialValue: (reqMes.requirement && reqMes.requirement[item.reqFilde]) || (enquiryMes && enquiryMes[item.getFiled]) || ''
                             })(
                               <Input className={style.inputTitle}></Input>
                             )}
@@ -550,7 +566,7 @@ class newEnquiry extends PureComponent {
                     initialValue: null,
                     rules: [{required: true, message: '请检查此项是否为纯数字，若不是，请输入数字' }]
                   })(
-                    <Input onChange={this.setInputType} className={style.inputTitle} placeholder={ (reqMes && reqMes.bulk_production_amount) || '' + '(请将此项写成数字)'}></Input>
+                    <Input onChange={this.setInputType} className={style.inputTitle} placeholder={ (reqMes && reqMes.bulk_production_amount) || (enquiryMes && enquiryMes.bulk_estimate_amount) || '(请将此项写成数字)'}></Input>
                   )}
                 </FormItem>
                 <FormItem label="大货单位">

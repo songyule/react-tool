@@ -40,6 +40,9 @@ export default class extends PureComponent {
   isShow = () => {
     this.setState({isEnqShow: !this.state.isEnqShow})
   }
+  againQuote = () => {
+    this.props.history.push(`/main/edit-enquiry/A${this.state.id}`)
+  }
   handleOk = (e) => {
     if (!this.state.returnCauseText) return
     this.setState({
@@ -48,10 +51,11 @@ export default class extends PureComponent {
       console.log(this.state.returnCauseText)
       sellerWithdraw({id: this.state.id, offer_withdraw_reason: this.state.returnCauseText}).then(res => {
         console.log(res)
-        if (res.code === 200) this.props.history.push({pathname: '/main/new-enquiry', state: this.state.id})
+        if (res.code === 200) this.props.history.push(`/main/edit-enquiry/B${this.state.id}`)
       })
     })
   }
+
   returnHandleOk = (e) => {
     this.setState({
       returnVisible: false,
@@ -107,11 +111,11 @@ export default class extends PureComponent {
                               <Button type="primary" onClick={this.closeEnquiry}>关闭工单</Button>
                           </div>)
     const OffTheStocks = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
-                            <Button type="primary" onClick={this.returnQuote}>退回重新报价</Button>
+                            <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                           </div>)
     const ByReturned = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                           <Button type="primary" onClick={this.closeEnquiry} style={{marginRight: 10}}>关闭工单</Button>
-                          <Button type="primary" onClick={this.returnQuote}>退回重新报价</Button>
+                          <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                         </div>)
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (

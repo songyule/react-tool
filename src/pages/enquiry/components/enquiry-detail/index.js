@@ -67,19 +67,25 @@ class newEnquiry extends PureComponent {
       console.log(this.state.reqMes)
     })
   }
+  checkBigImg = (img) => {
+    window.open(img)
+  }
   componentWillMount() {
     this.getLv1Class()
     if (JSON.stringify(this.props.enquiryMes) === '{}') return
+    console.log(this.props.enquiryMes)
+    this.setState({reqMes: this.props.enquiryMes})
+    if (JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}') return
     this.setState({
-      reqMes: this.props.enquiryMes,
       skuData: this.props.enquiryMes.sku_snapshot.attribute,
       spuData: this.props.enquiryMes.sku_snapshot.spu.commodity_attribute,
     })
   }
   componentWillReceiveProps (nextProps) {
     console.log(nextProps.enquiryMes, 233333)
+    this.setState({reqMes: nextProps.enquiryMes})
+    if (JSON.stringify(nextProps.enquiryMes.sku_snapshot) === '{}') return
     this.setState({
-      reqMes: nextProps.enquiryMes,
       skuData: nextProps.enquiryMes.sku_snapshot.attribute,
       spuData: nextProps.enquiryMes.sku_snapshot.spu.commodity_attribute,
     })
@@ -100,22 +106,22 @@ class newEnquiry extends PureComponent {
     const goodsReq = [
       {
         name: '颜色要求',
-        filed: 'color_req',
+        filed: 'color',
         getFiled: 'color_req'
       },
       {
         name: '尺寸要求',
-        filed: 'size_req',
+        filed: 'size',
         getFiled: 'size_req'
       },
       {
         name: '形状要求',
-        filed: 'shape_req',
+        filed: 'shape',
         getFiled: 'shape_req'
       },
       {
         name: '材质要求',
-        filed: 'material_req',
+        filed: 'material',
         getFiled: 'material_req'
       },
       {
@@ -235,8 +241,8 @@ class newEnquiry extends PureComponent {
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
-                                                  reqMes.sku_snapshot && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
-                                                    return (<img key={index} src={item} alt="img" className={style.originImg}/>)
+                                                  reqMes.sku_snapshot && reqMes.sku_snapshot.spu && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
+                                                    return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
                                                   })
                                                 }
                                               </FormItem>
@@ -245,7 +251,7 @@ class newEnquiry extends PureComponent {
             <FormItem label="商品补充描述">
               {
                 reqMes.img_url_arr.map((item, index) => {
-                  return (<img key={index} src={item} alt="img" className={style.originImg}/>)
+                  return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
                 })
               }
             </FormItem>
@@ -253,20 +259,22 @@ class newEnquiry extends PureComponent {
           <FormItem label="商品要求" className={style.tier}>
             {
               goodsReq.map((item, index) => {
-                return (<div className={style.mBottom} key={index}>
-                          <FormItem label={item.name}>
-                            {getFieldDecorator(item.filed, {
-                              initialValue: (reqMes && reqMes[item.getFiled]) || ''
-                            })(
-                              <Input disabled className={style.inputTitle}></Input>
-                            )}
-                          </FormItem>
-                        </div>)
+                return (
+                  <div className={style.mBottom} key={index}>
+                    <FormItem label={item.name}>
+                      {getFieldDecorator(item.filed, {
+                        initialValue: (reqMes && reqMes[item.getFiled]) || ''
+                      })(
+                        <Input disabled className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                  </div>
+                )
               })
             }
             <FormItem label="其他需求">
               {getFieldDecorator('other_req', {
-                initialValue: (reqMes && reqMes.applicant_comment) || ''
+                initialValue: (reqMes && reqMes.other_req) || ''
               })(
                 <Input disabled type="textarea" className={style.inputTitle}></Input>
               )}

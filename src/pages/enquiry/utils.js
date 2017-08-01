@@ -27,7 +27,7 @@ export function toLocalBom (remoteBom) {
     quality_req: remoteBom.quality_req,
     quality_testing_req: remoteBom.quality_testing_req,
     attributes: remoteBom.attribute_arr,
-    classesSelected: classToSelected(remoteBom.class_),
+    classesSelected: remoteBom.class_ ? classToSelected(remoteBom.class_) : '',
     attributesObj
   }
   return localBom

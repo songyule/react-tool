@@ -40,17 +40,6 @@ export default class extends PureComponent {
           </div>
           <div className={style.row}>
             <div className={style.col}>
-              <p className={style.lable}>大货预计数量</p>
-              <Input style={{width: 300}} value='111' disabled></Input>
-            </div>
-            <div className={style.col}>
-              <p className={style.lable}>大货预计价格</p>
-              <Input style={{width: 300}} value='100' disabled></Input>
-              <span>元</span>
-            </div>
-          </div>
-          <div className={style.row}>
-            <div className={style.col}>
               <p className={style.lable}>是否拆分</p>
               <p>不需要</p>
             </div>
@@ -82,7 +71,7 @@ export default class extends PureComponent {
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>磨损率</p>
-              <Input style={{width: 300}} value={quoMes.bulk_wear_rate} disabled ></Input>
+              <Input style={{width: 300}} value={quoMes.bulk_wear_rate * 1000} disabled ></Input>
               <span>%</span>
             </div>
             <div className={style.col}>
