@@ -1,0 +1,48 @@
+:global {
+  .gradually-title {
+
+    &__subhead {
+      display: flex;
+      align-items: center;
+      color: #333;
+      font-size: 16px;
+    }
+
+    &__subhead-content {
+      padding: 0 23px;
+    }
+
+    &__subhead-left {
+      position: relative;
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, #E8E8E8, #4A4A4A);
+
+      .gradually-title__subhead-dot {
+        position: absolute;
+        right: 0;
+        top: -1px;
+      }
+    }
+
+    &__subhead-right {
+      position: relative;
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to left, #E8E8E8, #4A4A4A);
+
+      .gradually-title__subhead-dot {
+        position: absolute;
+        left: 0;
+        top: -1px;
+      }
+    }
+
+    &__subhead-dot {
+      display: block;
+      width: 3px;
+      height: 3px;
+      background: #000;
+    }
+  }
+}

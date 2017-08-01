@@ -51,9 +51,15 @@ export default class extends Component {
         title: '首页管理',
         children: [
           {
-            key: 'home-settings',
-            title: '首页设置',
-            router: '/main/home-settings',
+            key: 'pc-home-settings',
+            title: 'PC 首页设置',
+            router: '/main/pc-home-settings',
+            icon: 'solution'
+          },
+          {
+            key: 'mobile-home-settings',
+            title: '手机首页设置',
+            router: '/main/mobile-home-settings',
             icon: 'solution'
           }
         ]
@@ -258,7 +264,6 @@ export default class extends Component {
               <Route path='/main/goods-create' component={GoodsCreate} />
               {/*打样相关 ==== */}
               <Route path='/main/requirement-list' component={RequirementList} />
-              <Route path='/main/home-settings' component={HomeSettings} />
               {/* 询价单相关 */}
               <Route path='/main/new-enquiry' component={NewEnquiry} />
               <Route path='/main/enquiry-list' component={EnquiryList} />
@@ -267,6 +272,9 @@ export default class extends Component {
               <Route path='/main/offer-list' component={OfferList} />
               <Route path='/main/create-offer/:id' component={CreateOffer} />
               <Route path='/main/offer-info/:id' component={OfferInfo} />
+              {/*首页相关 === */}
+              <Route path='/main/pc-home-settings' component={PCHomeSettings} />
+              <Route path='/main/mobile-home-settings' component={MobileHomeSettings} />
             </div>
         </div>
       </div>
@@ -300,10 +308,11 @@ const GoodsEdit = asyncComponent(() => import('pages/commodity/edit'))
 const GoodsContentEdit = asyncComponent(() => import('pages/commodity/content-edit'))
 const GoodsCreate = asyncComponent(() => import('pages/commodity/create'))
 const RequirementList = asyncComponent(() => import('pages/requirement/index'))
-const HomeSettings = asyncComponent(() => import('pages/home/settings'))
 const NewEnquiry = asyncComponent(() => import('pages/enquiry/new-enquiry'))
 const EnquiryList = asyncComponent(() => import('pages/enquiry/enquiry-list'))
 const EnquiryDetail = asyncComponent(() => import('pages/enquiry/enquiry-detail'))
 const OfferList = asyncComponent(() => import('pages/enquiry/offer-list'))
 const CreateOffer = asyncComponent(() => import('pages/enquiry/create-offer'))
 const OfferInfo = asyncComponent(() => import('pages/enquiry/offer-info'))
+const PCHomeSettings = asyncComponent(() => import('pages/home/pc-settings'))
+const MobileHomeSettings = asyncComponent(() => import('pages/home/mobile-settings'))

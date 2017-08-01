@@ -1,0 +1,15 @@
+:global {
+  .common-trends {
+    margin-top: 16px;
+    padding: 9px 15px 14px;
+    background: #fff;
+
+    &__content {
+      display: flex;
+      /* flex-wrap: wrap; */
+      width: auto;
+      margin-top: 10px;
+      overflow-x: scroll;
+    }
+  }
+}

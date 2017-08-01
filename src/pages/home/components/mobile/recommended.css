@@ -1,0 +1,20 @@
+.home-recommended {
+  margin-top: 16px;
+  padding: 9px 15px 14px;
+  background: #fff;
+
+  &__content {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  &__goods-card {
+    margin-right: 7px;
+    margin-bottom: 8px;
+
+    &:nth-child(2n) {
+      margin-right: 0;
+    }
+  }
+}

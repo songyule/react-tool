@@ -1,0 +1,49 @@
+:global {
+  .latest-card {
+    position: relative;
+    margin-bottom: 10px;
+
+    &__wrapper {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: -1px;
+    }
+
+    &__introduce {
+      margin: 0 22px;
+    }
+
+    &__introduce-wrapper {
+      width: 100%;
+      height: 38px;
+      background: #fff;
+    }
+
+    &__introduce-title {
+      padding-top: 6px;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    &__attributes-box {
+      margin-top: 5px;
+      text-align: center;
+      font-size: 8px;
+      color: #9b9b9b;
+
+      i {
+        font-size: 8px;
+      }
+    }
+
+    &__date {
+      margin-left: 17px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+}
