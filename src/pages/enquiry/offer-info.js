@@ -77,7 +77,13 @@ export default class OfferInfo extends PureComponent {
     buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason })
   }
 
-  handleOffers = (offer) => {
+  handleOffer = (offer) => {
+    if (offer.material_offer_arr && offer.material_offer_arr.length) offer.material_offer_arr = offer.material_offer_arr.map(material => this.handleMaterial(material))
+    return offer
+  }
+
+  handleMaterial = (material) => {
+    const saveMaterial = {}
     const fieldMapping = [
       'include_express_fee',
       'bulk_wear_rate',
@@ -90,21 +96,17 @@ export default class OfferInfo extends PureComponent {
       'material_serial'
     ]
 
-    offer.material_offer_arr = offer.material_offer_arr.map(material => {
-      const saveMaterial = {}
-      Object.keys(material).forEach(key => {
-        if (fieldMapping.indexOf(key) !== -1) saveMaterial[key] = material[key]
-      })
-      return saveMaterial
+    Object.keys(material).forEach(key => {
+      if (fieldMapping.indexOf(key) !== -1) saveMaterial[key] = material[key]
     })
-    return offer
+    return saveMaterial
   }
 
   handleSubmit = () => {
     const id = this.props.match.params.id
-    let { offer_arr, material_arr } = this.state.inquiry
+    let { offer_arr } = this.state.inquiry
     if (!offer_arr.length) return message.warning('必须填写一个报价')
-    if (material_arr.length) offer_arr = offer_arr.map(offer => this.handleOffers(offer))
+    offer_arr = offer_arr.map(offer => this.handleOffer(offer))
     offer_arr = offer_arr.filter(item => !item.id)
     buyerOffer({ id, offer_arr })
     this.getInquiryDetail()
