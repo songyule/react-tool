@@ -6,7 +6,7 @@ import * as commodityActions from 'actions/commodity'
 import AttributesPlane from './attributes-plane'
 import './bom-card.css'
 import arrayToTree from 'array-to-tree'
-import { uniqBy, find } from 'lodash'
+import { uniqBy, find, groupBy } from 'lodash'
 const FormItem = Form.Item
 
 @connect(
@@ -18,7 +18,7 @@ export default class extends PureComponent {
     super()
 
     this.state = {
-      attributesObj: {},
+      // attributesObj: {},
       attrOptions: [],
       attributeList: []
     }
@@ -64,24 +64,23 @@ export default class extends PureComponent {
       existAttrs.push(...matchAttrs)
     })
     this.setState({
-      attributesObj,
+      // attributesObj,
       attrOptions,
       attributeList
     })
-    this.props.changeBom({ attributes: existAttrs })
+    this.props.changeBom({ attributes: existAttrs, attributesObj })
   }
 
-  selectAttributes = () => {}
 
   changeAttributes = (value, id) => {
-    const attributesObj = {...this.state.attributesObj}
+    const attributesObj = {...this.props.bom.attributesObj}
     attributesObj[id] = value
-    this.setState({
-      attributesObj
-    })
+    // this.setState({
+    //   attributesObj
+    // })
     const list = []
-    Object.keys(attributesObj).forEach(item => list.push(...attributesObj[item]))
-    this.props.changeBom({ attributes: list.map(id => find([...this.state.attributeList], { id })) })
+    Object.keys(groupBy(this.state.attributeList, 'lv1_id')).forEach(item => list.push(...(attributesObj[item] || [])))
+    this.props.changeBom({ attributes: list.map(id => find([...this.state.attributeList], { id })), attributesObj })
   }
 
   render () {
@@ -114,7 +113,7 @@ export default class extends PureComponent {
               <FormItem {...rowFormItemLayout} label="商品描述">
                 { this.props.bom.attributes.map((item, index) => { return <Tag key={index} color="blue">{`${item.lv1_name_cn}：${item.name_cn}`}</Tag> }) }
               </FormItem>
-              <AttributesPlane attrOptions={this.state.attrOptions} attributesObj={this.state.attributesObj} changeAttributes={this.changeAttributes}></AttributesPlane>
+              <AttributesPlane attrOptions={this.state.attrOptions} attributesObj={this.props.bom.attributesObj} changeAttributes={this.changeAttributes}></AttributesPlane>
             </Col>
             <Col span={12}>
               <FormItem {...formItemLayout} label="使用数量">

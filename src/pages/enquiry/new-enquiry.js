@@ -9,7 +9,7 @@ import CommoditySelection from './components/commodity-selection/index'
 import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
 import { creatSampling, sellerInquirySearch, getRequirementList, enquiryUpdata } from 'actions/sampling'
-import { toRemoteBom } from './utils'
+import { toRemoteBom, toLocalBom } from './utils'
 import { format } from 'utils'
 
 const RadioGroup = Radio.Group
@@ -237,8 +237,9 @@ class newEnquiry extends PureComponent {
         this.setState({
           enquiryMes: res.data.inquiry[0],
           isMaterial: res.data.inquiry[0].material_arr.length ? true : false,
-          boms: res.data.inquiry[0].material_arr
+          boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom))
         })
+
         let id_arr = []
         id_arr.push(res.data.inquiry[0].sampling_id)
         getRequirementList({'id_arr': id_arr}).then(res => {
@@ -264,6 +265,7 @@ class newEnquiry extends PureComponent {
   render () {
     const { getFieldDecorator } = this.props.form
     const { clientOrgMes, reqMes } = this.state
+    const boms = this.state.boms
     const columns = [{
       title: '属性',
       dataIndex: 'lv1_name_cn',
@@ -306,7 +308,6 @@ class newEnquiry extends PureComponent {
         getFiled: ''
       }
     ]
-
     return (
       <div className={style.newContent}>
         <Title title='新建询价工单'></Title>
@@ -572,7 +573,7 @@ class newEnquiry extends PureComponent {
         >
           创建成功，是否跳往询价列表
         </Modal>
-        <BomCreate visible={this.state.bomVisible} boms={this.state.boms} onCancel={this.bomCancel} callback={this.bomCallback}></BomCreate>
+        <BomCreate visible={this.state.bomVisible} boms={boms} onCancel={this.bomCancel} changeBoms={boms => this.setState({ boms })} callback={this.bomCallback}></BomCreate>
       </div>
     )
   }
