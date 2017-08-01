@@ -57,10 +57,10 @@ const orgList = (state = {}, action) => {
     default:
       let orgLocal = window.localStorage.getItem('ORG_LIST')
       try {
-        const orgList = (orgLocal && JSON.parse(orgLocal)) || {}
+        const orgList = (orgLocal && JSON.parse(orgLocal)) || []
         return orgList || state
       } catch (error) {
-        return {}
+        return []
       }
   }
 }

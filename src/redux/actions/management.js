@@ -1,7 +1,7 @@
 import fetch from 'api/utils'
 
 export const getOrgList = (params) => async (dispatch, getState) => {
-  if (getState()['orgList']) return null
+  if (!getState()['orgList'].length) return null
   const response = await fetch.get('/management/org', { params })
   if (response) dispatch({ type: 'ORG_LIST', orgList: response.data.org })
   return response
