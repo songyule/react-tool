@@ -21,7 +21,8 @@ class newEnquiry extends PureComponent {
     reqMes: {
       img_url_arr: []
     },
-    selectSku: {}
+    selectSku: {},
+    isBomHide: false
   }
 
   onChangeType = (e) => { // 选择商品类型
@@ -29,7 +30,9 @@ class newEnquiry extends PureComponent {
       isType: e.target.value
     })
   }
-
+  isHide = () => {
+    this.setState({isBomHide: !this.state.isBomHide})
+  }
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -69,6 +72,13 @@ class newEnquiry extends PureComponent {
   }
   checkBigImg = (img) => {
     window.open(img)
+  }
+  findBomMes = (value, filed) => {
+    return this.state.reqMes.material_arr.map(item => {
+      if (item.serial === value) {
+        return item[filed]
+      }
+    })
   }
   componentWillMount() {
     this.getLv1Class()
@@ -135,6 +145,42 @@ class newEnquiry extends PureComponent {
         getFiled: 'quality_testing_req'
       }
     ]
+    const Bom = ({bomItem}) => (
+      <div style={{border: '1px solid #ccc', paddingTop: 10, marginBottom: 10}}>
+        <div className={style.row}>
+          <div className={style.col}>
+            <p className={style.lable}>BOM行号</p>
+            <Input style={{width: 300}} value={bomItem.serial} disabled></Input>
+          </div>
+          <div className={style.col}>
+            <p className={style.lable}>名称</p>
+            <Input style={{width: 300}} value={bomItem.name} disabled></Input>
+          </div>
+        </div>
+        <div className={style.row}>
+          <p className={style.lable}>商品描述</p>
+          <Table style={{width: 800}} pagination={false} columns={columns} dataSource={bomItem.attribute_arr} key='123'></Table>
+        </div>
+        <div className={style.row}>
+          <div className={style.col}>
+            <p className={style.lable}>使用数量</p>
+            <Input style={{width: 300}} value={bomItem.per_bom_amount} disabled></Input>
+          </div>
+          <div className={style.col}>
+            <p className={style.lable}>数量单位</p>
+            <Input style={{width: 300}} value={bomItem.unit} disabled></Input>
+          </div>
+        </div>
+        <div className={style.row}>
+          <p className={style.lable}>品质要求</p>
+          <Input disabled value={bomItem.quality_req}></Input>
+        </div>
+        <div className={style.row}>
+          <p className={style.lable}>质检要求</p>
+          <Input disabled value={bomItem.quality_testing_req}></Input>
+        </div>
+      </div>
+    )
     return (
       <div className={style.newContent}>
         <Form>
@@ -288,11 +334,23 @@ class newEnquiry extends PureComponent {
                   <Radio value={0}>需要</Radio>
                 </RadioGroup>
                 {
-                  reqMes.material_arr && <p>BOM中有{reqMes.material_arr.length}物料</p>
+                  reqMes.material_arr && (
+                    <div style={{display: 'flex'}}>
+                      <Button style={{marginLeft: 10}} onClick={this.isHide}>{this.state.isBomHide ? '折叠' : '展开'}</Button>
+                      <p>BOM中有{reqMes.material_arr.length}物料</p>
+                    </div>
+                  )
                 }
               </div>
             </FormItem>
           </FormItem>
+          <div>
+            {
+              this.state.isBomHide && reqMes.material_arr.map((bomItem, index) => {
+                return <Bom key={index} bomItem={bomItem}/>
+              })
+            }
+          </div>
           <FormItem label="实物样" className={style.tier}>
             <RadioGroup disabled value={reqMes && reqMes.has_sampling}>
               <Radio value={0}>无</Radio>

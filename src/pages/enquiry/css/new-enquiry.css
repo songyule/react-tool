@@ -7,6 +7,21 @@
   .mBottom {
     margin-bottom: 10px !important;
   }
+  .row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  }
+  .col {
+    display: flex;
+    align-items: center;
+    width: 500px;
+  }
+  .lable {
+    text-align: right;
+    width: 80px;
+    margin-right: 5px;
+  }
   :global {
     .ant-form-item-label {
       /*background: pink;*/

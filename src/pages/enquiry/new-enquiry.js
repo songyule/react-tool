@@ -447,7 +447,7 @@ class newEnquiry extends PureComponent {
                                                 {getFieldDecorator('sku_id', {
                                                   initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id) || ''
                                                 })(
-                                                    <Input className={style.inputTitle}></Input>
+                                                    <Input className={style.inputTitle} disabled></Input>
                                                 )}
                                                 <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
                                               </FormItem>
@@ -514,7 +514,7 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="实物样" className={style.tier}>
               {getFieldDecorator('has_sampling', {
-                initialValue:(enquiryMes && enquiryMes.has_sampling) || 0,
+                initialValue:(enquiryMes && enquiryMes.has_sampling) || -1,
               })(
                 <RadioGroup>
                   <Radio value={-1}>无</Radio>

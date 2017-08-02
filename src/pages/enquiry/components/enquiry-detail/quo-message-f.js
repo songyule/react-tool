@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { Card, Input, Radio } from 'antd'
 import style from './quo-message.css'
 import { format } from 'utils'
+import cs from 'classnames'
 const RadioGroup = Radio.Group
 const TextArea = Input
 export default class extends PureComponent {
@@ -9,18 +10,23 @@ export default class extends PureComponent {
     quoMes: {}
   }
   clickCard = () => {
-    console.log(this.state.quoMes)
     this.props.callBack(this.state.quoMes)
   }
   componentWillMount () {
-    console.log(this.props.quoMes)
     this.setState({quoMes: this.props.quoMes})
+  }
+  componentWillReceiveProps (nextProps) {
+    this.setState({borderStyle: nextProps.borderStyle})
   }
   render () {
     const { quoMes } = this.state
+    const cardClass = cs({
+      [style.card]: true,
+      [style.what]: (this.state.quoMes.id === this.state.borderStyle) ? true : false
+    })
     return (
       <div>
-        <Card className={style.card} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} onClick={this.clickCard}>
+        <Card className={cardClass} title={format(quoMes.created_at * 1000, 'yyyy-MM-dd HH:mm:ss')} onClick={this.clickCard}>
           <div className={style.row}>
             <div className={style.col}>
               <p className={style.lable}>报价员</p>

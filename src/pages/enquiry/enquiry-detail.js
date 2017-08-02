@@ -120,9 +120,9 @@ export default class extends PureComponent {
     const offerArr = () => (<div>
                               {enquiryMes && enquiryMes.offer_arr.map((item, index) => (
                                 item.material_offer_arr.length ?
-                                <QuoMessageT material_arr={enquiryMes.material_arr} borderStyle={this.state.offer_id} quoMes={item} key={index} callBack={this.callBack}></QuoMessageT>
+                                <QuoMessageT style={{background: 'red'}} material_arr={enquiryMes.material_arr} borderStyle={this.state.offer_id} quoMes={item} key={index} callBack={this.callBack}></QuoMessageT>
                                  :
-                                <QuoMessageF quoMes={item} key={index} callBack={this.callBack}></QuoMessageF>
+                                <QuoMessageF style={{background: 'red'}} borderStyle={this.state.offer_id} quoMes={item} key={index} callBack={this.callBack}></QuoMessageF>
                               ))}
                             </div>)
     return (

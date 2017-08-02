@@ -26,8 +26,10 @@ export default class extends PureComponent {
     this.props.callBack(this.state.quoMes)
   }
   componentWillMount () {
-    console.log(this.props.material_arr)
     this.setState({quoMes: this.props.quoMes, material_arr: this.props.material_arr})
+  }
+  componentWillReceiveProps (nextProps) {
+    this.setState({borderStyle: nextProps.borderStyle})
   }
   render () {
     const { quoMes } = this.state
@@ -126,7 +128,7 @@ export default class extends PureComponent {
 
     const cardClass = cs({
       [style.card]: true,
-      [style.what]: (this.state.quoMes === this.props.borderStyle) ? true : false
+      [style.what]: (this.state.quoMes.id === this.state.borderStyle) ? true : false
     })
     return (
       <div>
