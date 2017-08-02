@@ -59,7 +59,8 @@ export default class extends PureComponent {
     let attributeList = uniqBy([...linkageAttributes, ...spuAttributes], 'id')
     attributeList = attributeList.filter(item => item.level === 1 || item.level === 2)
     attributeList = attributeList.map(item => ({ ...item, value: item.id, label: item.name_cn }))
-    const attrOptions = arrayToTree(attributeList)
+    let attrOptions = arrayToTree(attributeList)
+    attrOptions = attrOptions.filter(attributeObj => attributeObj.children)
 
     attrOptions.forEach(attr => {
       const matchAttrs = this.props.bom.attributes.filter(item => item.lv1_id === attr.id)
