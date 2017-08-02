@@ -8,9 +8,8 @@ import SelectClient from 'components/enquiry/select-client'
 import CommoditySelection from './components/commodity-selection/index'
 import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
-import { creatSampling, sellerInquirySearch, getRequirementList, enquiryUpdata } from 'actions/sampling'
+import { creatSampling, sellerInquirySearch, enquiryUpdata } from 'actions/sampling'
 import { toRemoteBom, toLocalBom } from './utils'
-import { format } from 'utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item

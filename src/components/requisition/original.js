@@ -35,6 +35,8 @@ class original extends PureComponent {
   }
 
   componentWillReceiveProps (nextProps) {
+    console.log(nextProps.samplingMes)
+    console.log(nextProps.samplingMes.sku_snapshot.spu.commodity_attribute)
     let classify = nextProps.samplingMes.sku_snapshot.spu.commodity_class
     let classifyStr = ''
     let classifyStrC = classify.map(item => {

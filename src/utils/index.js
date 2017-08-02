@@ -264,6 +264,8 @@ export function isRepeat (arr) {
 export function mergeSpuAttr (spuArr) {
   let idArr = []
   let newSpuArr = []
+  console.log(spuArr)
+  if (!spuArr) return
   spuArr.map(item => {
     if (idArr.indexOf(item.lv1_id) === -1) {
       idArr.push(item.lv1_id)

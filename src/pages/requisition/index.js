@@ -13,10 +13,12 @@ export default class requisition extends PureComponent {
   }
   // 17071118091016882 0 17071118091024410 1 17071118170096655 2
   componentWillMount () {
+    console.log(16)
     let data = {
       id_arr: [this.props.match.params.id]
     }
     postSamplingSearch(data).then(res => {
+      console.log(data)
       this.setState({
         samplingMes: res.data.sampling[0],
         dataSource: res.data.sampling[0].sku_snapshot.attribute,

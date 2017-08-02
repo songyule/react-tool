@@ -69,10 +69,12 @@ export default class extends PureComponent {
       return '待认领'
     } else if (val === 4) {
       return '待确认'
-    } else if ([1,3,-1].indexOf(val) !== -1) {
+    } else if ([1,3].indexOf(val) !== -1) {
       return '报价中'
     } else if (val === 2) {
       return '已完成'
+    } else if (val === -1) {
+      return '关闭订单'
     } else {
       return '被退回'
     }
