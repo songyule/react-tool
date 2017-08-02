@@ -26,12 +26,7 @@ export default class extends PureComponent {
   }
 
   changeClass = (value) => {
-    this.setState({
-      bom: {
-        ...this.props.bom,
-        classesSelected: value
-      }
-    })
+    this.props.changeBom({ classesSelected: value })
     this.calcAttributes()
   }
 
@@ -115,7 +110,7 @@ export default class extends PureComponent {
             <Col span={12}>
               <FormItem {...formItemLayout} label="类目">
                 {getFieldDecorator('classesSelected', { rules: [{ required: true, message: '请选择类目' }], initialValue: this.props.bom.classesSelected })(
-                  <Cascader options={this.props.commodityClasses.sortClasses} onChange={value => changeBom({ classesSelected: value })} placeholder="请选择商品分类"></Cascader>
+                  <Cascader options={this.props.commodityClasses.sortClasses} onChange={value => this.changeClass(value)} placeholder="请选择商品分类"></Cascader>
                 )}
               </FormItem>
             </Col>
