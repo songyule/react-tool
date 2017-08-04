@@ -32,3 +32,15 @@ export const qiniuRequest = async (file, options = {}) => {
 		body: formData
 	}, onProgress)
 }
+
+export const qiniuBase64Request = async (base64, options) => {
+	const { onProgress, token } = options
+	return fetch(QINIU_API, {
+    method: 'POST',
+    header: {
+      "Content-Type": "application/octet-stream",
+      "Authorization": "UpToken " + token
+    },
+		body: base64.replace(/^.*?,/, '')
+	}, onProgress)
+}

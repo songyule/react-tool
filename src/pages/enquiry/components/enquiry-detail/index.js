@@ -184,61 +184,65 @@ class newEnquiry extends PureComponent {
     return (
       <div className={style.newContent}>
         <Form>
-          <FormItem
-            label="数据来源"
-            className={style.tier}
-          >
-            <div>
-              <RadioGroup value={reqMes.sampling_id ? true : false} disabled>
-                <Radio value={true}>需求单</Radio>
-                <Radio value={false}>其他来源</Radio>
-              </RadioGroup>
-              {
-                reqMes.sampling_id && <div className={style.flex}>
-                                      <p>需求单号：{reqMes.sampling_id}</p>
-                                    </div>
-              }
-            </div>
-          </FormItem>
-          <FormItem
-            label="客户情况"
-            className={style.tier}
-          >
-            <div>
-              <div className={style.flex}>
-                <FormItem label="客户简称">
-                  {getFieldDecorator('name_cn', {
-                    initialValue: (reqMes.client_org && reqMes.client_org.name_cn) || ''
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-                <FormItem label="客户编码">
-                  {getFieldDecorator('sn', {
-                    initialValue: (reqMes.client_org && 'SN' + reqMes.client_org.sn) || ''
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
+          <div id="dataSource">
+            <FormItem
+              label="数据来源"
+              className={style.tier}
+            >
+              <div>
+                <RadioGroup value={reqMes.sampling_id ? true : false} disabled>
+                  <Radio value={true}>需求单</Radio>
+                  <Radio value={false}>其他来源</Radio>
+                </RadioGroup>
+                {
+                  reqMes.sampling_id && <div className={style.flex}>
+                                        <p>需求单号：{reqMes.sampling_id}</p>
+                                      </div>
+                }
               </div>
-              <div className={style.flex}>
-                <FormItem label="客户级别">
-                  {getFieldDecorator('level', {
-                    initialValue: '' || (reqMes.client_org && reqMes.client_org.client_level && reqMes.client_org.client_level.name)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-                <FormItem label="提交人">
-                  {getFieldDecorator('name', {
-                    initialValue: '' || (reqMes.client_org && reqMes.client_org.client_source && reqMes.client_org.client_source.name)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
+            </FormItem>
+          </div>
+          <div id="clientInfo">
+            <FormItem
+              label="客户情况"
+              className={style.tier}
+            >
+              <div>
+                <div className={style.flex}>
+                  <FormItem label="客户简称">
+                    {getFieldDecorator('name_cn', {
+                      initialValue: (reqMes.client_org && reqMes.client_org.name_cn) || ''
+                    })(
+                      <Input disabled className={style.inputTitle}></Input>
+                    )}
+                  </FormItem>
+                  <FormItem label="客户编码">
+                    {getFieldDecorator('sn', {
+                      initialValue: (reqMes.client_org && 'SN' + reqMes.client_org.sn) || ''
+                    })(
+                      <Input disabled className={style.inputTitle}></Input>
+                    )}
+                  </FormItem>
+                </div>
+                <div className={style.flex}>
+                  <FormItem label="客户级别">
+                    {getFieldDecorator('level', {
+                      initialValue: '' || (reqMes.client_org && reqMes.client_org.client_level && reqMes.client_org.client_level.name)
+                    })(
+                      <Input disabled className={style.inputTitle}></Input>
+                    )}
+                  </FormItem>
+                  <FormItem label="提交人">
+                    {getFieldDecorator('name', {
+                      initialValue: '' || (reqMes.client_org && reqMes.client_org.client_source && reqMes.client_org.client_source.name)
+                    })(
+                      <Input disabled className={style.inputTitle}></Input>
+                    )}
+                  </FormItem>
+                </div>
               </div>
-            </div>
-          </FormItem>
+            </FormItem>
+          </div>
           <FormItem label="商品类型" className={style.tier}>
             {getFieldDecorator('sampling_type', {
               initialValue: (reqMes && reqMes.sampling_type) || 0

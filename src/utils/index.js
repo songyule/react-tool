@@ -286,3 +286,13 @@ export function accMul(arg1, arg2) {
   try { m += s2.split('.')[1].length } catch (e) {}
   return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
 }
+
+export function download(src) {
+  var $a = document.createElement('a');
+  $a.setAttribute("href", src);
+  $a.setAttribute("download", "");
+
+  var evObj = document.createEvent('MouseEvents');
+  evObj.initMouseEvent( 'click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+  $a.dispatchEvent(evObj);
+}
