@@ -153,9 +153,6 @@ export default class extends PureComponent {
                             <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                           </div>)
     const ByReturned = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
-                          <Popconfirm title="确认要关闭该工单？" style={{marginRight: 10}} okText="确认" cancelText="取消" onConfirm={this.closeEnquiry}>
-                            <Button type="primary">关闭工单</Button>
-                          </Popconfirm>
                           <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                         </div>)
     const offerArr = () => (<div>
