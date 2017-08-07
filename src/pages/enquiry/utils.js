@@ -6,6 +6,8 @@ export function toRemoteBom (localBom) {
     name: localBom.name,
     per_bom_amount: localBom.amount,
     unit: localBom.unit,
+    color_req: localBom.color_req,
+    size_req: localBom.size_req,
     quality_req: localBom.quality_req,
     quality_testing_req: localBom.quality_testing_req
   }
@@ -24,6 +26,8 @@ export function toLocalBom (remoteBom) {
     name: remoteBom.name,
     amount: remoteBom.per_bom_amount,
     unit: remoteBom.unit,
+    color_req: remoteBom.color_req,
+    size_req: remoteBom.size_req,
     quality_req: remoteBom.quality_req,
     quality_testing_req: remoteBom.quality_testing_req,
     attributes: remoteBom.attribute_arr,

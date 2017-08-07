@@ -172,6 +172,14 @@ class newEnquiry extends PureComponent {
           </div>
         </div>
         <div className={style.row}>
+          <p className={style.lable}>颜色要求</p>
+          <Input disabled value={bomItem.color_req}></Input>
+        </div>
+        <div className={style.row}>
+          <p className={style.lable}>尺寸要求</p>
+          <Input disabled value={bomItem.size_req}></Input>
+        </div>
+        <div className={style.row}>
           <p className={style.lable}>品质要求</p>
           <Input disabled value={bomItem.quality_req}></Input>
         </div>

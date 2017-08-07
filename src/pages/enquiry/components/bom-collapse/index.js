@@ -81,6 +81,14 @@ export default class BomCollapse extends PureComponent {
 
     const materialItemFullColConfig = [
       {
+        label: '颜色要求',
+        valid: 'color_req'
+      },
+      {
+        label: '尺寸要求',
+        valid: 'size_req'
+      },
+      {
         label: '品质要求',
         valid: 'quality_req'
       },
@@ -135,7 +143,9 @@ export default class BomCollapse extends PureComponent {
               {materialItemFullColConfig.map(config => (
                 <Col key={config.valid} span={24}>
                   <FormItem {...formItemFullColLayout} label={config.label}>
-                    <Input disabled />
+                    <Input
+                    value={material[config.valid]}
+                    disabled />
                   </FormItem>
                 </Col>
               ))}

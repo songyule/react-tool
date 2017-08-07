@@ -87,7 +87,8 @@ export default class OfferInfo extends PureComponent {
                   'bulk_mould_fee',
                   'bulk_examine_fee',
                   'predictable_risk',
-                  'comment']
+                  'comment',
+                  'material_offer_arr']
     Object.keys(offer).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveOffer[key] = offer[key]
     })
