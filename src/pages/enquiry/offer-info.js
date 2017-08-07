@@ -74,7 +74,14 @@ export default class OfferInfo extends PureComponent {
 
   returnOffer = () => {
     const id = this.props.match.params.id
-    buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason })
+    buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason }).then(res => {
+      if (!res instanceof Error) {
+        message.success('退回成功')
+        this.props.history.push('/main/offer-list')
+      } else {
+        this.handleCancel()
+      }
+    })
   }
 
   handleOfferSelf = (offer) => {
