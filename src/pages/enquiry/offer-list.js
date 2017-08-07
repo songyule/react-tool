@@ -116,6 +116,11 @@ export default class OfferList extends PureComponent {
         render: text => <span>{text.name_cn}</span>
       },
       {
+        title: '认领人',
+        dataIndex: 'buyer[name_cn]',
+        key: 'buyer'
+      },
+      {
         title: '状态',
         dataIndex: 'status',
         key: 'status',

@@ -138,6 +138,10 @@ export default class extends PureComponent {
       dataIndex: 'sku_snapshot[name_cn]',
       key: 'sku_snapshot',
     }, {
+      title: '发起人',
+      dataIndex: 'creator_user[name_cn]',
+      key: 'creator_user'
+    }, {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
