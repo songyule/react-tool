@@ -7,7 +7,7 @@ import progress from 'nprogress'
 import 'nprogress/nprogress.css'
 require('es6-promise').polyfill()
 const queryString = require('query-string')
-const errorMessages = (res) => `${res.status} ${res.statusText}`
+const errorMessages = (res) => `${res.code} ${res.descr}`
 
 export const apiConfig = {
   count: 0
@@ -25,18 +25,25 @@ function changeApiCount (res) {
   return res
 }
 
+
+/**
+ * 清算error
+ *
+ * @param {any} err
+ * @returns promise (resolved)
+ */
 function catchError (err) {
-  console.log('%c' + errorMessages(err), 'color: red')
-
-  if (err.data) {
-    switch (err.data.code) {
-      case 1040038:
-        message.error('权限不足，请联系管理员')
-        break
-
-      default: break
-    }
+  if (['1040013', '1040014', '1040017', '1040018', '1040019'].indexOf(err.code) > -1) {
+    message.error(`${err.descr}, 需重新登录`, 2)
+    setTimeout(() => {
+      window.localStorage.removeItem('USER')
+      window.location.href = '/login'
+    }, 2000)
+    return
   }
+
+  message.error(err.descr)
+  console.log('%c' + errorMessages(err), 'color: red')
   return err
 }
 
@@ -49,9 +56,11 @@ function catchError (err) {
 function check401(res) {
   // 登陆界面不需要做401校验
   if (res.status === 401) {
-    message.error('请重新登录')
-    window.localStorage.removeItem('USER')
-    window.location.href = '/login'
+    message.error('账号无权限, 需重新登录', 2)
+    setTimeout(() => {
+      window.localStorage.removeItem('USER')
+      window.location.href = '/login'
+    }, 2000)
     return Promise.reject(res)
   }
   return res
@@ -79,17 +88,9 @@ function check404(res) {
 function checkStatus(res) {
   if (res.status >= 200 && res.status < 300) {
     return res
-  } else {
-    // 这里补充更多错误参数
-    res.json().then(res => message.error(res.descr))
-
-    return res.text().then(errorMsg => {
-      return new StandardError({
-        statusCode: res.status,
-        msg: errorMsg
-      })
-    }).then(err => { throw err })
   }
+
+  return res.json().then(Promise.reject.bind(Promise))
 }
 
 /**
@@ -128,14 +129,7 @@ function fetchData (url, opts) {
     opts.headers
   )
   // add x-token
-  let userLocal = window.localStorage.getItem('USER')
-  try {
-    const user = (userLocal && JSON.parse(userLocal)) || {}
-    opts.headers['x-token'] = user.token
-  } catch (error) {
-    console.log(error)
-  }
-  // if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
+  if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
   progress.start()
   apiConfig.count++

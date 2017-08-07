@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^2.10.2",
+    "antd": "^2.12.4",
     "array-to-tree": "^2.2.0",
     "babel-plugin-import": "^1.2.1",
     "classnames": "^2.2.5",
@@ -11,6 +11,7 @@
     "enquire.js": "^2.1.6",
     "es6-promise": "^4.1.0",
     "html-to-draftjs": "^0.1.0-beta7",
+    "html2canvas": "^0.5.0-beta4",
     "isomorphic-fetch": "^2.2.1",
     "lazyimage": "^2.1.2",
     "nprogress": "^0.2.0",
