@@ -6,6 +6,7 @@ import History from './history'
 import { connect } from 'react-redux'
 import { Button, message } from 'antd'
 import { editUser } from 'actions/user'
+import { getUserInfo } from 'actions/user'
 import './edit.css'
 const ButtonGrop = Button.Group
 
@@ -20,8 +21,13 @@ export default class EditAccount extends PureComponent {
     this.state = {
       disabled: true,
       user: [],
-      resetForm: false
+      resetForm: false,
+      data: {}
     }
+  }
+
+  componentWillMount () {
+    this.getInfo()
   }
 
   handleEdit () {
@@ -36,7 +42,7 @@ export default class EditAccount extends PureComponent {
       if (err) return
 
       const { type, userName, phone, email, org, status, role, id } = fieldsValue
-      console.log(type ,typeof type)
+
       const params = {
         name_cn: userName,
         status: status ? 1 : 2,
@@ -51,6 +57,7 @@ export default class EditAccount extends PureComponent {
       if (res.code === 200) {
         message.success('保存成功')
         this.setState({ disabled: true })
+        this.getInfo()
       }
     })
 
@@ -63,8 +70,14 @@ export default class EditAccount extends PureComponent {
     })
   }
 
+  getInfo = async () => {
+    const { data } = await getUserInfo(this.props.location.state.id)
+    this.setState({ data })
+  }
+
   render () {
-    const { id, name_cn, mobile, mail, status, role, org, org_id } = this.props.location.state
+
+    const { id, name_cn, mobile, mail, status, role, org, org_id } = this.state.data
     const { disabled, resetForm } = this.state
 
     return (
