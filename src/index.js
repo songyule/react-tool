@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import registerServiceWorker from './utils/registerServiceWorker'
+// import registerServiceWorker from './utils/registerServiceWorker'
 import { Provider } from 'react-redux'
 import store from '@/redux/store'
 import history from 'router/history'
@@ -15,4 +15,4 @@ render(
   </Provider>,
   document.getElementById('root'))
 
-registerServiceWorker()
+// registerServiceWorker()
