@@ -82,25 +82,25 @@ class newEnquiry extends PureComponent {
   }
   componentWillMount() {
     this.getLv1Class()
-    if (JSON.stringify(this.props.enquiryMes) === '{}') return
-    console.log(this.props.enquiryMes)
-    this.setState({reqMes: this.props.enquiryMes})
-    // if (JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}') {
-    //   return this.setState({spuName: this.props.enquiryMes.custom_commodity_name})
-    // }
+    const enquiryMes = this.props.enquiryMes || {}
+    if (JSON.stringify(enquiryMes) === '{}') return
+    this.setState({reqMes: enquiryMes})
+    const skuSnapshot = enquiryMes.sku_snapshot || {}
+    const spu = skuSnapshot.spu || {}
     this.setState({
-      skuData: this.props.enquiryMes.sku_snapshot.attribute,
-      spuData: this.props.enquiryMes.sku_snapshot.spu.commodity_attribute,
-      spuName: JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}' ? this.props.enquiryMes.custom_commodity_name : this.props.enquiryMes.sku_snapshot.spu_name_cn
+      skuData: skuSnapshot.attribute,
+      spuData: spu.commodity_attribute,
     })
   }
   componentWillReceiveProps (nextProps) {
-    console.log(nextProps.enquiryMes, 233333)
+    const enquiryMes = this.props.enquiryMes || {}
     this.setState({reqMes: nextProps.enquiryMes})
     if (JSON.stringify(nextProps.enquiryMes.sku_snapshot) === '{}') return
+    const skuSnapshot = enquiryMes.sku_snapshot || {}
+    const spu = skuSnapshot.spu || {}
     this.setState({
-      skuData: nextProps.enquiryMes.sku_snapshot.attribute,
-      spuData: nextProps.enquiryMes.sku_snapshot.spu.commodity_attribute,
+      skuData: skuSnapshot.attribute,
+      spuData: spu.commodity_attribute,
     })
   }
   render () {
@@ -269,7 +269,7 @@ class newEnquiry extends PureComponent {
             <div className={style.flex}>
               <FormItem label="商品名称">
                 {getFieldDecorator('custom_commodity_name', {
-                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || ''
+                  initialValue: reqMes.sampling_type === 2 ? reqMes.custom_commodity_name : (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn)
                 })(
                   <Input disabled className={style.inputTitle}></Input>
                 )}

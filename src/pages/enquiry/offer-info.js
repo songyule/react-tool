@@ -68,7 +68,10 @@ export default class OfferInfo extends PureComponent {
     const id = this.props.match.params.id
     const inquiry = {...this.inquiry}
     const res = await claimOffer(id)
-    if (res.code === 200) inquiry.status = 1
+    if (res.code === 200) {
+      inquiry.buyer_id = this.props.userLogin.id
+      inquiry.status = 1
+    }
     this.setState({ inquiry })
   }
 
