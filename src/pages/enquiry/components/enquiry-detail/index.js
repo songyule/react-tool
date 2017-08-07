@@ -4,7 +4,7 @@ import style from '../../css/new-enquiry.css'
 import { getClass } from 'actions/commodity'
 import { creatSampling } from 'actions/sampling'
 import { format } from 'utils'
-
+const { TextArea } = Input
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
 const Option = Select.Option
@@ -337,7 +337,7 @@ class newEnquiry extends PureComponent {
               {getFieldDecorator('other_req', {
                 initialValue: (reqMes && reqMes.other_req) || ''
               })(
-                <Input disabled type="textarea" className={style.inputTitle}></Input>
+                <Input disabled type="textarea" className={style.inputTitle} autosize></Input>
               )}
             </FormItem>
             <FormItem

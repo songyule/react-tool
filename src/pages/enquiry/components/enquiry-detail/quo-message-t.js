@@ -172,7 +172,7 @@ export default class extends PureComponent {
           }
           <div className={style.row}>
             <p className={style.lable}>备注：</p>
-            <TextArea rows={4} disabled value={quoMes.comment}/>
+            <Input type="textarea" rows={4} disabled value={quoMes.comment} autosize/>
           </div>
           <div className={style.row}>
             <p className={style.lable}>存在风险</p>

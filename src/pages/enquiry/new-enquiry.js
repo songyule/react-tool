@@ -491,7 +491,7 @@ class newEnquiry extends PureComponent {
               {getFieldDecorator('other_req', {
                 initialValue: (reqMes && reqMes.applicant_comment) || (enquiryMes && enquiryMes.other_req) || ''
               })(
-                <Input type="textarea" className={style.inputTitle}></Input>
+                <Input type="textarea" className={style.inputTitle} autosize></Input>
               )}
             </FormItem>
             <FormItem
