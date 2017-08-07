@@ -26,12 +26,7 @@ export default class extends PureComponent {
   }
 
   changeClass = (value) => {
-    this.setState({
-      bom: {
-        ...this.props.bom,
-        classesSelected: value
-      }
-    })
+    this.props.changeBom({ classesSelected: value })
     this.calcAttributes()
   }
 
@@ -59,7 +54,8 @@ export default class extends PureComponent {
     let attributeList = uniqBy([...linkageAttributes, ...spuAttributes], 'id')
     attributeList = attributeList.filter(item => item.level === 1 || item.level === 2)
     attributeList = attributeList.map(item => ({ ...item, value: item.id, label: item.name_cn }))
-    const attrOptions = arrayToTree(attributeList)
+    let attrOptions = arrayToTree(attributeList)
+    attrOptions = attrOptions.filter(attributeObj => attributeObj.children)
 
     attrOptions.forEach(attr => {
       const matchAttrs = this.props.bom.attributes.filter(item => item.lv1_id === attr.id)
@@ -114,7 +110,7 @@ export default class extends PureComponent {
             <Col span={12}>
               <FormItem {...formItemLayout} label="类目">
                 {getFieldDecorator('classesSelected', { rules: [{ required: true, message: '请选择类目' }], initialValue: this.props.bom.classesSelected })(
-                  <Cascader options={this.props.commodityClasses.sortClasses} onChange={value => changeBom({ classesSelected: value })} placeholder="请选择商品分类"></Cascader>
+                  <Cascader options={this.props.commodityClasses.sortClasses} onChange={value => this.changeClass(value)} placeholder="请选择商品分类"></Cascader>
                 )}
               </FormItem>
             </Col>
