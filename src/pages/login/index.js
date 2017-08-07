@@ -63,6 +63,8 @@ export default class LoginForm extends PureComponent {
         this.setState({
           time: 0
         })
+      }).catch(err => {
+        console.log(err)
       })
     })
   }
