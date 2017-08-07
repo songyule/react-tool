@@ -213,6 +213,14 @@ export default class CreateOffer extends PureComponent {
 
     const materialItemFullColConfig = [
       {
+        label: '颜色要求',
+        valid: 'color_req'
+      },
+      {
+        label: '尺寸要求',
+        valid: 'size_req'
+      },
+      {
         label: '品质要求',
         valid: 'quality_req'
       },

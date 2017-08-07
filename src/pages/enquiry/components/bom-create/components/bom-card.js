@@ -143,6 +143,20 @@ export default class extends PureComponent {
               </FormItem>
             </Col>
             <Col span={24}>
+              <FormItem {...rowFormItemLayout} label="颜色要求">
+                {getFieldDecorator('color_req', { rules: [{ required: true, message: '请填写颜色要求' }], initialValue: this.props.bom.color_req })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ color_req: e.target.value })} />
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...rowFormItemLayout} label="尺寸要求">
+                {getFieldDecorator('size_req', { rules: [{ required: true, message: '请填写尺寸要求' }], initialValue: this.props.bom.size_req })(
+                  <Input placeholder="placeholder" onChange={e => changeBom({ size_req: e.target.value })} />
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
               <FormItem {...rowFormItemLayout} label="品质要求">
                 {getFieldDecorator('quality_req', { rules: [{ required: true, message: '请填写品质要求' }], initialValue: this.props.bom.quality_req })(
                   <Input placeholder="placeholder" onChange={e => changeBom({ quality_req: e.target.value })} />

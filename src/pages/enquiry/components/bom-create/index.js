@@ -42,6 +42,8 @@ export default class extends PureComponent {
       classesSelected: [],
       amount: '',
       unit: '',
+      color_req: '',
+      size_req: '',
       quality_req: '',
       quality_testing_req: '',
       attributes: [],
