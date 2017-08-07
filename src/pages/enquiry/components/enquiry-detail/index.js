@@ -85,10 +85,13 @@ class newEnquiry extends PureComponent {
     if (JSON.stringify(this.props.enquiryMes) === '{}') return
     console.log(this.props.enquiryMes)
     this.setState({reqMes: this.props.enquiryMes})
-    if (JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}') return
+    // if (JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}') {
+    //   return this.setState({spuName: this.props.enquiryMes.custom_commodity_name})
+    // }
     this.setState({
       skuData: this.props.enquiryMes.sku_snapshot.attribute,
       spuData: this.props.enquiryMes.sku_snapshot.spu.commodity_attribute,
+      spuName: JSON.stringify(this.props.enquiryMes.sku_snapshot) === '{}' ? this.props.enquiryMes.custom_commodity_name : this.props.enquiryMes.sku_snapshot.spu_name_cn
     })
   }
   componentWillReceiveProps (nextProps) {

@@ -513,11 +513,11 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <FormItem label="实物样" className={style.tier}>
               {getFieldDecorator('has_sampling', {
-                initialValue:(enquiryMes && enquiryMes.has_sampling) || -1,
+                initialValue:(enquiryMes && enquiryMes.has_sampling) || 0,
               })(
                 <RadioGroup>
-                  <Radio value={-1}>无</Radio>
-                  <Radio value={0}>有</Radio>
+                  <Radio value={0}>无</Radio>
+                  <Radio value={1}>有</Radio>
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
                 </RadioGroup>
               )}
