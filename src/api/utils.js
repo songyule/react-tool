@@ -127,8 +127,15 @@ function fetchData (url, opts) {
     },
     opts.headers
   )
-
-  if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
+  // add x-token
+  let userLocal = window.localStorage.getItem('USER')
+  try {
+    const user = (userLocal && JSON.parse(userLocal)) || {}
+    opts.headers['x-token'] = user.token
+  } catch (error) {
+    console.log(error)
+  }
+  // if (store.getState().userLogin.token) opts.headers['x-token'] = store.getState().userLogin.token
 
   progress.start()
   apiConfig.count++

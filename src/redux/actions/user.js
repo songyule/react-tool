@@ -16,7 +16,10 @@ export const login = (data) => async (dispatch, getState) => {
     let response = await fetch.post('/user/fly/login', {
       headers: { 'Content-Type': 'application/json'
     }, body: data })
-    if (response) dispatch({ type: 'LOGIN_SUCCESS', user: response.data })
+    if (response) {
+      window.localStorage.setItem('USER', JSON.stringify(response.data))
+      dispatch({ type: 'LOGIN_SUCCESS', user: response.data })
+    }
     return response
   } catch (error) {
     console.log('error: ', error)
