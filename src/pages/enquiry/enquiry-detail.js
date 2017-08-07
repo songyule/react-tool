@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Modal, Input, message, Select, Spin } from 'antd'
+import { Button, Modal, Input, message, Select, Spin, Popconfirm } from 'antd'
 import { uploadQiniuBase64 } from 'api/common'
 import Title from 'components/title'
 import CopyToClipboard from 'react-copy-to-clipboard'
@@ -29,7 +29,9 @@ export default class extends PureComponent {
   // this.props.match.params.id
   closeEnquiry = () => {
     closeEnquiry({id: this.state.id}).then(res => {
-      console.log(res)
+      this.props.history.push('/main/enquiry-list')
+    }).catch(err => {
+      message.warning('关闭工单时发生错误，请刷新后重试')
     })
   }
   returnQuote = () => {
@@ -133,7 +135,9 @@ export default class extends PureComponent {
   render () {
     const { enquiryMes, version } = this.state
     const Shelters = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
-                        <Button type="primary" onClick={this.closeEnquiry}>关闭工单</Button>
+                        <Popconfirm title="确认要关闭该工单？" okText="确认" cancelText="取消" onConfirm={this.closeEnquiry}>
+                          <Button type="primary">关闭工单</Button>
+                        </Popconfirm>
                       </div>)
     const InTheQuotation = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                               <Button type="primary"><Link to='/main/enquiry-list'>返回列表页</Link></Button>
@@ -141,13 +145,17 @@ export default class extends PureComponent {
     const ToBeConfirmed = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                               <Button type="primary" onClick={this.confirmResult}>确认结果</Button>
                               <Button style={{marginLeft: 10,marginRight: 10}} type="primary" onClick={this.returnQuote}>退回重新报价</Button>
-                              <Button type="primary" onClick={this.closeEnquiry}>关闭工单</Button>
+                              <Popconfirm title="确认要关闭该工单？" okText="确认" cancelText="取消" onConfirm={this.closeEnquiry}>
+                                <Button type="primary">关闭工单</Button>
+                              </Popconfirm>
                           </div>)
     const OffTheStocks = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
                             <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                           </div>)
     const ByReturned = (<div style={{width: 1000, display: 'flex', justifyContent: 'center'}}>
-                          <Button type="primary" onClick={this.closeEnquiry} style={{marginRight: 10}}>关闭工单</Button>
+                          <Popconfirm title="确认要关闭该工单？" style={{marginRight: 10}} okText="确认" cancelText="取消" onConfirm={this.closeEnquiry}>
+                            <Button type="primary">关闭工单</Button>
+                          </Popconfirm>
                           <Button type="primary" onClick={this.againQuote}>重新询价</Button>
                         </div>)
     const offerArr = () => (<div>
