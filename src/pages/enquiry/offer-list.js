@@ -108,7 +108,7 @@ export default class OfferList extends PureComponent {
       {
         title: '商品名称',
         dataIndex: 'sku_snapshot',
-        render: text => <span>{text.spu_name_cn}</span>
+        render: (text, record) => <span>{record.sampling_type !== 2 ? record.sku_snapshot.spu_name_cn : record.custom_commodity_name}</span>
       },
       {
         title: '发起人',

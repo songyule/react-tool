@@ -75,7 +75,7 @@ export default class OfferInfo extends PureComponent {
   returnOffer = () => {
     const id = this.props.match.params.id
     buyerWithdraw({ id, no_supplier_withdraw_reason: this.state.returnObj.reason }).then(res => {
-      if (!res instanceof Error) {
+      if (!(res instanceof Error)) {
         message.success('退回成功')
         this.props.history.push('/main/offer-list')
       } else {
@@ -168,6 +168,7 @@ export default class OfferInfo extends PureComponent {
       [-2]: '采购退回询价单'
     }
     const statusText = statusMapping[inquiry.status]
+    const isSelfInquiry = inquiry.buyer_id === this.props.userLogin.id
 
     return (
       <div className="page_offer-info">
@@ -191,7 +192,7 @@ export default class OfferInfo extends PureComponent {
         { inquiry.offer_arr && inquiry.offer_arr.map((item, index) => (
           <OfferCard key={index} offer={item} materials={inquiry.material_arr} hasRemove={!item.id} onRemove={() => this.removeOffer(index)}></OfferCard>
         )) }
-        { (inquiry.status === 1 || inquiry.status === 3) &&
+        { (inquiry.status === 1 || inquiry.status === 3) && isSelfInquiry &&
           <Row className={style['offer-info__row']}>
             <Link to={`/main/create-offer/${id}`}>
               <Button type="primary">新增报价</Button>
@@ -204,12 +205,12 @@ export default class OfferInfo extends PureComponent {
         <Row className={style['offer-info__row']}>
           <Col span={24} className={style['offer-info__button-operate']}>
             { inquiry.status === 0 && <Button className={style['offer-info__button']} onClick={this.handleClaim}>抢</Button> }
-            { (inquiry.status === 1 || inquiry.status === 3) &&
+            { (inquiry.status === 1 || inquiry.status === 3) && isSelfInquiry &&
               <Popconfirm title="确认提交工单？" okText="确认" cancelText="取消" onConfirm={this.handleSubmit}>
                 <Button className={style['offer-info__button']}>提交工单</Button>
               </Popconfirm>
             }
-            { (inquiry.status === 1 || inquiry.status === 3) && <Button className={style['offer-info__button']} onClick={this.showReturn}>退回工单</Button> }
+            { (inquiry.status === 1 || inquiry.status === 3) && isSelfInquiry && <Button className={style['offer-info__button']} onClick={this.showReturn}>退回工单</Button> }
             <Link to="/main/offer-list">
               <Button>返回</Button>
             </Link>
