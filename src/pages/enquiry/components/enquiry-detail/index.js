@@ -229,7 +229,7 @@ class newEnquiry extends PureComponent {
                   </FormItem>
                   <FormItem label="客户编码">
                     {getFieldDecorator('sn', {
-                      initialValue: (reqMes.client_org && 'SN' + reqMes.client_org.sn) || ''
+                      initialValue: (reqMes.client_org && 'CL' + reqMes.client_org.sn) || ''
                     })(
                       <Input disabled className={style.inputTitle}></Input>
                     )}
