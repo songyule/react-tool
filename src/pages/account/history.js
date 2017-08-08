@@ -39,7 +39,13 @@ export default class History extends PureComponent {
       limit: pageSize,
       offset: (current - 1) * pageSize
     })
-    this.setState({ list: data.access_log })
+    this.setState({
+      list: data.access_log,
+      pagination: {
+        ...this.state.pagination,
+        total: data.total
+      }
+    })
   }
 
   changePage = (e) => {
@@ -50,7 +56,7 @@ export default class History extends PureComponent {
           current: e,
         }
       },
-      this.getList
+      this.getLogsList
     )
   }
 

@@ -79,7 +79,7 @@ export default class EditAccount extends PureComponent {
 
     const { id, name_cn, mobile, mail, status, role, org, org_id } = this.state.data
     const { disabled, resetForm } = this.state
-
+    console.log(id)
     return (
       <div>
         <Title title={name_cn} >
@@ -111,7 +111,7 @@ export default class EditAccount extends PureComponent {
         />
         <Title title="登录历史">
         </Title>
-        <History id={id}/>
+        { id ? <History id={id} /> : null}
       </div>
     )
   }
