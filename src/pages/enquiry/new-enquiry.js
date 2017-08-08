@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Input, Radio, Button, Table, Form, Select, Modal } from 'antd'
+import { Input, Radio, Button, Table, Form, Select, Modal, message } from 'antd'
 import Title from 'components/title'
 import style from './css/new-enquiry.css'
 import MyUpload from '../../pages/topic/components/img-upload'
@@ -34,7 +34,9 @@ class newEnquiry extends PureComponent {
     reqMes: {},
     bom: {},
     boms: [],
-    enquiryMes: {}
+    enquiryMes: {},
+    spuImgArr: [],
+    enqId: ''
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -95,7 +97,8 @@ class newEnquiry extends PureComponent {
         reqMes: val.reqMes,
         skuData: val.reqMes.sku_snapshot.attribute || '',
         spuData: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.commodity_attribute) || '',
-        fileList: fileArr
+        fileList: fileArr,
+        spuImgArr: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.image_url) || []
       })
     } else if (val.name === 'client') {
       console.log(val.clientOrgMes)
@@ -141,20 +144,20 @@ class newEnquiry extends PureComponent {
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if (this.state.isReq) return
       if (!err && this.checkNumber(values.bulk_estimate_amount)) {
         let arr = []
         this.state.fileList.map(item => {
           arr.push(item.response)
           return arr
         })
-        console.log(arr)
         values.img_url_arr = arr
         if (this.state.isType !== 2) values.custom_commodity_class_id = 0
         if (this.state.isMaterial) values.material_arr = this.state.bom
         if (this.state.isReq) {
+          if (!this.state.reqMes.id) return this.total('请选择一个需求单')
           values.sampling_id = this.state.reqMes.id
         } else {
+          if (!this.state.clientOrgMes) return this.total('请选择供应商')
           values.client_uid = this.state.clientOrgMes.id
           values.client_org_id = this.state.clientOrgMes.org_id
         }
@@ -175,7 +178,6 @@ class newEnquiry extends PureComponent {
   }
   getLv1Class () {
     getClass({level: 1}).then(res => {
-      console.log(res)
       this.setState({lv1ClassArr: res.data})
     })
   }
@@ -211,6 +213,7 @@ class newEnquiry extends PureComponent {
       reqMes: newReqMes,
       skuData: sku.attribute,
       spuData: sku.spu.commodity_attribute,
+      spuImgArr:sku.spu.image_url
     })
   }
   bomCallback = (boms) => {
@@ -237,10 +240,15 @@ class newEnquiry extends PureComponent {
     })
   }
   getEnqDetail = () => {
-    sellerInquirySearch({id: this.state.enqId}).then(res => {
+    console.log(this.state.enqId)
+    let data = {
+      id: this.state.enqId
+    }
+    sellerInquirySearch(data).then(res => {
       console.log(res.data.inquiry[0])
       let inquiry = res.data.inquiry[0]
       let fileArr = []
+      console.log(inquiry)
       inquiry.img_url_arr.map((item, index) => {
         let obj ={
                     uid: index,
@@ -253,25 +261,26 @@ class newEnquiry extends PureComponent {
         return fileArr.push(obj)
       })
       if (res.code === 200) {
-        this.setState({
-          enquiryMes: inquiry,
-          isMaterial: inquiry.material_arr.length ? true : false,
-          boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom)),
-          isReq: inquiry.sampling_id ? true : false,
-          skuData: inquiry.sku_snapshot.attribute,
-          spuData: inquiry.sku_snapshot.spu.commodity_attribute,
-          fileList: fileArr
-        })
-        // if (!this.isReq) return
-        // let id_arr = []
-        // id_arr.push(res.data.inquiry[0].sampling_id)
-        // getRequirementList({'id_arr': id_arr}).then(res => {
-        //   console.log(res)
-        //   let val = {}
-        //   val.name = 'getReq'
-        //   val.reqMes = res.data.sampling[0]
-        //   this.callbackParent(val)
-        // })
+        if (inquiry.sku_id) {
+          this.setState({
+            enquiryMes: inquiry,
+            isMaterial: inquiry.material_arr.length ? true : false,
+            boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom)),
+            isReq: inquiry.sampling_id ? true : false,
+            skuData: inquiry.sku_snapshot.attribute,
+            spuData: inquiry.sku_snapshot.spu.commodity_attribute,
+            fileList: fileArr,
+            spuImgArr: inquiry.sku_snapshot.spu.image_url
+          })
+        } else {
+          this.setState({
+            enquiryMes: inquiry,
+            isMaterial: inquiry.material_arr.length ? true : false,
+            boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom)),
+            isReq: inquiry.sampling_id ? true : false,
+            fileList: fileArr
+          })
+        }
       }
     })
   }
@@ -282,14 +291,19 @@ class newEnquiry extends PureComponent {
   checkBigImg = (img) => {
     window.open(img)
   }
+  total = (val) => {
+    message.info(val)
+  }
   componentWillMount() {
     this.getLv1Class()
     if (!this.props.match.params.id) return
+    console.log(this.props.match.params.id.substring(1))
     this.setState({
       enqId: this.props.match.params.id.substring(1),
       enqSource: this.props.match.params.id.substring(-1,1)
+    }, () => {
+      this.getEnqDetail()
     })
-    this.getEnqDetail()
   }
   render () {
     const { getFieldDecorator } = this.props.form
@@ -433,7 +447,7 @@ class newEnquiry extends PureComponent {
                   <Select className={style.inputTitle} disabled={this.state.isType !== 2}>
                     {
                       this.state.lv1ClassArr.map((item, index) => {
-                        return (<Option  key={index} value={item.lv1_id}>{item.name_cn}</Option>)
+                        return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
                       })
                     }
                   </Select>
@@ -458,7 +472,7 @@ class newEnquiry extends PureComponent {
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
-                                                  reqMes.sku_snapshot && reqMes.sku_snapshot.spu && reqMes.sku_snapshot.spu.image_url.map((item, index) => {
+                                                  this.state.spuImgArr.map((item, index) => {
                                                     return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
                                                   })
                                                 }
