@@ -448,7 +448,7 @@ class newEnquiry extends PureComponent {
               </FormItem>
               <FormItem label="类目">
                 {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: (reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || ''
+                  initialValue: String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
                 })(
                   <Select className={style.inputTitle} disabled={this.state.isType !== 2}>
                     {
@@ -602,7 +602,7 @@ class newEnquiry extends PureComponent {
               <div className={style.flex}>
                 <FormItem label="预计大货数量">
                   {getFieldDecorator('bulk_estimate_amount', {
-                    initialValue: null,
+                    initialValue: (reqMes && reqMes.bulk_production_amount) || (enquiryMes && enquiryMes.bulk_estimate_amount) || '',
                     rules: [{required: true, message: '请检查此项是否为纯数字，若不是，请输入数字' }]
                   })(
                     <Input onChange={this.setInputType} className={style.inputTitle} placeholder={ (reqMes && reqMes.bulk_production_amount) || (enquiryMes && enquiryMes.bulk_estimate_amount) || '(请将此项写成数字)'}></Input>

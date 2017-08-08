@@ -21,7 +21,7 @@ export default class OrderCollapse extends PureComponent {
   }
   render () {
     return (
-      <Collapse className={style['order-collapse']}>
+      <Collapse className={style['order-collapse']} defaultActiveKey={['1']}>
         <Panel header="展开工单详情" key="1">
           <EnquiryDeatil enquiryMes={this.props.enquiryMes}></EnquiryDeatil>
         </Panel>
