@@ -98,9 +98,11 @@ export default class OfferInfo extends PureComponent {
                   'bulk_examine_fee',
                   'predictable_risk',
                   'comment',
+                  'img_url_arr',
                   'material_offer_arr']
     Object.keys(offer).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveOffer[key] = offer[key]
+      if (key === 'bulk_wear_rate') saveOffer[key] = String(Number(saveOffer[key]) / 100)
     })
     return saveOffer
   }
@@ -122,11 +124,13 @@ export default class OfferInfo extends PureComponent {
       'bulk_unit_price',
       'supplier_id',
       'comment',
-      'material_serial'
+      'material_serial',
+      'img_url_arr'
     ]
 
     Object.keys(material).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveMaterial[key] = material[key]
+      if (key === 'bulk_wear_rate') saveMaterial[key] = String(Number(saveMaterial[key]) / 100)
     })
     return saveMaterial
   }
@@ -135,8 +139,8 @@ export default class OfferInfo extends PureComponent {
     const id = this.props.match.params.id
     let { offer_arr } = this.state.inquiry
     if (!offer_arr.length) return message.warning('必须填写一个报价')
-    offer_arr = offer_arr.map(offer => this.handleOffer(offer))
     offer_arr = offer_arr.filter(item => !item.id)
+    offer_arr = offer_arr.map(offer => this.handleOffer(offer))
     buyerOffer({ id, offer_arr }).then(res => {
       this.getInquiryDetail()
     })

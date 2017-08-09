@@ -1,0 +1,14 @@
+.bom-collapse {
+
+  &__image-field {
+    display: flex;
+  }
+  &__image-box {
+    width: 150px;
+    margin-right: 8px;
+
+    img {
+      width: 100%;
+    }
+  }
+}

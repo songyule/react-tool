@@ -7,6 +7,7 @@ import { getOfferList } from 'actions/sampling'
 import { Link } from 'react-router-dom'
 import Title from 'components/title'
 import { accMul } from 'utils'
+import MyUpload from 'components/common/img-upload.js'
 // import MaterialForm from './components/material-form'
 import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button } from 'antd'
 const [FormItem, RadioGroup, Option, Panel, TextArea] = [Form.Item, Radio.Group, Select.Option, Collapse.Panel, Input.TextArea]
@@ -23,7 +24,9 @@ export default class CreateOffer extends PureComponent {
 
     this.state = {
       isExpand: false,
-      id: this.props.match.params.id
+      id: this.props.match.params.id,
+      fileList: [],
+      fileObj: {}
     }
   }
 
@@ -56,7 +59,8 @@ export default class CreateOffer extends PureComponent {
           bulk_mould_fee,
           bulk_examine_fee,
           quality_req,
-          quality_testing_req
+          quality_testing_req,
+          img_url_arr = []
         } = values
 
         let data = {
@@ -89,7 +93,8 @@ export default class CreateOffer extends PureComponent {
             bulk_mould_fee,
             bulk_examine_fee,
             quality_req,
-            quality_testing_req
+            quality_testing_req,
+            img_url_arr
           }
         }
         const id = this.props.match.params.id
@@ -102,7 +107,7 @@ export default class CreateOffer extends PureComponent {
   }
 
   handleCalcEstimatedQuantity = (e, config, item) => {
-    if (config.valid !== 'bulk_wear_rate') return
+    if (config.valid !== 'bulk_wear_rate' || this.state.data.material_arr.length === 0) return
     const val = e.target.value
     const amount = accMul(item.per_bom_amount, (1 + val * 0.01))
 
@@ -114,11 +119,32 @@ export default class CreateOffer extends PureComponent {
   getDetail = async () => {
     const { id } = this.state
     const { data } = await getOfferList({ id })
-    this.setState({ data: data.inquiry[0] })
+    const inquiry = data.inquiry[0] || {}
+    const fileObj = {}
+    inquiry.material_arr.forEach(material => {
+      fileObj[material.serial] = []
+    })
+    this.setState({ data: inquiry, fileObj })
+  }
+
+  confirmBack = async () => {
+    const id = this.state.id
+    this.props.history.push(`/main/offer-info/${id}`)
+  }
+
+  handleUpload = (fileList, serial) => {
+    const { fileObj } = this.state
+    if (fileList.length > 5) fileList = fileList.slice(0, 5)
+    if (!serial) this.setState({ fileList: fileList || [] })
+    else this.setState({ fileObj: { ...fileObj, [serial]: fileList } })
+
+    const imgs = fileList ? fileList.map(file => file.response) : []
+    if (!serial) this.props.form.setFieldsValue({ img_url_arr: imgs })
+    else this.props.form.setFieldsValue({ [`BOM__img_url_arr__${serial}`]: imgs })
   }
 
   render () {
-    const { id, data, isExpand } = this.state
+    const { id, data, isExpand, fileList, fileObj } = this.state
     const { getFieldDecorator } = this.props.form
     const { orgList } = this.props
 
@@ -245,6 +271,14 @@ export default class CreateOffer extends PureComponent {
         <Title title={`报价单号${id}`} />
         <Form style={{maxWidth: '1000px'}}>
           <Row>
+            {
+              <FormItem {...formItemFullColLayout} label="图片">
+                {getFieldDecorator('img_url_arr', { initialValue: data['img_url_arr'] })(<div></div>)}
+                <MyUpload onChange={this.handleUpload} fileList={[...fileList]}></MyUpload>
+              </FormItem>
+            }
+          </Row>
+          <Row>
             {formItemConfig.map(config => (
               <Col key={config.valid} span={12}>
                 <FormItem {...formItemLayout} label={config.label}>
@@ -333,6 +367,10 @@ export default class CreateOffer extends PureComponent {
                           item.status !== '0'
                            ? (
                              <Card title="物料" key={item.serial} style={{ marginBottom: '15px' }}>
+                                <FormItem {...formItemFullColLayout} label="图片">
+                                  {getFieldDecorator(`BOM__img_url_arr__${item.serial}`, { initialValue: [] })(<div></div>)}
+                                  <MyUpload onChange={fileList => this.handleUpload(fileList, item.serial)} fileList={[...(fileObj[item.serial] || fileObj[item.serial]['fileList'] || [])]}></MyUpload>
+                                </FormItem>
                                {materialItemConfig.map(config => (
                                  <Col key={config.valid} span={12}>
                                    <FormItem {...formItemLayout} label={config.label}>

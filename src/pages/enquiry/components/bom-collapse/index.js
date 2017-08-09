@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as managementActions from 'actions/management'
-import { Card, Collapse, Form, Col, Input, Radio, Select } from 'antd'
+import { Card, Collapse, Form, Row, Col, Input, Radio, Select } from 'antd'
+import style from './style.css'
 const [ Panel, FormItem, RadioGroup, Option, TextArea ] = [ Collapse.Panel, Form.Item, Radio.Group, Select.Option, Input.TextArea ]
 
 @connect(
@@ -103,6 +104,20 @@ export default class BomCollapse extends PureComponent {
         <Panel header="展开物料详情" key="1">
           { materials.map(material => (
             <Card title="物料" style={{ marginBottom: '15px' }}>
+              { material.img_url_arr && material.img_url_arr.length &&
+                <Row gutter={32} className={style['bom-collapse__row']}>
+                  <Col span={3}>图片</Col>
+                  <Col span={21}>
+                    <div className={style['bom-collapse__image-field']}>
+                      { material.img_url_arr.map(image =>
+                        <div className={style['bom-collapse__image-box']}>
+                          <img src={image} alt=""/>
+                        </div>
+                      ) }
+                    </div>
+                  </Col>
+                </Row>
+              }
               {materialItemConfig.map(config => (
                 <Col key={config.valid} span={12}>
                   <FormItem {...formItemLayout} label={config.label}>

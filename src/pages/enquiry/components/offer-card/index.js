@@ -32,6 +32,20 @@ export default class OfferCard extends PureComponent {
           { this.props.hasRemove && <Icon className={style['offer-card__close']} type="close-circle" onClick={this.props.onRemove} /> }
         </div>
         <div className={style['offer-card__content']}>
+          { offer.img_url_arr && offer.img_url_arr.length &&
+            <Row gutter={32} className={style['offer-card__row']}>
+              <Col span={3}>图片</Col>
+              <Col span={21}>
+                <div className={style['offer-card__image-field']}>
+                  { offer.img_url_arr.map(image =>
+                    <div className={style['offer-card__image-box']}>
+                      <img src={image} alt=""/>
+                    </div>
+                  ) }
+                </div>
+              </Col>
+            </Row>
+          }
           <Row gutter={32} className={style['offer-card__row']}>
             <Col span={3}>
               供应商编码
