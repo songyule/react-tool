@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react'
-import { Row, Col, Input, Icon } from 'antd'
+import { Row, Col, Input, Icon, Radio, DatePicker } from 'antd'
 import BomCollapse from '../bom-collapse'
 import style from './index.css'
 import { format } from 'utils'
 import { find } from 'lodash'
-const [ TextArea ] = [ Input.TextArea ]
+import moment from 'moment'
+const [ TextArea, RadioGroup ] = [ Input.TextArea, Radio.Group ]
 
 export default class OfferCard extends PureComponent {
   constructor (props) {
@@ -32,19 +33,19 @@ export default class OfferCard extends PureComponent {
           { this.props.hasRemove && <Icon className={style['offer-card__close']} type="close-circle" onClick={this.props.onRemove} /> }
         </div>
         <div className={style['offer-card__content']}>
-          { offer.img_url_arr && offer.img_url_arr.length &&
+          { (offer.img_url_arr && offer.img_url_arr.length) ?
             <Row gutter={32} className={style['offer-card__row']}>
               <Col span={3}>图片</Col>
               <Col span={21}>
                 <div className={style['offer-card__image-field']}>
-                  { offer.img_url_arr.map(image =>
-                    <div className={style['offer-card__image-box']}>
+                  { offer.img_url_arr.map((image, index) =>
+                    <div className={style['offer-card__image-box']} key={index}>
                       <img src={image} alt=""/>
                     </div>
                   ) }
                 </div>
               </Col>
-            </Row>
+            </Row> : null
           }
           <Row gutter={32} className={style['offer-card__row']}>
             <Col span={3}>
@@ -81,6 +82,45 @@ export default class OfferCard extends PureComponent {
             </Col>
             <Col span={9}>
               <Input disabled value={ offer.bulk_unit_price }></Input>
+            </Col>
+          </Row>
+          <Row gutter={32} className={style['offer-card__row']}>
+            <Col span={3}>
+              报价有效期
+            </Col>
+            <Col span={9}>
+              { offer.valid_deadline ? <DatePicker disabled defaultValue={moment(offer.valid_deadline)}></DatePicker> : '无' }
+            </Col>
+            <Col span={3}>
+              打样单价
+            </Col>
+            <Col span={9}>
+              <Input disabled value={ offer.sampling_unit_price }></Input>
+            </Col>
+          </Row>
+          <Row gutter={32} className={style['offer-card__row']}>
+            <Col span={3}>
+              起订量
+            </Col>
+            <Col span={9}>
+              <Input disabled value={ offer.minimum_order_quantity }></Input>
+            </Col>
+            <Col span={3}>
+              是否含税
+            </Col>
+            <Col span={9}>
+              <RadioGroup disabled value={offer.include_tax}>
+                <Radio value="1"> 包含税费 </Radio>
+                <Radio value="0"> 不包含税费 </Radio>
+              </RadioGroup>
+            </Col>
+          </Row>
+          <Row gutter={32} className={style['offer-card__row']}>
+            <Col span={3}>
+              开票加点
+            </Col>
+            <Col span={9}>
+              <Input disabled value={ offer.tax_point }></Input>
             </Col>
           </Row>
           <Row gutter={32} className={style['offer-card__row']}>

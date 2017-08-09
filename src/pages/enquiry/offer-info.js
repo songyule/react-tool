@@ -32,11 +32,26 @@ export default class OfferInfo extends PureComponent {
     this.getInquiryDetail()
   }
 
+  handleToLocal = (obj) => {
+    Object.keys(obj).forEach(key => {
+      if (key === 'bulk_wear_rate') obj[key] = String(Number(obj[key]) * 100)
+      if (key === 'tax_point' && obj[key] !== '') obj[key] = String(Number(obj[key]) * 100)
+      if (key === 'valid_deadline' && obj[key] !== '') obj[key] = Number(obj[key]) * 1000
+      if (key === 'include_tax' && obj[key] !== '') obj[key] = String(obj[key])
+      if (key === 'include_express_fee' && obj[key] !== '') obj[key] = String(obj[key])
+      if (key === 'material_offer_arr') {
+        obj[key] = obj[key].map(material => this.handleToLocal(material))
+      }
+    })
+    return obj
+  }
+
   getInquiryDetail = async() => {
     const id = this.props.match.params.id
     const res = await getOfferList({ id })
     const inquiry = res.data.inquiry[0]
     const offerObj = this.props.offers
+    if (inquiry.offer_arr && inquiry.offer_arr.length) inquiry.offer_arr = inquiry.offer_arr.map(offer => this.handleToLocal(offer))
     if (offerObj.id === id) inquiry.offer_arr = [...inquiry.offer_arr, ...offerObj.list]
 
     this.setState({
@@ -99,10 +114,19 @@ export default class OfferInfo extends PureComponent {
                   'predictable_risk',
                   'comment',
                   'img_url_arr',
-                  'material_offer_arr']
+                  'material_offer_arr',
+                  'valid_deadline',
+                  'sampling_unit_price',
+                  'minimum_order_quantity',
+                  'include_tax',
+                  'tax_point']
     Object.keys(offer).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveOffer[key] = offer[key]
       if (key === 'bulk_wear_rate') saveOffer[key] = String(Number(saveOffer[key]) / 100)
+      if (key === 'tax_point' && saveOffer[key]) saveOffer[key] = String(Number(saveOffer[key]) / 100)
+      if (key === 'valid_deadline' && saveOffer[key]) saveOffer[key] = ~~(+new Date(saveOffer[key]) / 1000)
+      if (key === 'include_tax' && saveOffer[key]) saveOffer[key] = +saveOffer[key]
+      if (key === 'include_express_fee' && saveOffer[key]) saveOffer[key] = +saveOffer[key]
     })
     return saveOffer
   }
@@ -125,12 +149,21 @@ export default class OfferInfo extends PureComponent {
       'supplier_id',
       'comment',
       'material_serial',
-      'img_url_arr'
+      'img_url_arr',
+      'valid_deadline',
+      'sampling_unit_price',
+      'minimum_order_quantity',
+      'include_tax',
+      'tax_point'
     ]
 
     Object.keys(material).forEach(key => {
       if (fieldMapping.indexOf(key) !== -1) saveMaterial[key] = material[key]
       if (key === 'bulk_wear_rate') saveMaterial[key] = String(Number(saveMaterial[key]) / 100)
+      if (key === 'tax_point' && saveMaterial[key]) saveMaterial[key] = String(Number(saveMaterial[key]) / 100)
+      if (key === 'valid_deadline' && saveMaterial[key]) saveMaterial[key] = ~~(+new Date(saveMaterial[key]) / 1000)
+      if (key === 'include_tax' && saveMaterial[key]) saveMaterial[key] = +saveMaterial[key]
+      if (key === 'include_express_fee' && saveMaterial[key]) saveMaterial[key] = +saveMaterial[key]
     })
     return saveMaterial
   }

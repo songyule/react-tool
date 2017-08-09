@@ -9,7 +9,7 @@ import Title from 'components/title'
 import { accMul } from 'utils'
 import MyUpload from 'components/common/img-upload.js'
 // import MaterialForm from './components/material-form'
-import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button } from 'antd'
+import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button, Popconfirm, DatePicker } from 'antd'
 const [FormItem, RadioGroup, Option, Panel, TextArea] = [Form.Item, Radio.Group, Select.Option, Collapse.Panel, Input.TextArea]
 
 @Form.create()
@@ -60,14 +60,25 @@ export default class CreateOffer extends PureComponent {
           bulk_examine_fee,
           quality_req,
           quality_testing_req,
-          img_url_arr = []
+          img_url_arr = [],
+          valid_deadline,
+          sampling_unit_price,
+          minimum_order_quantity,
+          include_tax,
+          tax_point
         } = values
 
         let data = {
           sampling_price,
           bulk_unit_price,
           predictable_risk,
-          comment
+          comment,
+          img_url_arr,
+          valid_deadline,
+          sampling_unit_price,
+          minimum_order_quantity,
+          include_tax,
+          tax_point
         }
 
         const BOMData = {}
@@ -93,8 +104,7 @@ export default class CreateOffer extends PureComponent {
             bulk_mould_fee,
             bulk_examine_fee,
             quality_req,
-            quality_testing_req,
-            img_url_arr
+            quality_testing_req
           }
         }
         const id = this.props.match.params.id
@@ -301,16 +311,54 @@ export default class CreateOffer extends PureComponent {
                 )}
               </FormItem>
             </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label="报价有效期">
+                {getFieldDecorator('valid_deadline')(
+                  <DatePicker></DatePicker>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label="打样单价">
+                {getFieldDecorator('sampling_unit_price', { rules: [{ message: '打样单价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+                  <Input />
+                )}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label="起订量">
+                {getFieldDecorator('minimum_order_quantity', { rules: [{ message: '起订量必须为整数', pattern: /^\d+$/ }] })(
+                  <Input />
+                )}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label="是否含税">
+                {getFieldDecorator('include_tax')(
+                  <RadioGroup >
+                    <Radio value="1"> 包含税费 </Radio>
+                    <Radio value="0"> 不包含税费 </Radio>
+                  </RadioGroup>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label="开票加点">
+                {getFieldDecorator('tax_point', { rules: [{ message: '税点格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+                  <Input />
+                )}
+              </FormItem>
+            </Col>
             {
               data['material_arr'].length === 0
                 ? (
                   <div>
                     <Col span={12}>
                       <FormItem {...formItemLayout} label="包含运费">
-                        {getFieldDecorator('include_express_fee', { initialValue: data.include_express_fee || 1 })(
-                          <RadioGroup >
-                            <Radio value={1}> 包含运费 </Radio>
-                            <Radio value={0}> 不包含运费 </Radio>
+                        {getFieldDecorator('include_express_fee', { initialValue: data.include_express_fee || '1' })(
+                          <RadioGroup>
+                            <Radio value="1"> 包含运费 </Radio>
+                            <Radio value="0"> 不包含运费 </Radio>
                           </RadioGroup>
                         )}
                       </FormItem>
@@ -382,10 +430,10 @@ export default class CreateOffer extends PureComponent {
                                ))}
                                <Col span={12}>
                                  <FormItem {...formItemLayout} label="包含运费">
-                                   {getFieldDecorator('BOM__include_express_fee__' + item.serial, { initialValue: item.include_express_fee || 1 })(
+                                   {getFieldDecorator('BOM__include_express_fee__' + item.serial, { initialValue: item.include_express_fee || '1' })(
                                      <RadioGroup >
-                                       <Radio value={1}> 包含运费 </Radio>
-                                       <Radio value={0}> 不包含运费 </Radio>
+                                       <Radio value="1"> 包含运费 </Radio>
+                                       <Radio value="0"> 不包含运费 </Radio>
                                      </RadioGroup>
                                    )}
                                  </FormItem>
@@ -419,6 +467,44 @@ export default class CreateOffer extends PureComponent {
                                    </FormItem>
                                  </Col>
                                ))}
+                              <Col span={12}>
+                                <FormItem {...formItemLayout} label="报价有效期">
+                                  {getFieldDecorator(`BOM__valid_deadline__${item.serial}`)(
+                                    <DatePicker></DatePicker>
+                                  )}
+                                </FormItem>
+                              </Col>
+                              <Col span={12}>
+                                <FormItem {...formItemLayout} label="打样单价">
+                                  {getFieldDecorator(`BOM__sampling_unit_price__${item.serial}`, { rules: [{ message: '打样单价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+                                    <Input />
+                                  )}
+                                </FormItem>
+                              </Col>
+                              <Col span={12}>
+                                <FormItem {...formItemLayout} label="起订量">
+                                  {getFieldDecorator(`BOM__minimum_order_quantity__${item.serial}`, { rules: [{ message: '起订量必须为整数', pattern: /^\d+$/ }] })(
+                                    <Input />
+                                  )}
+                                </FormItem>
+                              </Col>
+                              <Col span={12}>
+                                <FormItem {...formItemLayout} label="是否含税">
+                                  {getFieldDecorator(`BOM__include_tax__${item.serial}`)(
+                                    <RadioGroup>
+                                      <Radio value="1"> 包含税费 </Radio>
+                                      <Radio value="0"> 不包含税费 </Radio>
+                                    </RadioGroup>
+                                  )}
+                                </FormItem>
+                              </Col>
+                              <Col span={12}>
+                                <FormItem {...formItemLayout} label="开票加点">
+                                  {getFieldDecorator(`BOM__tax_point__${item.serial}`, { rules: [{ message: '税点格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+                                    <Input />
+                                  )}
+                                </FormItem>
+                              </Col>
                                {materialItemFullColConfig.map(config => (
                                  <Col key={config.valid} span={24}>
                                    <FormItem {...formItemFullColLayout} label={config.label}>

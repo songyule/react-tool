@@ -287,7 +287,6 @@ class newEnquiry extends PureComponent {
   }
   setInputType = (e) => {
     this.props.form.setFieldsValue({'bulk_estimate_amount': 1})
-    console.log(this.props.form)
   }
   checkBigImg = (img) => {
     window.open(img)
