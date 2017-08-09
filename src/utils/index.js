@@ -64,8 +64,10 @@ export function format (time, formatStr) {
   var tf = function (i) {
     return (i < 10 ? '0' : '') + i
   }
-  return formatStr.replace(/yyyy|MM|dd|HH|mm|ss/g, function (a) {
+  return formatStr.replace(/YY|yyyy|MM|dd|HH|mm|ss/g, function (a) {
     switch (a) {
+      case 'YY':
+        return tf(t.getFullYear()).slice(-2)
       case 'yyyy':
         return tf(t.getFullYear())
       case 'MM':

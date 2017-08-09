@@ -6,7 +6,6 @@
 
     &__content {
       display: flex;
-      /* flex-wrap: wrap; */
       width: auto;
       margin-top: 10px;
       overflow-x: scroll;

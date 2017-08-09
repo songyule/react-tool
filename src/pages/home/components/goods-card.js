@@ -6,7 +6,6 @@ class Topic extends Component {
   render () {
     const { image, title, price, className } = this.props
     const classList = ['goods-card', className]
-    console.log(image)
     return (
       <div className={classList.join(' ')} onClick={this.props.onClick}>
         <div className="img" style={{ backgroundImage: `url(${image})` }}></div>

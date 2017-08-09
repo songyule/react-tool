@@ -7,6 +7,13 @@ import { format } from 'utils'
 const Option = Select.Option
 const Search = Input.Search
 
+const typeMappings = {
+  'pc topic': 1,
+  'pc trends': 2,
+  'mobile topic': 3,
+  'mobile trends': 4
+}
+
 // get /user/editor/list 获取所有编辑er列表
 // post /article/list 创建文章
 // patch /article/edit/<article_id> 修改文章
@@ -71,6 +78,8 @@ export default class extends PureComponent {
       limit: pageSize,
       offset: (current - 1) * pageSize
     }
+    const key = [this.props.device, this.props.type].join(' ')
+    params['article_type_arr'] = [typeMappings[key]]
     if (content) params[type] = content
     if (updator_id) params.updator_id = updator_id
 
@@ -107,7 +116,7 @@ export default class extends PureComponent {
     }, this.getArticleList)
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.getArticleList()
 
     // 获取编辑列表
@@ -116,6 +125,18 @@ export default class extends PureComponent {
         editors: res.data
       })
     })
+  }
+
+  componentWillReceiveProps (nextProps) {
+
+    this.setState({
+      data: [],
+      pagination: {
+        ...this.state.pagination,
+        total: 0,
+        current: 1
+      }
+    }, () => this.getArticleList())
   }
 
   render() {
@@ -181,19 +202,6 @@ export default class extends PureComponent {
 
     const { pagination, data } = this.state
 
-    // const data = [{
-    //   key: '1',
-    //   no: '1',
-    //   cover_image: 'http://od2cb56o8.bkt.clouddn.com/information_cover/f643e9bf5ccf428e9debc6374d843e28',
-    //   title: '新工艺 教你如何使用珍珠',
-    //   create: '2017-04-18 15:00:30',
-    //   author: '提莫',
-    //   label: '2017,春,新工艺,超现',
-    //   read: '2111',
-    //   sort: 32,
-    //   status: '显示',
-    // }]
-
     const selectBefore = (
       <Select defaultValue="标题" style={{ width: 80 }} onChange={this.changeSearchType}>
         <Option value="title">标题</Option>
@@ -203,7 +211,7 @@ export default class extends PureComponent {
 
     return (
       <div>
-        <Title title="趋势文章列表">
+        <Title title={this.props.type === 'topic' ? '专题文章列表' : '趋势文章列表'}>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <Search addonBefore={selectBefore} placeholder='搜索' onSearch={value => this.onSearch(value)} />
         </div>

@@ -2,6 +2,7 @@
   .home-common-card {
     position: relative;
     width: 165px;
+    height: 180px;
     margin-right: 8px;
     flex-shrink: 0;
 
@@ -10,24 +11,42 @@
       text-align: center;
       font-size: 11px;
       color: #444444;
-    }
-
-    &__img {
-      width: 100%;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     &__image-box {
       position: relative;
+      height: 140px;
+    }
+
+    &__backgroud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
     }
 
     &__label {
       position: absolute;
-      bottom: -7px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      bottom: 0;
       width: 100%;
       text-align: center;
+      transform: translateY(50%);
     }
 
     &__label-img {
+      display: block;
       width: 76px;
     }
   }

@@ -34,7 +34,8 @@ class HomeSettings extends Component {
       fileList: [],
       indexObj,
       editIndex: -1,
-      edit: { ...emptyItem }
+      edit: { ...emptyItem },
+      params: { type: 'trends' }
     }
   }
 
@@ -61,6 +62,7 @@ class HomeSettings extends Component {
       edit: obj,
       editIndex: index,
       editVisible: true,
+      params: { type: code !== 'mobile_index_top_topic' ? 'trends' : 'topic' },
       fileList
     })
   }
@@ -151,9 +153,10 @@ class HomeSettings extends Component {
 
   handleSelect = (trend) => {
     const editObj = this.state.edit
+    const detailUrl = this.state.type === 'top' ? 'topic' : 'article'
     editObj.title = trend.title
     editObj.image_url = trend.cover_image
-    editObj.link = `${MOBILE_URL}/trend-detail/${trend.id}`
+    editObj.link = `${MOBILE_URL}/#/${detailUrl}/${trend.id}`
     editObj.obj_id = trend.id
     const fileList = []
     if (editObj.image_url) fileList.push({
@@ -263,7 +266,7 @@ class HomeSettings extends Component {
 
           { this.state.edit.section_code !== 'mobile_index_top_banner' && this.state.edit.section_code !== 'mobile_index_recommend_product' && <Button onClick={() => this.setState({ articleVisible: true })}>选择文章</Button> }
 
-          { this.state.articleVisible && <TrendList select={this.handleSelect}></TrendList> }
+          { this.state.articleVisible && <TrendList device="mobile" type={this.state.params.type} select={this.handleSelect}></TrendList> }
         </Modal>
       </div>
     )
