@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { Input, Radio, Button, Table, Form, Select } from 'antd'
 import style from '../../css/new-enquiry.css'
 import { getClass } from 'actions/commodity'
-import { creatSampling } from 'actions/sampling'
+import { creatSampling, kd100 } from 'actions/sampling'
 import { format } from 'utils'
 const { TextArea } = Input
 const RadioGroup = Radio.Group
@@ -22,7 +22,8 @@ class newEnquiry extends PureComponent {
       img_url_arr: []
     },
     selectSku: {},
-    isBomHide: false
+    isBomHide: false,
+    expressObj: {}
   }
 
   onChangeType = (e) => { // 选择商品类型
@@ -83,6 +84,11 @@ class newEnquiry extends PureComponent {
   componentWillMount() {
     this.getLv1Class()
     const enquiryMes = this.props.enquiryMes || {}
+    kd100().then(res => {
+      this.setState({
+        expressObj: res.data
+      })
+    })
     if (JSON.stringify(enquiryMes) === '{}') return
     this.setState({reqMes: enquiryMes})
     const skuSnapshot = enquiryMes.sku_snapshot || {}
@@ -104,7 +110,7 @@ class newEnquiry extends PureComponent {
     })
   }
   render () {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldValue} = this.props.form
     const { reqMes } = this.state
     const columns = [{
       title: '属性',
@@ -192,6 +198,7 @@ class newEnquiry extends PureComponent {
         </div>
       </div>
     )
+    const hasSampling = reqMes.has_sampling
     return (
       <div className={style.newContent}>
         <Form>
@@ -372,6 +379,18 @@ class newEnquiry extends PureComponent {
               <Radio value={1}>有</Radio>
               <span>(请在工单被供应链同事响应后给到具体同事)</span>
             </RadioGroup>
+            { hasSampling && <FormItem label="物流公司" className={style.tier}>
+              <Select className={style.inputTitle} value={reqMes.logistics_company_kd100_code} disabled>
+                {
+                  Object.keys(this.state.expressObj).map((key, index) => {
+                    return (<Option  key={index} value={this.state.expressObj[key]}>{key}</Option>)
+                  })
+                }
+              </Select>
+            </FormItem> }
+            { hasSampling && <FormItem label="物流单号" className={style.tier}>
+              <Input className={style.inputTitle} value={reqMes.logistics_code} disabled></Input>
+            </FormItem> }
           </FormItem>
           <FormItem
             label="打样要求"

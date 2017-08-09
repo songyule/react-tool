@@ -67,3 +67,8 @@ export const saveOffer = ({ id, offer }) => async (dispatch, getState) => {
 export const editOffers = ({ id, offers }) => async (dispatch, getState) => {
   dispatch({ type: constants.EDIT_OFFERS, offers, id })
 }
+
+export const kd100 = async (data) => {
+  const response = await fetch.get('/sampling/kd100')
+  return response
+}

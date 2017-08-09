@@ -8,7 +8,7 @@ import SelectClient from 'components/enquiry/select-client'
 import CommoditySelection from './components/commodity-selection/index'
 import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
-import { creatSampling, sellerInquirySearch, enquiryUpdata } from 'actions/sampling'
+import { creatSampling, sellerInquirySearch, enquiryUpdata, kd100 } from 'actions/sampling'
 import { toRemoteBom, toLocalBom } from './utils'
 
 const RadioGroup = Radio.Group
@@ -36,7 +36,8 @@ class newEnquiry extends PureComponent {
     boms: [],
     enquiryMes: {},
     spuImgArr: [],
-    enqId: ''
+    enqId: '',
+    expressObj: {}
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -296,8 +297,12 @@ class newEnquiry extends PureComponent {
   }
   componentWillMount() {
     this.getLv1Class()
+    kd100().then(res => {
+      this.setState({
+        expressObj: res.data
+      })
+    })
     if (!this.props.match.params.id) return
-    console.log(this.props.match.params.id.substring(1))
     this.setState({
       enqId: this.props.match.params.id.substring(1),
       enqSource: this.props.match.params.id.substring(-1,1)
@@ -306,7 +311,7 @@ class newEnquiry extends PureComponent {
     })
   }
   render () {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldValue} = this.props.form
     const { clientOrgMes, reqMes, enquiryMes } = this.state
     const boms = this.state.boms
     const columns = [{
@@ -357,6 +362,7 @@ class newEnquiry extends PureComponent {
         reqFilde: 'standard'
       }
     ]
+    const hasSampling = getFieldValue('has_sampling') || enquiryMes.has_sampling
     return (
       <div className={style.newContent}>
         <Title title='新建询价工单'></Title>
@@ -535,6 +541,26 @@ class newEnquiry extends PureComponent {
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
                 </RadioGroup>
               )}
+            { hasSampling && <FormItem label="物流公司" className={style.tier}>
+              {getFieldDecorator('logistics_company_kd100_code', {
+                initialValue:(enquiryMes && enquiryMes.logistics_company_kd100_code) || '',
+              })(
+                <Select className={style.inputTitle}>
+                  {
+                    Object.keys(this.state.expressObj).map((key, index) => {
+                      return (<Option  key={index} value={this.state.expressObj[key]}>{key}</Option>)
+                    })
+                  }
+                </Select>
+              )}
+            </FormItem> }
+            { hasSampling && <FormItem label="物流单号" className={style.tier}>
+              {getFieldDecorator('logistics_code', {
+                initialValue:(enquiryMes && enquiryMes.logistics_code) || '',
+              })(
+                <Input className={style.inputTitle}></Input>
+              )}
+            </FormItem> }
           </FormItem>
           <FormItem
             label="打样要求"
