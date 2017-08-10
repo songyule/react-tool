@@ -153,7 +153,7 @@ class HomeSettings extends Component {
 
   handleSelect = (trend) => {
     const editObj = this.state.edit
-    const detailUrl = this.state.type === 'top' ? 'topic' : 'article'
+    const detailUrl = this.state.params.type === 'topic' ? 'topic' : 'article'
     editObj.title = trend.title
     editObj.image_url = trend.cover_image
     editObj.link = `${MOBILE_URL}/#/${detailUrl}/${trend.id}`
@@ -224,9 +224,9 @@ class HomeSettings extends Component {
 
         <LatestTrends list={this.state.indexObj.mobile_index_latest_trends} editImage={this.editImage}></LatestTrends>
 
-        <CommonTrends title="贴布绣趋势" label="mobile_index_category_trend_1" list={this.state.indexObj.mobile_index_category_trend_1} editImage={this.editImage}></CommonTrends>
+        <CommonTrends title="绣花章趋势" label="mobile_index_category_trend_1" list={this.state.indexObj.mobile_index_category_trend_1} editImage={this.editImage}></CommonTrends>
 
-        <CommonTrends title="纽扣趋势" label="mobile_index_category_trend_2" list={this.state.indexObj.mobile_index_category_trend_2} editImage={this.editImage}></CommonTrends>
+        <CommonTrends title="手工钉珠趋势" label="mobile_index_category_trend_2" list={this.state.indexObj.mobile_index_category_trend_2} editImage={this.editImage}></CommonTrends>
 
         <CommonTrends title="织带趋势" label="mobile_index_category_trend_3" list={this.state.indexObj.mobile_index_category_trend_3} editImage={this.editImage}></CommonTrends>
 
