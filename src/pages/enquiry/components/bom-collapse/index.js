@@ -147,7 +147,7 @@ export default class BomCollapse extends PureComponent {
               </Col>
               <Col span={12}>
                 <FormItem {...formItemLayout} label="报价有效期">
-                  { material.valid_deadline ? <DatePicker disabled defaultValue={moment(material.valid_deadline, 'YYYY-MM-DD')}></DatePicker> : '无' }
+                  { material.valid_deadline ? <DatePicker disabled defaultValue={moment(material.valid_deadline)}></DatePicker> : '无' }
                 </FormItem>
               </Col>
               <Col span={12}>

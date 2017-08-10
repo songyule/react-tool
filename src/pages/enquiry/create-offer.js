@@ -170,10 +170,10 @@ export default class CreateOffer extends PureComponent {
 
     const formItemConfig = [
       {
-        label: '打样价格',
+        label: '打样单价',
         valid: 'sampling_price',
         unit: '元',
-        rules: [{ required: true, message: '请输入打样价格', pattern: /^\d+(\.\d+)?$/ }]
+        rules: [{ required: true, message: '请输入打样单价', pattern: /^\d+(\.\d+)?$/ }]
       },
       {
         label: '大货单价',
@@ -234,10 +234,10 @@ export default class CreateOffer extends PureComponent {
         rules: [{ required: true, message: '请输入检测费', pattern: /^\d+(\.\d+)?$/ }]
       },
       {
-        label: '单价',
+        label: '打样单价',
         valid: 'bulk_unit_price',
         unit: '元',
-        rules: [{ required: true, message: '请输入单价', pattern: /^\d+(\.\d+)?$/ }]
+        rules: [{ required: true, message: '请输入打样单价', pattern: /^\d+(\.\d+)?$/ }]
       },
       {
         label: '预计数量',
@@ -319,8 +319,8 @@ export default class CreateOffer extends PureComponent {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem {...formItemLayout} label="打样单价">
-                {getFieldDecorator('sampling_unit_price', { rules: [{ message: '打样单价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+              <FormItem {...formItemLayout} label="打样成本价">
+                {getFieldDecorator('sampling_unit_price', { rules: [{ message: '打样成本价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
                   <Input />
                 )}
               </FormItem>
@@ -475,8 +475,8 @@ export default class CreateOffer extends PureComponent {
                                 </FormItem>
                               </Col>
                               <Col span={12}>
-                                <FormItem {...formItemLayout} label="打样单价">
-                                  {getFieldDecorator(`BOM__sampling_unit_price__${item.serial}`, { rules: [{ message: '打样单价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
+                                <FormItem {...formItemLayout} label="打样成本价">
+                                  {getFieldDecorator(`BOM__sampling_unit_price__${item.serial}`, { rules: [{ message: '打样成本价格式有误', pattern: /^\d+(\.\d+)?$/ }] })(
                                     <Input />
                                   )}
                                 </FormItem>
