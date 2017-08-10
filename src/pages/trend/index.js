@@ -52,7 +52,7 @@ export default class extends PureComponent {
     let trend = val.trend_image && val.trend_image.map(item => {
       return ({
         trend_image: item.trend_image,
-        spu_id: item.spu.map(val => val.id)
+        spu_id: item.spu && item.spu.map(val => val.id)
       })
     })
 
