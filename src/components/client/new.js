@@ -115,6 +115,11 @@ class create extends PureComponent {
         data.adcode = values.residence[values.residence.length - 1]
         data.status = Number(values.status)
         data.org_type = this.state.isClientNew ? 2 : 3
+        data.extra_info = {
+          supplier_extra_info: {
+            recommend_comment: values.recommend_comment
+          }
+        }
         if (this.state.orgMes && this.state.orgMes.from === 'clientEdit') { // 这个是来自client 的编辑组织
           data.id = this.state.orgMes.orgId
           editOrgMes(data).then(res => {
@@ -361,6 +366,18 @@ class create extends PureComponent {
                 initialValue: (this.state.orgMes && this.state.orgMes.website) || '',
               })(
                 <Input className={style.input}/>
+              )}
+          </FormItem>
+        </div>
+        <div className={style.fromBottom}>
+          <FormItem
+            label="备注"
+            className={style.formitme}
+            >
+              {getFieldDecorator('recommend_comment', {
+                initialValue: (this.state.orgMes && this.state.orgMes.extra_info && this.state.orgMes.extra_info.supplier_extra_info.recommend_comment) || '',
+              })(
+                <Input className={style.input} type="textarea"/>
               )}
           </FormItem>
         </div>
