@@ -52,7 +52,7 @@ export default class extends PureComponent {
     let trend = val.trend_image && val.trend_image.map(item => {
       return ({
         trend_image: item.trend_image,
-        spu_id: item.spu.map(val => val.id)
+        spu_id: item.spu && item.spu.map(val => val.id)
       })
     })
 
@@ -142,6 +142,7 @@ export default class extends PureComponent {
     confirm({
       content: '确定要删除这篇文章吗？',
       onOk: async () => {
+        let tag = (val.article_tag && val.article_tag.map(item => item.id)) || []
         let trend = val.trend_image && val.trend_image.map(item => {
           return ({
             trend_image: item.trend_image,
@@ -153,6 +154,7 @@ export default class extends PureComponent {
         let data = {
           ...val,
           trend_image: trend,
+          article_tag: tag,
           'article_type': 2,
           status: -1
         }
