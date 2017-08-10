@@ -37,7 +37,16 @@ export default class OfferList extends PureComponent {
   }
 
   handleTabsChange = e => {
-    this.setState({ state: e }, this.getList)
+    this.setState(
+      {
+        state: e,
+        pagination: {
+          current: 1,
+          pageSize: 10
+        }
+      },
+      this.getList
+    )
   }
 
   handleTableChange = e => {
