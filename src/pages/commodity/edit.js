@@ -106,7 +106,7 @@ class CommodityEdit extends Component {
       const skus = res.data.map(toLocalSku)
       let attributes = []
       skus.forEach(sku => {
-        attributes.push(...sku.attributes)
+        attributes.push(...(sku.attributes || []))
       })
       attributes = uniqBy(attributes, 'id')
       const groupAttributes = groupBy(attributes, 'lv2_id')
