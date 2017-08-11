@@ -366,10 +366,10 @@ export default class CreateOffer extends PureComponent {
                     <Col span={12}>
                       <FormItem {...formItemLayout} label="供应商选择">
                         {getFieldDecorator('supplier_id', { rules: [{ required: true, message: '请选择供应商'}] })(
-                          <Select placeholder="请选择">
+                          <Select placeholder="请选择" showSearch optionFilterProp="label">
                             {
                               orgList.map(item => (
-                                <Option key={item.id} value={item.id}> {item.name_official || item.name_cn} </Option>
+                                <Option key={item.id} value={item.id} label={item.name_official || item.name_cn}> {item.name_official || item.name_cn} </Option>
                               ))
                             }
                           </Select>
@@ -439,17 +439,17 @@ export default class CreateOffer extends PureComponent {
                                  </FormItem>
                                </Col>
                                <Col span={12}>
-                                 <FormItem {...formItemLayout} label="供应商选择">
-                                   {getFieldDecorator('BOM__supplier_id__' + item.serial, { rules: [{ required: true, message: '请选择供应商'}] })(
-                                     <Select placeholder="请选择">
-                                       {
-                                         orgList.map(item => (
-                                           <Option key={item.id} value={item.id}> {item.name_official || item.name_cn} </Option>
-                                         ))
-                                       }
-                                     </Select>
-                                   )}
-                                 </FormItem>
+                                <FormItem {...formItemLayout} label="供应商选择">
+                                  {getFieldDecorator('supplier_id', { rules: [{ required: true, message: '请选择供应商'}] })(
+                                    <Select placeholder="请选择" showSearch optionFilterProp="label">
+                                      {
+                                        orgList.map(item => (
+                                          <Option key={item.id} value={item.id} label={item.name_official || item.name_cn}> {item.name_official || item.name_cn} </Option>
+                                        ))
+                                      }
+                                    </Select>
+                                  )}
+                                </FormItem>
                                </Col>
                                {materialItemWithUnitConfig.map(config => (
                                  <Col key={config.valid} span={12}>
