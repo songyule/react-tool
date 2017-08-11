@@ -1,5 +1,8 @@
 import React, { PureComponent } from 'react'
-import { Input, Radio, Button, Table, Form, Select, Modal, message } from 'antd'
+import { Input, Radio, Button, Table, Form, Select, Modal, message, Cascader } from 'antd'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as commodityActions from 'actions/commodity'
 import Title from 'components/title'
 import style from './css/new-enquiry.css'
 import MyUpload from '../../pages/topic/components/img-upload'
@@ -10,11 +13,16 @@ import BomCreate from './components/bom-create'
 import { getClass } from 'actions/commodity'
 import { creatSampling, sellerInquirySearch, enquiryUpdata, kd100 } from 'actions/sampling'
 import { toRemoteBom, toLocalBom } from './utils'
+import { classToSelected } from '../../utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
 const Option = Select.Option
 
+@connect(
+  state => state,
+  dispatch => bindActionCreators(commodityActions, dispatch)
+)
 class newEnquiry extends PureComponent {
   state = {
     defaultSource: true,
@@ -37,7 +45,10 @@ class newEnquiry extends PureComponent {
     enquiryMes: {},
     spuImgArr: [],
     enqId: '',
-    expressObj: {}
+    expressObj: {},
+    isSelectReq: false,
+    isSelectClient: false,
+    isSelectShop: false
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -79,6 +90,7 @@ class newEnquiry extends PureComponent {
     if (val.name === 'req') {
       console.log(val.reqMes)
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
+      this.setState({isSelectReq: true})
       if (val.reqMes.spu) val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
       let fileArr = []
       val.reqMes.img_arr.map((item, index) => {
@@ -105,7 +117,8 @@ class newEnquiry extends PureComponent {
       console.log(val.clientOrgMes)
       this.setState({
         clientVisible: val.visible,
-        clientOrgMes: val.clientOrgMes
+        clientOrgMes: val.clientOrgMes,
+        isSelectClient: true
       })
     } else if (val.name === 'getReq') {
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
@@ -136,7 +149,7 @@ class newEnquiry extends PureComponent {
     this.setState({ fileList })
   }
   checkNumber = (value) => {
-    let reg = /^[0-9]+.?[0-9]*$/
+    let reg = /^\+?[1-9][0-9]*$/
     if (reg.test(value)) {
       return true
     }
@@ -145,12 +158,14 @@ class newEnquiry extends PureComponent {
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!this.checkNumber(values.bulk_estimate_amount)) return this.total('预计大货数量 为纯数字')
       if (!err && this.checkNumber(values.bulk_estimate_amount)) {
         let arr = []
         this.state.fileList.map(item => {
           arr.push(item.response)
           return arr
         })
+        if (values.custom_commodity_class_ids && values.custom_commodity_class_ids.length) values.custom_commodity_class_id = values.custom_commodity_class_ids.slice(-1)[0]
         values.img_url_arr = arr
         if (this.state.isType !== 2) values.custom_commodity_class_id = 0
         if (this.state.isMaterial) values.material_arr = this.state.bom
@@ -166,12 +181,30 @@ class newEnquiry extends PureComponent {
           console.log('我是一个返回并修改报价哦')
           values.id = this.state.enqId
           enquiryUpdata(values).then(res => {
-            if (res.code === 200) this.setState({modalVisible: true})
+            if (res.code === 200) {
+              const modal = Modal.info({
+                content: '询价单正在努力创建中'
+              })
+              setTimeout(() => {
+                modal.destroy()
+                this.props.history.push('/main/enquiry-list')
+                message.success('创建成功')
+              }, 2000);
+            }
           })
         } else {
           console.log('这里是新建一个报价')
           creatSampling(values).then(res => {
-            if (res.code === 200) this.setState({modalVisible: true})
+            if (res.code === 200) {
+              const modal = Modal.info({
+                content: '询价单正在努力创建中'
+              })
+              setTimeout(() => {
+                modal.destroy()
+                this.props.history.push('/main/enquiry-list')
+                message.success('创建成功')
+              }, 2000);
+            }
           })
         }
       }
@@ -206,15 +239,17 @@ class newEnquiry extends PureComponent {
     })
   }
   commodityCallback = (sku) => {
-    console.log(sku)
     let newReqMes = this.state.reqMes
     newReqMes.sku_snapshot = sku
+    console.log(newReqMes.sku_snapshot.spu.commodity_class)
+    console.log(classToSelected(newReqMes.sku_snapshot.spu.commodity_class[0].id))
     this.setState({
       commodityVisible: false,
       reqMes: newReqMes,
       skuData: sku.attribute,
       spuData: sku.spu.commodity_attribute,
-      spuImgArr:sku.spu.image_url
+      spuImgArr:sku.spu.image_url,
+      isSelectShop: true
     })
   }
   bomCallback = (boms) => {
@@ -262,6 +297,8 @@ class newEnquiry extends PureComponent {
         return fileArr.push(obj)
       })
       if (res.code === 200) {
+        console.log(inquiry.custom_commodity_class)
+        inquiry.custom_commodity_class_id = classToSelected(inquiry.custom_commodity_class)
         if (inquiry.sku_id) {
           this.setState({
             enquiryMes: inquiry,
@@ -383,48 +420,54 @@ class newEnquiry extends PureComponent {
               }
             </div>
           </FormItem>
-          <FormItem
-            label="客户情况"
-            className={style.tier}
-          >
-            {
-              !this.state.isReq && <Button type="primary" onClick={() => this.showModal('client')}>选择客户</Button>
-            }
-            <div>
-              <div className={style.flex}>
-                <FormItem label="客户简称">
-                  {getFieldDecorator('name_cn', {
-                    initialValue: (clientOrgMes && clientOrgMes.org.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.name_cn) || (enquiryMes.client_org && enquiryMes.client_org.name_cn)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-                <FormItem label="客户编码">
-                  {getFieldDecorator('sn', {
-                    initialValue: (clientOrgMes && 'SN' + clientOrgMes.org.sn) || (reqMes.applicant_org && 'SN' + reqMes.applicant_org.sn) || (enquiryMes.client_org && 'SN' + enquiryMes.client_org.sn)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-              </div>
-              <div className={style.flex}>
-                <FormItem label="客户级别">
-                  {getFieldDecorator('level', {
-                    initialValue: (clientOrgMes && clientOrgMes.org && clientOrgMes.org.client_level && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level && enquiryMes.client_org.client_level.name)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-                <FormItem label="提交人">
-                  {getFieldDecorator('name', {
-                    initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller && enquiryMes.client_org.seller[0].name_cn)
-                  })(
-                    <Input disabled className={style.inputTitle}></Input>
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </FormItem>
+          {
+            (this.state.isReq ? this.state.isSelectReq : true) &&
+            <FormItem
+              label="客户情况"
+              className={style.tier}
+            >
+              {
+                !this.state.isReq && <Button type="primary" onClick={() => this.showModal('client')}>选择客户</Button>
+              }
+              {
+                (this.state.isReq ? true : !this.isReq && this.state.isSelectClient) &&
+                <div>
+                  <div className={style.flex}>
+                    <FormItem label="客户简称">
+                      {getFieldDecorator('name_cn', {
+                        initialValue: (clientOrgMes && clientOrgMes.org.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.name_cn) || (enquiryMes.client_org && enquiryMes.client_org.name_cn)
+                      })(
+                        <Input disabled className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                    <FormItem label="客户编码">
+                      {getFieldDecorator('sn', {
+                        initialValue: (clientOrgMes && 'SN' + clientOrgMes.org.sn) || (reqMes.applicant_org && 'SN' + reqMes.applicant_org.sn) || (enquiryMes.client_org && 'SN' + enquiryMes.client_org.sn)
+                      })(
+                        <Input disabled className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                  </div>
+                  <div className={style.flex}>
+                    <FormItem label="客户级别">
+                      {getFieldDecorator('level', {
+                        initialValue: (clientOrgMes && clientOrgMes.org && clientOrgMes.org.client_level && clientOrgMes.org.client_level.name) || (reqMes.applicant_org && reqMes.applicant_org.client_level && reqMes.applicant_org.client_level.name) || (enquiryMes.client_org && enquiryMes.client_org.client_level && enquiryMes.client_org.client_level.name)
+                      })(
+                        <Input disabled className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                    <FormItem label="提交人">
+                      {getFieldDecorator('name', {
+                        initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller && enquiryMes.client_org.seller[0].name_cn)
+                      })(
+                        <Input disabled className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                  </div>
+                </div>
+              }
+            </FormItem>
+          }
           <FormItem label="商品类型" className={style.tier}>
             {getFieldDecorator('sampling_type', {
               initialValue: (reqMes && reqMes.classification) || ( enquiryMes && enquiryMes.sampling_type) || 0
@@ -436,62 +479,84 @@ class newEnquiry extends PureComponent {
               </RadioGroup>
             )}
           </FormItem>
-          <FormItem label="商品详情" className={style.tier}>
-            <div className={style.flex}>
-              <FormItem label="商品名称">
-                {getFieldDecorator('custom_commodity_name', {
-                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || ''
+          {
+            (this.state.isReq ? this.state.isSelectReq : true) &&
+            <FormItem label="商品详情" className={style.tier}>
+              {this.state.isType !== 2 && <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>}
+              {this.state.isType === 2 &&
+                <div className={style.flex}>
+                  <FormItem label="商品名称">
+                    {getFieldDecorator('custom_commodity_name', {
+                      initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || ''
+                    })(
+                      <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
+                    )}
+                  </FormItem>
+                  <FormItem label="类目">
+                    {getFieldDecorator('custom_commodity_class_ids', {
+                      initialValue: []
+                      // String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
+                    })(
+                      <Cascader options={this.props.commodityClasses.sortClasses} placeholder="请选择商品分类"></Cascader>
+                    )}
+                  </FormItem>
+                </div>
+              }
+              {
+                (this.state.isReq ? true : !this.state.isReq && this.state.isSelectShop) &&
+                <div>
+                  <div className={style.flex}>
+                    <FormItem label="商品名称">
+                      {getFieldDecorator('custom_commodity_name', {
+                        initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || enquiryMes.custom_commodity_name || ''
+                      })(
+                        <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
+                      )}
+                    </FormItem>
+                    <FormItem label="类目">
+                    {getFieldDecorator('custom_commodity_class_ids', {
+                      initialValue: [] || (reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id)
+                      // String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
+                    })(
+                      <Cascader options={this.props.commodityClasses.sortClasses} placeholder="请选择商品分类"></Cascader>
+                    )}
+                  </FormItem>
+                  </div>
+                  {
+                    this.state.isType !== 2 &&  <div>
+                                                    <FormItem label="SKUID" className={style.mBottom}>
+                                                      {getFieldDecorator('sku_id', {
+                                                        initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id) || ''
+                                                      })(
+                                                          <Input className={style.inputTitle} disabled></Input>
+                                                      )}
+                                                    </FormItem>
+                                                    <FormItem label="SKU描述">
+                                                      <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
+                                                    </FormItem>
+                                                    <FormItem label="商品描述">
+                                                      <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='321'></Table>
+                                                    </FormItem>
+                                                    <FormItem label="商品图片">
+                                                      {
+                                                        this.state.spuImgArr.map((item, index) => {
+                                                          return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
+                                                        })
+                                                      }
+                                                    </FormItem>
+                                                  </div>
+                  }
+                </div>
+              }
+              <FormItem label="商品补充描述">
+                {getFieldDecorator('img_url_arr', {
+                  initialValue: ''
                 })(
-                  <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
+                  <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
                 )}
               </FormItem>
-              <FormItem label="类目">
-                {getFieldDecorator('custom_commodity_class_id', {
-                  initialValue: String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
-                })(
-                  <Select className={style.inputTitle} disabled={this.state.isType !== 2}>
-                    {
-                      this.state.lv1ClassArr.map((item, index) => {
-                        return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
-                      })
-                    }
-                  </Select>
-                )}
-              </FormItem>
-            </div>
-            {
-              this.state.isType !== 2 &&  <div>
-                                              <FormItem label="SKUID" className={style.mBottom}>
-                                                {getFieldDecorator('sku_id', {
-                                                  initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || (enquiryMes && enquiryMes.sku_id) || ''
-                                                })(
-                                                    <Input className={style.inputTitle} disabled></Input>
-                                                )}
-                                                <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
-                                              </FormItem>
-                                              <FormItem label="SKU描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>
-                                              </FormItem>
-                                              <FormItem label="商品描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='321'></Table>
-                                              </FormItem>
-                                              <FormItem label="商品图片">
-                                                {
-                                                  this.state.spuImgArr.map((item, index) => {
-                                                    return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
-                                                  })
-                                                }
-                                              </FormItem>
-                                            </div>
-            }
-            <FormItem label="商品补充描述">
-              {getFieldDecorator('img_url_arr', {
-                initialValue: ''
-              })(
-                <MyUpload fileList={[...this.state.fileList]} onChange={this.handleChange} length={5}></MyUpload>
-              )}
             </FormItem>
-          </FormItem>
+          }
           <FormItem label="商品要求" className={style.tier}>
             {
               goodsReq.map((item, index) => {

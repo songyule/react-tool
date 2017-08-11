@@ -203,9 +203,10 @@ export function toLocalSpu (spu) {
   }
 }
 
-export function classToSelected (data) {
+export function classToSelected (data = {}) {
   let level = 1
   const list = []
+  if (!data.level) return list
   while (level <= data.level) {
     list.push(data[`lv${level}_id`])
     level++

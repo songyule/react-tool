@@ -1,14 +1,22 @@
 import React, { PureComponent } from 'react'
-import { Input, Radio, Button, Table, Form, Select } from 'antd'
+import { Input, Radio, Button, Table, Form, Select, Cascader } from 'antd'
 import style from '../../css/new-enquiry.css'
+import * as commodityActions from 'actions/commodity'
 import { getClass } from 'actions/commodity'
 import { creatSampling, kd100 } from 'actions/sampling'
-import { format } from 'utils'
-const { TextArea } = Input
+import { format, classToSelected } from 'utils'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
 const Option = Select.Option
 
+
+@connect(
+  state => state,
+  dispatch => bindActionCreators(commodityActions, dispatch)
+)
 class newEnquiry extends PureComponent {
   state = {
     defaultSource: true,
@@ -22,8 +30,9 @@ class newEnquiry extends PureComponent {
       img_url_arr: []
     },
     selectSku: {},
-    isBomHide: false,
-    expressObj: {}
+    isBomHide: true,
+    expressObj: {},
+    classArr: []
   }
 
   onChangeType = (e) => { // 选择商品类型
@@ -49,12 +58,6 @@ class newEnquiry extends PureComponent {
         console.log(res)
       })
     })
-  }
-  getLv1Class () {
-    getClass({level: 1}).then(res => {
-      this.setState({lv1ClassArr: res.data})
-    })
-    console.log(this.props)
   }
   classify (val) {
     if (!val) return
@@ -82,8 +85,9 @@ class newEnquiry extends PureComponent {
     })
   }
   componentWillMount() {
-    this.getLv1Class()
+    this.props.getClasses()
     const enquiryMes = this.props.enquiryMes || {}
+    console.log(enquiryMes)
     kd100().then(res => {
       this.setState({
         expressObj: res.data
@@ -93,20 +97,25 @@ class newEnquiry extends PureComponent {
     this.setState({reqMes: enquiryMes})
     const skuSnapshot = enquiryMes.sku_snapshot || {}
     const spu = skuSnapshot.spu || {}
+    console.log(enquiryMes)
     this.setState({
       skuData: skuSnapshot.attribute,
       spuData: spu.commodity_attribute,
     })
   }
   componentWillReceiveProps (nextProps) {
-    const enquiryMes = this.props.enquiryMes || {}
-    this.setState({reqMes: nextProps.enquiryMes})
+    const enquiryMes = nextProps.enquiryMes || {}
+    console.log(enquiryMes)
+    this.setState({
+      reqMes: nextProps.enquiryMes,
+      classArr: classToSelected(enquiryMes.custom_commodity_class)
+    })
     if (JSON.stringify(nextProps.enquiryMes.sku_snapshot) === '{}') return
     const skuSnapshot = enquiryMes.sku_snapshot || {}
     const spu = skuSnapshot.spu || {}
     this.setState({
       skuData: skuSnapshot.attribute,
-      spuData: spu.commodity_attribute,
+      spuData: spu.commodity_attribute
     })
   }
   render () {
@@ -282,13 +291,7 @@ class newEnquiry extends PureComponent {
                 )}
               </FormItem>
               <FormItem label="类目">
-                <Select className={style.inputTitle} disabled value={`${reqMes.custom_commodity_class_id}`}>
-                  {
-                    this.state.lv1ClassArr.map((item, index) => {
-                      return (<Option  key={index} value={item.lv1_id.toString()}>{item.name_cn}</Option>)
-                    })
-                  }
-                </Select>
+                <Cascader disabled options={this.props.commodityClasses.sortClasses} value={this.state.classArr} placeholder="请选择商品分类"></Cascader>
               </FormItem>
             </div>
             {
@@ -305,7 +308,7 @@ class newEnquiry extends PureComponent {
                                                 <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='skuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='spuTable'></Table>
+                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.spuData} rowKey='spuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
@@ -318,7 +321,7 @@ class newEnquiry extends PureComponent {
             }
             <FormItem label="商品补充描述">
               {
-                reqMes.img_url_arr.map((item, index) => {
+                reqMes.img_url_arr && reqMes.img_url_arr.map((item, index) => {
                   return (<img key={index} src={item} alt="img" className={style.originImg} onClick={(imgSrc) => this.checkBigImg(item)}/>)
                 })
               }
@@ -368,7 +371,7 @@ class newEnquiry extends PureComponent {
           </FormItem>
           <div>
             {
-              this.state.isBomHide && reqMes.material_arr.map((bomItem, index) => {
+              this.state.isBomHide && reqMes.material_arr && reqMes.material_arr.map((bomItem, index) => {
                 return <Bom key={index} bomItem={bomItem}/>
               })
             }

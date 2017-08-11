@@ -16,7 +16,7 @@ export default class extends PureComponent {
   state = {
     id: '',
     enquiryMes: {},
-    isEnqShow: false,
+    isEnqShow: true,
     visible: false,
     returnVisible: false,
     returnCauseText: '',
