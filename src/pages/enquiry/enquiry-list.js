@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Tabs, Input, Select, Button, Table, Pagination } from 'antd'
+import { Tabs, Input, Select, Button, Table, Pagination, Spin } from 'antd'
 import style from './css/enquiry-list.css'
 import { Link } from 'react-router-dom'
 import { sellerInquirySearch } from 'actions/sampling'
@@ -29,7 +29,17 @@ export default class extends PureComponent {
     kw: '',
     statusValue: 0,
     page: 1,
-    limit: 10
+    limit: 10,
+    count: {
+      0: '',
+      1: '',
+      2: '',
+      3: '',
+      4: '',
+      5: ''
+    },
+    loading: false,
+    tip: '加载中....'
   }
   tabCallback = (key) => {
     this.setState({
@@ -40,6 +50,7 @@ export default class extends PureComponent {
     })
   }
   getEnquiryData () {
+    this.setState({ loading: true, tip: '加载中……' })
     let data = {
       offset: (this.state.page - 1) * this.state.limit,
       limit: this.state.limit,
@@ -49,7 +60,8 @@ export default class extends PureComponent {
     sellerInquirySearch(data).then(res => {
       console.log(res)
       this.setState({
-        enquiryData: res.data
+        enquiryData: res.data,
+        loading: false
       })
     })
   }
@@ -80,6 +92,16 @@ export default class extends PureComponent {
     }
   }
   componentWillMount () {
+    let initData = {
+      limit: 0,
+      offset: 0,
+      state: 5
+    }
+    sellerInquirySearch(initData).then(res => {
+      console.log(res.code)
+      if (res.code !== 200) return
+      this.setState({count: res.data.agg.state})
+    })
     this.getEnquiryData()
   }
   render () {
@@ -93,29 +115,29 @@ export default class extends PureComponent {
         <Search
           addonBefore={selectBefore}
           placeholder="请输入工单号"
-          style={{ width: 300 }}
+          style={{ width: 240 }}
           onSearch={value => this.searchChange(value)}
         />
         <Button type="primary" style={{marginLeft: 20}}><Link to="/main/new-enquiry">新建工单</Link></Button>
       </div>
     )
     const status = [{
-      name: '待确定',
-      value: 0
-    },{
-      name: '被退回',
-      value: 1
-    },{
-      name: '待认领',
+      name: `待认领(${this.state.count[2]})`,
       value: 2
     },{
-      name: '报价中',
+      name: `被退回(${this.state.count[1]})`,
+      value: 1
+    },{
+      name: `待确定(${this.state.count[0]})`,
+      value: 0
+    },{
+      name: `报价中(${this.state.count[3]})`,
       value: 3
     },{
-      name: '已完成',
+      name: `已完成(${this.state.count[4]})`,
       value: 4
     },{
-      name: '全部',
+      name: `全部(${this.state.count[5]})`,
       value: 5
     }]
     const columns = [{
@@ -161,7 +183,7 @@ export default class extends PureComponent {
         </div>
       )
     }];
-    const { enquiryData } = this.state
+    const { enquiryData, loading, tip } = this.state
     return (
       <div className={style.content}>
         <div>
@@ -170,7 +192,9 @@ export default class extends PureComponent {
               status.map(item => {
                 return (
                   <TabPane tab={item.name} key={item.value}>
-                    <Table columns={columns} dataSource={enquiryData.inquiry} pagination={false} rowKey="uid"/>
+                    <Spin spinning={loading} tip={tip}>
+                      <Table columns={columns} dataSource={enquiryData.inquiry} pagination={false} rowKey="uid"/>
+                    </Spin>
                   </TabPane>
                 )
               })
