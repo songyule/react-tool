@@ -283,7 +283,7 @@ export default class CreateOffer extends PureComponent {
           <Row>
             {
               <FormItem {...formItemFullColLayout} label="图片">
-                {getFieldDecorator('img_url_arr', { initialValue: data['img_url_arr'] })(<div></div>)}
+                {getFieldDecorator('img_url_arr', { initialValue: [] })(<div></div>)}
                 <MyUpload onChange={this.handleUpload} fileList={[...fileList]}></MyUpload>
               </FormItem>
             }
