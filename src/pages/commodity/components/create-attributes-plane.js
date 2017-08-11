@@ -78,22 +78,23 @@ class CreateAttributesPlane extends Component {
             { !this.props.inEdit ? <FormItem
               label="">
               {
-              // getFieldDecorator('skuTypes', {
-              //   rules: [{
-              //     type: 'array',
-              //     required: true,
-              //     message: '至少选择一个商品类型'
-              //   }]
-              // })(
-                <div className={style["attribute-row"]}>
-                  <div className="attribute-row__left">
-                    商品类型：
+                getFieldDecorator('skuTypes', {
+                  initialValue: this.props.skuTypes,
+                  rules: [{
+                    type: 'array',
+                    required: true,
+                    message: '至少选择一个商品类型'
+                  }]
+                })(
+                  <div className={style["attribute-row"]}>
+                    <div className="attribute-row__left">
+                      商品类型：
+                    </div>
+                    <div className="attribute-row__right">
+                      <Select mode="tags" style={{ width: '500px' }} value={this.props.skuTypes} onChange={this.changeTypes}>{ this.renderSelect() }</Select>
+                    </div>
                   </div>
-                  <div className="attribute-row__right">
-                    <Select mode="tags" style={{ width: '500px' }} value={this.props.skuTypes} onChange={this.changeTypes}>{ this.renderSelect() }</Select>
-                  </div>
-                </div>
-              // )
+                )
             }
             </FormItem> : <FormItem>
               <div className={style["attribute-row"]}>

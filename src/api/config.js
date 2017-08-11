@@ -11,4 +11,4 @@ export const PC_URL = IS_DEV ? 'http://mp.fuliaoyi.com' : 'https://www.fuliaoyi.
 
 export const MOBILE_URL = IS_DEPLOY_DEV ? 'https://dev.fuliaoyi.com' : 'https://shop.fuliaoyi.com/'
 
-export const CUSTOM_ATTRIBUTE_PARENT_ID = IS_DEPLOY_DEV ? '1942' : '219'
+export const CUSTOM_ATTRIBUTE_PARENT_ID = IS_DEPLOY_DEV ? 1942 : 219

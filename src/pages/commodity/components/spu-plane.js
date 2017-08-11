@@ -240,7 +240,7 @@ class SpuPlane extends PureComponent {
             label="属性">
             <div className="spu-plane__attributes-button-row">
               {getFieldDecorator('attributes', {
-                initialValue: this.props.spu.classesSelected,
+                initialValue: this.props.spu.attributes,
                 rules: [{
                   type: 'array',
                   required: true,
