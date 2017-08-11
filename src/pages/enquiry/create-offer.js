@@ -9,7 +9,7 @@ import Title from 'components/title'
 import { accMul } from 'utils'
 import MyUpload from 'components/common/img-upload.js'
 // import MaterialForm from './components/material-form'
-import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button, Popconfirm, DatePicker } from 'antd'
+import { Form, Input, Row, Col, Radio, Select, Collapse, Card, Button, Popconfirm, DatePicker, Modal } from 'antd'
 const [FormItem, RadioGroup, Option, Panel, TextArea] = [Form.Item, Radio.Group, Select.Option, Collapse.Panel, Input.TextArea]
 
 @Form.create()
@@ -26,13 +26,14 @@ export default class CreateOffer extends PureComponent {
       isExpand: false,
       id: this.props.match.params.id,
       fileList: [],
-      fileObj: {}
+      fileObj: {},
+      visible: false
     }
   }
 
   componentWillMount () {
     this.getDetail()
-    this.props.getOrgList({ limit: 10000 })
+    this.props.getOrgList({ limit: 10000, org_type: 3 })
   }
 
   handleExpand = (e) => {
@@ -109,7 +110,7 @@ export default class CreateOffer extends PureComponent {
         }
         const id = this.props.match.params.id
         this.props.saveOffer({ id, offer: data })
-        this.props.history.push(`/main/offer-info/${id}`)
+        this.setState({ visible: true })
       } else {
         if (!this.state.isExpand) this.setState({ isExpand: true })
       }
@@ -153,8 +154,19 @@ export default class CreateOffer extends PureComponent {
     else this.props.form.setFieldsValue({ [`BOM__img_url_arr__${serial}`]: imgs })
   }
 
+  handleGoDetail = () => {
+    const id = this.props.match.params.id
+    this.setState({ visible: false })
+    this.props.history.push(`/main/offer-info/${id}`)
+  }
+
+  handleContinue = () => {
+    this.setState({ visible: false })
+    this.props.form.resetFields()
+  }
+
   render () {
-    const { id, data, isExpand, fileList, fileObj } = this.state
+    const { id, data, isExpand, fileList, fileObj, visible } = this.state
     const { getFieldDecorator } = this.props.form
     const { orgList } = this.props
 
@@ -184,7 +196,7 @@ export default class CreateOffer extends PureComponent {
       {
         label: '大货预计数量',
         valid: 'bulk_estimate_amount',
-        unit: data && data.unit,
+        unit: data && data.bulk_unit,
         isReturn: true
       },
       {
@@ -543,11 +555,25 @@ export default class CreateOffer extends PureComponent {
           </Row>
         </Form>
         <div style={{textAlign: 'center', maxWidth: '1000px', margin: '10px 0'}}>
-          <Button type="primary" onClick={this.handleSubmit}> 保存报价 </Button>
-          <Link to={`/main/offer-info/${id}`}>
+          <Button type="primary" onClick={this.handleSubmit} style={{ marginRight: '20px'}}> 保存报价 </Button>
+          <Popconfirm title="返回报价工单所填写的数据将不会保存，请确定返回" okText="确认" cancelText="取消" onConfirm={this.confirmBack}>
             <Button> 返回 </Button>
           </Link>
         </div>
+        <Modal
+          visible={visible}
+          closable={false}
+          title="您的报价单已创建成功"
+          style={{top: '300px'}}
+          footer={[
+            <Button key="back" size="large" onClick={this.handleContinue}>继续报价</Button>,
+            <Button key="submit" type="primary" size="large" onClick={this.handleGoDetail}>
+              查看详情
+            </Button>
+          ]}
+        >
+          <p>您可以：查看详情或继续报价，一份报价单允许多个报价</p>
+        </Modal>
       </div>
     ) : null
   }
