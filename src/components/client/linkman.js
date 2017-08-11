@@ -164,7 +164,7 @@ class linkman extends PureComponent {
               {getFieldDecorator('classification', {
                 initialValue: (this.state.contactObj && this.state.contactObj.classificationS) || '',
                 rules: [{
-                  required: true, message: '请填写类型',
+                  required: true, message: '请选择联系人的类型',
                 }],
               })(
                 <RadioGroup>
@@ -195,10 +195,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('gender', {
-                initialValue: (this.state.contactObj && this.state.contactObj.genderS) || '',
-                rules: [{
-                  required: true, message: '请填写称谓',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.genderS) || ''
               })(
                 <Select>
                   <Option value="1">先生</Option>
@@ -213,10 +210,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('department', {
-                initialValue: (this.state.contactObj && this.state.contactObj.department) || '',
-                rules: [{
-                  required: true, message: '请填写部门',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.department) || ''
               })(
                 <Input />
               )}
@@ -227,10 +221,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('title', {
-                initialValue: (this.state.contactObj && this.state.contactObj.title) || '',
-                rules: [{
-                  required: true, message: '请填写职位',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.title) || ''
               })(
                 <Input />
               )}
@@ -241,10 +232,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('landline', {
-                initialValue: (this.state.contactObj && this.state.contactObj.landline) || '',
-                rules: [{
-                  required: true, message: '请填写座机',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.landline) || ''
               })(
                 <Input />
               )}
@@ -258,8 +246,6 @@ class linkman extends PureComponent {
                 initialValue: (this.state.contactObj && this.state.contactObj.mobile) || '',
                 rules: [{
                   pattern: /^1[34578]\d{9}$/, message: '手机号格式不正确', trigger: 'none'
-                },{
-                  required: true, message: '请填写联系电话',
                 }],
               })(
                 <Input />
@@ -271,10 +257,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('email', {
-                initialValue: (this.state.contactObj && this.state.contactObj.email) || '',
-                rules: [{
-                  required: true, message: '请填写邮箱',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.email) || ''
               })(
                 <Input />
               )}
@@ -285,10 +268,7 @@ class linkman extends PureComponent {
               hasFeedback
             >
               {getFieldDecorator('address', {
-                initialValue: (this.state.contactObj && this.state.contactObj.address) || '',
-                rules: [{
-                  required: true, message: '请填写公司地址',
-                }],
+                initialValue: (this.state.contactObj && this.state.contactObj.address) || ''
               })(
                 <Input />
               )}

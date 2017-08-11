@@ -147,6 +147,10 @@ class create extends PureComponent {
     })
   }
 
+  what = (e) => {
+    console.log(e)
+  }
+
   handleOk () {
     this.state.isClientNew ? this.props.history.push('/main/clientList') : this.props.history.push('/main/supplierList')
   }
@@ -200,7 +204,7 @@ class create extends PureComponent {
           </FormItem>
           <div className={style.fromTopCenter}>
             <FormItem
-            label="客户名称"
+            label={this.state.isClientNew ? '客户名称' : '供应商名称'}
             className={style.formitme}
             >
               {getFieldDecorator('name_official', {
@@ -217,7 +221,7 @@ class create extends PureComponent {
             className={style.formitme}
             >
               {getFieldDecorator('status', {
-                initialValue: (this.state.orgMes && this.state.orgMes.statusS) || '',
+                initialValue: (this.state.orgMes && this.state.orgMes.statusS) || '1',
                 rules: [{
                   required: true, message: '请选择状态',
                 }]
@@ -288,7 +292,7 @@ class create extends PureComponent {
           {
             !this.state.isClientNew &&
             <FormItem
-            label="简称"
+            label={this.state.isClientNew ? '客户简称' : '供应商简称'}
             className={style.formitme}
             >
               {getFieldDecorator('name_cn', {
@@ -306,7 +310,7 @@ class create extends PureComponent {
         {
           this.state.isClientNew &&
           <FormItem
-            label="简称"
+            label={this.state.isClientNew ? '客户简称' : '供应商简称'}
             className={style.formitme}
             >
               {getFieldDecorator('name_cn', {
@@ -324,10 +328,10 @@ class create extends PureComponent {
             label="城市选择"
           >
             {getFieldDecorator('residence', {
-              initialValue: (this.state.orgMes && this.state.orgMes.adcode_path) || [],
+              initialValue: (this.state.orgMes && this.state.orgMes.adcode_path) || ["100000", "440000", "440100"],
               rules: [{ type: 'array', required: true, message: '请选择城市' }]
             })(
-              <Cascader options={this.state.residences} style={{width: 300}} changeOnSelect placeholder="请选择"/>
+              <Cascader options={this.state.residences} style={{width: 300}} changeOnSelect onChange={this.what} placeholder="请选择"/>
             )}
           </FormItem>
           <FormItem

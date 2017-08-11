@@ -540,7 +540,7 @@ class newEnquiry extends PureComponent {
                   <span>(请在工单被供应链同事响应后给到具体同事)</span>
                 </RadioGroup>
               )}
-            { hasSampling && <FormItem label="物流公司" className={style.tier}>
+            { hasSampling ? <FormItem label="物流公司" className={style.tier}>
               {getFieldDecorator('logistics_company_kd100_code', {
                 initialValue:(enquiryMes && enquiryMes.logistics_company_kd100_code) || '',
               })(
@@ -552,14 +552,14 @@ class newEnquiry extends PureComponent {
                   }
                 </Select>
               )}
-            </FormItem> }
-            { hasSampling && <FormItem label="物流单号" className={style.tier}>
+            </FormItem> : null }
+            { hasSampling ? <FormItem label="物流单号" className={style.tier}>
               {getFieldDecorator('logistics_code', {
                 initialValue:(enquiryMes && enquiryMes.logistics_code) || '',
               })(
                 <Input className={style.inputTitle}></Input>
               )}
-            </FormItem> }
+            </FormItem> : null }
           </FormItem>
           <FormItem
             label="打样要求"

@@ -379,7 +379,7 @@ class newEnquiry extends PureComponent {
               <Radio value={1}>有</Radio>
               <span>(请在工单被供应链同事响应后给到具体同事)</span>
             </RadioGroup>
-            { hasSampling && <FormItem label="物流公司" className={style.tier}>
+            { hasSampling ? <FormItem label="物流公司" className={style.tier}>
               <Select className={style.inputTitle} value={reqMes.logistics_company_kd100_code} disabled>
                 {
                   Object.keys(this.state.expressObj).map((key, index) => {
@@ -387,10 +387,10 @@ class newEnquiry extends PureComponent {
                   })
                 }
               </Select>
-            </FormItem> }
-            { hasSampling && <FormItem label="物流单号" className={style.tier}>
+            </FormItem> : null }
+            { hasSampling ? <FormItem label="物流单号" className={style.tier}>
               <Input className={style.inputTitle} value={reqMes.logistics_code} disabled></Input>
-            </FormItem> }
+            </FormItem> : null }
           </FormItem>
           <FormItem
             label="打样要求"

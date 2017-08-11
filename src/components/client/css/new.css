@@ -37,7 +37,7 @@
   :global{
     .ant-form-item-label {
       /*background: pink;*/
-      width: 80px;
+      width: 100px;
       text-align: right;
     }
   }
