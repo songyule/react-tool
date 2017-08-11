@@ -12,6 +12,7 @@ import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
 import Editor from 'components/richEditor'
 import style from './create.css'
+import { CUSTOM_ATTRIBUTE_PARENT_ID } from 'api/config'
 // const FormItem = Form.Item
 
 @connect(
@@ -110,7 +111,7 @@ class CommodityCreate extends Component {
     // if (!this.spuPlaneValid() || !this.createAttributesPlaneValid()) return
     if (!this.spuPlaneValid() || !this.createAttributesPlaneValid() || !this.validAttributes() || !this.validAttributesPlus()) return
     const skuAttributes = [...this.state.skuAttributes]
-    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name.value, parent_id: 1942, weight: 1 })) })
+    const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: skuAttributes.map(item => ({ attr_type: 2, name_cn: item.name.value, parent_id: CUSTOM_ATTRIBUTE_PARENT_ID, weight: 1 })) })
     // const nameRes = {data: [{"attr_type":2,"created_at":1499305851,"id":1959,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1959,"lv2_name_cn":"11","name_cn":"11","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1},{"attr_type":2,"created_at":1499305851,"id":1960,"level":2,"lv1_id":1942,"lv1_name_cn":"测试","lv2_id":1960,"lv2_name_cn":"22","name_cn":"22","parent_id":1942,"status":1,"updated_at":1499305851,"weight":1}]}
 
     nameRes.data.forEach(item => {

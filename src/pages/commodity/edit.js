@@ -12,6 +12,7 @@ import { toRemoteSku, toRemoteSpu, toLocalSpu, toLocalSku } from 'utils'
 import * as managementActions from 'actions/management'
 import * as commodityActions from 'actions/commodity'
 import style from './edit.css'
+import { CUSTOM_ATTRIBUTE_PARENT_ID } from 'api/config'
 // const FormItem = Form.Item
 
 @connect(
@@ -199,7 +200,7 @@ class CommodityEdit extends Component {
 
     const nameAttributes = []
     skuAttributes.forEach(attribute => {
-      if (attribute.name.id && attribute.name.changed) nameAttributes.push({ attr_type: 2, name_cn: attribute.name.value, parent_id: 1942 })
+      if (attribute.name.id && attribute.name.changed) nameAttributes.push({ attr_type: 2, name_cn: attribute.name.value, parent_id: CUSTOM_ATTRIBUTE_PARENT_ID })
     })
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
 
@@ -319,7 +320,7 @@ class CommodityEdit extends Component {
     const sku = {...this.state.editSku}
     const nameAttributes = []
     this.state.editSku.attributes.forEach(attribute => {
-      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: 1942 })
+      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: CUSTOM_ATTRIBUTE_PARENT_ID })
     })
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
 
@@ -363,7 +364,7 @@ class CommodityEdit extends Component {
     const sku = {...this.state.editSku}
     const nameAttributes = []
     this.state.editSku.attributes.forEach(attribute => {
-      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: 1942 })
+      nameAttributes.push({ attr_type: 2, name_cn: attribute.lv2_name_cn, parent_id: CUSTOM_ATTRIBUTE_PARENT_ID })
     })
     const nameRes = await this.props.multiCreateCommodityAttribute({ attribute: nameAttributes })
 
