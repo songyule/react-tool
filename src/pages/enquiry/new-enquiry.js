@@ -70,7 +70,10 @@ class newEnquiry extends PureComponent {
   onChangeWd = (e) => { // 数据来源
     if (!e.target.value) this.handleReset()
     this.setState({
-      isReq: e.target.value
+      isReq: e.target.value,
+      isType: (e.target.value && this.state.reqMes && this.state.reqMes.classification) || (!e.target.value && this.state.enquiryMes && this.state.enquiryMes.sampling_type) || 0
+    }, () => {
+      console.log(this.state.isType)
     })
     console.log(e.target.value)
   }
@@ -91,7 +94,9 @@ class newEnquiry extends PureComponent {
       console.log(val.reqMes)
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
       this.setState({isSelectReq: true})
-      if (val.reqMes.spu) val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      // if (val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu) val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      if (val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu) val.reqMes.commodity_class_ids = classToSelected(val.reqMes.sku_snapshot.spu.commodity_class[0])
+      console.log(val.reqMes)
       let fileArr = []
       val.reqMes.img_arr.map((item, index) => {
         let obj ={
@@ -111,7 +116,10 @@ class newEnquiry extends PureComponent {
         skuData: val.reqMes.sku_snapshot.attribute || '',
         spuData: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.commodity_attribute) || '',
         fileList: fileArr,
-        spuImgArr: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.image_url) || []
+        spuImgArr: (val.reqMes.sku_snapshot.spu && val.reqMes.sku_snapshot.spu.image_url) || [],
+        isType: val.reqMes.classification
+      }, () => {
+        console.log(this.state.isType)
       })
     } else if (val.name === 'client') {
       console.log(val.clientOrgMes)
@@ -122,7 +130,8 @@ class newEnquiry extends PureComponent {
       })
     } else if (val.name === 'getReq') {
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
-      val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
+      console.log(val)
+      if (val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu) val.reqMes.commodity_class_ids = classToSelected(val.reqMes.sku_snapshot.spu.commodity_class[0])
       let fileArr = []
       val.reqMes.img_arr.map((item, index) => {
         let obj ={
@@ -139,7 +148,8 @@ class newEnquiry extends PureComponent {
         reqMes: val.reqMes,
         skuData: val.reqMes.sku_snapshot.attribute,
         spuData: val.reqMes.sku_snapshot.spu.commodity_attribute,
-        fileList: fileArr
+        fileList: fileArr,
+        isType: val.reqMes.classification
       })
     }
   }
@@ -173,7 +183,7 @@ class newEnquiry extends PureComponent {
           if (!this.state.reqMes.id) return this.total('请选择一个需求单')
           values.sampling_id = this.state.reqMes.id
         } else {
-          if (!this.state.clientOrgMes) return this.total('请选择供应商')
+          if (!this.state.clientOrgMes) return this.total('请选择一个客户')
           values.client_uid = this.state.clientOrgMes.id
           values.client_org_id = this.state.clientOrgMes.org_id
         }
@@ -241,8 +251,8 @@ class newEnquiry extends PureComponent {
   commodityCallback = (sku) => {
     let newReqMes = this.state.reqMes
     newReqMes.sku_snapshot = sku
-    console.log(newReqMes.sku_snapshot.spu.commodity_class)
-    console.log(classToSelected(newReqMes.sku_snapshot.spu.commodity_class[0].id))
+    console.log(newReqMes)
+    console.log(classToSelected(newReqMes.sku_snapshot.spu.commodity_class))
     this.setState({
       commodityVisible: false,
       reqMes: newReqMes,
@@ -297,8 +307,8 @@ class newEnquiry extends PureComponent {
         return fileArr.push(obj)
       })
       if (res.code === 200) {
-        console.log(inquiry.custom_commodity_class)
-        inquiry.custom_commodity_class_id = classToSelected(inquiry.custom_commodity_class)
+        console.log(inquiry)
+        if (JSON.stringify(inquiry.custom_commodity_class) !== '{}') inquiry.custom_commodity_class_ids = classToSelected(inquiry.custom_commodity_class)
         if (inquiry.sku_id) {
           this.setState({
             enquiryMes: inquiry,
@@ -308,7 +318,8 @@ class newEnquiry extends PureComponent {
             skuData: inquiry.sku_snapshot.attribute,
             spuData: inquiry.sku_snapshot.spu.commodity_attribute,
             fileList: fileArr,
-            spuImgArr: inquiry.sku_snapshot.spu.image_url
+            spuImgArr: inquiry.sku_snapshot.spu.image_url,
+            isType: inquiry.sampling_type
           })
         } else {
           this.setState({
@@ -316,7 +327,8 @@ class newEnquiry extends PureComponent {
             isMaterial: inquiry.material_arr.length ? true : false,
             boms: res.data.inquiry[0].material_arr.map(bom => toLocalBom(bom)),
             isReq: inquiry.sampling_id ? true : false,
-            fileList: fileArr
+            fileList: fileArr,
+            isType: inquiry.sampling_type
           })
         }
       }
@@ -430,7 +442,7 @@ class newEnquiry extends PureComponent {
                 !this.state.isReq && <Button type="primary" onClick={() => this.showModal('client')}>选择客户</Button>
               }
               {
-                (this.state.isReq ? true : !this.isReq && this.state.isSelectClient) &&
+                (this.state.isReq ? true : this.state.isSelectClient || enquiryMes && enquiryMes.client_org) &&
                 <div>
                   <div className={style.flex}>
                     <FormItem label="客户简称">
@@ -458,7 +470,7 @@ class newEnquiry extends PureComponent {
                     </FormItem>
                     <FormItem label="提交人">
                       {getFieldDecorator('name', {
-                        initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_org && enquiryMes.client_org.seller && enquiryMes.client_org.seller[0].name_cn)
+                        initialValue: (clientOrgMes && clientOrgMes.name_cn) || (reqMes.applicant_org && reqMes.applicant_org.client_source.name)|| (enquiryMes.client_user && enquiryMes.client_user.name_cn)
                       })(
                         <Input disabled className={style.inputTitle}></Input>
                       )}
@@ -470,7 +482,7 @@ class newEnquiry extends PureComponent {
           }
           <FormItem label="商品类型" className={style.tier}>
             {getFieldDecorator('sampling_type', {
-              initialValue: (reqMes && reqMes.classification) || ( enquiryMes && enquiryMes.sampling_type) || 0
+              initialValue: (this.state.isReq && reqMes && reqMes.classification) || (!this.state.isReq && enquiryMes && enquiryMes.sampling_type) || 0
             })(
               <RadioGroup onChange={this.onChangeType} disabled={this.state.isReq}>
                 <Radio value={0}>原版</Radio>
@@ -487,15 +499,14 @@ class newEnquiry extends PureComponent {
                 <div className={style.flex}>
                   <FormItem label="商品名称">
                     {getFieldDecorator('custom_commodity_name', {
-                      initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || ''
+                      initialValue: this.state.isType !== 2 ? ((reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || '') : (enquiryMes.custom_commodity_name || '')
                     })(
                       <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
                     )}
                   </FormItem>
                   <FormItem label="类目">
                     {getFieldDecorator('custom_commodity_class_ids', {
-                      initialValue: []
-                      // String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
+                      initialValue: (enquiryMes && enquiryMes.custom_commodity_class_ids) || []
                     })(
                       <Cascader options={this.props.commodityClasses.sortClasses} placeholder="请选择商品分类"></Cascader>
                     )}
@@ -503,22 +514,21 @@ class newEnquiry extends PureComponent {
                 </div>
               }
               {
-                (this.state.isReq ? true : !this.state.isReq && this.state.isSelectShop) &&
+                (this.state.isReq ? true : this.isType !==2 && this.state.isSelectShop) &&
                 <div>
                   <div className={style.flex}>
                     <FormItem label="商品名称">
                       {getFieldDecorator('custom_commodity_name', {
-                        initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || enquiryMes.custom_commodity_name || ''
+                        initialValue: this.state.isType !== 2 ? ((reqMes.sku_snapshot && reqMes.sku_snapshot.spu_name_cn) || (enquiryMes.sku_snapshot && enquiryMes.sku_snapshot.spu_name_cn) || '') : (enquiryMes.custom_commodity_name || '')
                       })(
                         <Input disabled={this.state.isType !== 2} className={style.inputTitle}></Input>
                       )}
                     </FormItem>
                     <FormItem label="类目">
                     {getFieldDecorator('custom_commodity_class_ids', {
-                      initialValue: [] || (reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id)
-                      // String((reqMes && reqMes.classify) || (enquiryMes && enquiryMes.custom_commodity_class_id) || '')
+                      initialValue: (reqMes && reqMes.commodity_class_ids) || (enquiryMes && enquiryMes.custom_commodity_class_ids) || []
                     })(
-                      <Cascader options={this.props.commodityClasses.sortClasses} placeholder="请选择商品分类"></Cascader>
+                      <Cascader disabled options={this.props.commodityClasses.sortClasses} placeholder="请选择商品分类"></Cascader>
                     )}
                   </FormItem>
                   </div>
