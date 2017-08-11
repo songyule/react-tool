@@ -124,12 +124,12 @@ export default class OfferInfo extends PureComponent {
       const list = ['tax_point', 'valid_deadline', 'include_tax', 'include_express_fee', 'minimum_order_quantity', 'sampling_unit_price']
       if (fieldMapping.indexOf(key) !== -1 && list.indexOf(key) === -1) saveOffer[key] = offer[key]
       if (key === 'bulk_wear_rate') saveOffer[key] = String(Number(saveOffer[key]) / 100)
-      if (key === 'tax_point' && offer[key] !== '') saveOffer[key] = String(Number(offer[key]) / 100)
-      if (key === 'valid_deadline' && offer[key] !== '') saveOffer[key] = ~~(+new Date(offer[key]) / 1000)
-      if (key === 'include_tax' && offer[key] !== '') saveOffer[key] = +offer[key]
-      if (key === 'include_express_fee' && offer[key] !== '') saveOffer[key] = +offer[key]
-      if (key === 'minimum_order_quantity' && offer[key] !== '') saveOffer[key] = +offer[key]
-      if (key === 'sampling_unit_price' && offer[key] !== '') saveOffer[key] = +offer[key]
+      if (key === 'tax_point' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = String(Number(offer[key]) / 100)
+      if (key === 'valid_deadline' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = ~~(+new Date(offer[key]) / 1000)
+      if (key === 'include_tax' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = +offer[key]
+      if (key === 'include_express_fee' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = +offer[key]
+      if (key === 'minimum_order_quantity' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = +offer[key]
+      if (key === 'sampling_unit_price' && ['', undefined].indexOf(offer[key]) === -1) saveOffer[key] = +offer[key]
     })
     return saveOffer
   }
@@ -164,12 +164,12 @@ export default class OfferInfo extends PureComponent {
       const list = ['tax_point', 'valid_deadline', 'include_tax', 'include_express_fee', 'minimum_order_quantity', 'sampling_unit_price']
       if (fieldMapping.indexOf(key) !== -1 && list.indexOf(key) === -1) saveMaterial[key] = material[key]
       if (key === 'bulk_wear_rate') saveMaterial[key] = String(Number(saveMaterial[key]) / 100)
-      if (key === 'tax_point' && material[key] !== '') saveMaterial[key] = String(Number(material[key]) / 100)
-      if (key === 'valid_deadline' && material[key] !== '') saveMaterial[key] = ~~(+new Date(material[key]) / 1000)
-      if (key === 'include_tax' && material[key] !== '') saveMaterial[key] = +material[key]
-      if (key === 'include_express_fee' && material[key] !== '') saveMaterial[key] = +material[key]
-      if (key === 'minimum_order_quantity' && material[key] !== '') saveMaterial[key] = +material[key]
-      if (key === 'sampling_unit_price' && material[key] !== '') saveMaterial[key] = +material[key]
+      if (key === 'tax_point' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = String(Number(material[key]) / 100)
+      if (key === 'valid_deadline' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = ~~(+new Date(material[key]) / 1000)
+      if (key === 'include_tax' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = +material[key]
+      if (key === 'include_express_fee' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = +material[key]
+      if (key === 'minimum_order_quantity' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = +material[key]
+      if (key === 'sampling_unit_price' && ['', undefined].indexOf(material[key]) === -1) saveMaterial[key] = +material[key]
     })
     return saveMaterial
   }
