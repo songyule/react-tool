@@ -3,7 +3,7 @@ import { format } from 'utils'
 import { getOfferList, claimOffer } from 'actions/sampling'
 import { Link } from 'react-router-dom'
 import Title from 'components/title'
-import { Tabs, Table, Button, Select, Input, message } from 'antd'
+import { Tabs, Table, Button, Select, Input, Spin, message } from 'antd'
 const [Option, Search, ButtonGroup, TabPane] = [Select.Option, Input.Search, Button.Group, Tabs.TabPane]
 
 export default class OfferList extends PureComponent {
@@ -20,11 +20,22 @@ export default class OfferList extends PureComponent {
       search: {
         type: 'id',
         content: ''
+      },
+      loading: false,
+      tip: '加载中……',
+      count: {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
       }
     }
   }
   componentWillMount () {
     this.getList()
+    this.getStateCount()
   }
 
   handleSearch = e => {
@@ -54,41 +65,62 @@ export default class OfferList extends PureComponent {
   }
 
   handleClaim = async (id) => {
+    this.setState({ loading: true, tip: '认领中……' })
     const res = await claimOffer(id)
     if (res.code === 200) {
-      message.success('认领成功')
-      this.getList()
+      setTimeout(() => {
+        message.success('认领成功')
+        this.getStateCount()
+        this.getList()
+      }, 2000)
     }
   }
 
   getList = async () => {
+    this.setState({ loading: true, tip: '加载中……' })
+
     const { current, pageSize } = this.state.pagination
     const { type, content } = this.state.search
     const { state } = this.state
 
     const params = {
+      state,
       limit: pageSize,
-      offset: (current - 1) * pageSize,
-      state
+      offset: (current - 1) * pageSize
     }
-
     if (content) params[type] = content
 
     const { data } = await getOfferList(params)
     console.log(data)
     this.setState({
+      loading: false,
       list: data.inquiry,
       pagination: { ...this.state.pagination, total: data.total }
     })
   }
 
-  render () {
-    const { list, pagination } = this.state
+  getStateCount = async () => {
+    this.setState({ loading: true, tip: '加载中……' })
+    const params = {
+      limit: 0,
+      offset: 0,
+      state: 5
+    }
 
-    const tabsMapping = [
-      { name: '待认领', key: 2 },
-      { name: '报价中', key: 3 },
-      { name: '全部', key: 5 },
+    const { data } = await getOfferList(params)
+    this.setState({
+      loading: false,
+      count: data.agg.state
+    })
+  }
+
+  render () {
+    const { list, pagination, loading, tip, count } = this.state
+
+    const tabsMapping = (countMapping) => [
+      { name: `待认领(${countMapping[2]})`, key: 2 },
+      { name: `报价中(${countMapping[3]})`, key: 3 },
+      { name: `全部(${countMapping[5]})`, key: 5 },
     ]
 
     const statusMapping = {
@@ -141,14 +173,10 @@ export default class OfferList extends PureComponent {
         key: 'action',
         render: (text, record) => (
           <ButtonGroup>
-            <Link to={`/main/offer-info/${record.id}`}>
-              <Button>查看</Button>
-            </Link>
-            {
-              text === STATUS_WAITING_FOR_CLAIM
-                ? <Button type="primary" onClick={(id) => this.handleClaim(record.id)}>抢</Button>
-                : null
-            }
+            <Button>
+              <Link to={`/main/offer-info/${record.id}`}>查看</Link>
+            </Button>
+            {text === STATUS_WAITING_FOR_CLAIM ? <Button type="primary" onClick={(id) => this.handleClaim(record.id)}> 认领 </Button> : null}
           </ButtonGroup>
         )
       }
@@ -171,16 +199,18 @@ export default class OfferList extends PureComponent {
             />
           </div>
         </Title>
-        <Tabs onChange={this.handleTabsChange} type="card">
-          {tabsMapping.map(tab => <TabPane tab={tab.name} key={tab.key} />)}
-        </Tabs>
-        <Table
-          rowKey="id"
-          dataSource={list}
-          columns={columns}
-          pagination={pagination}
-          onChange={this.handleTableChange}
-        />
+        <Spin spinning={loading} tip={tip}>
+          <Tabs onChange={this.handleTabsChange}>
+            {tabsMapping(count).map(tab => <TabPane tab={tab.name} key={tab.key} />)}
+          </Tabs>
+          <Table
+            rowKey="id"
+            dataSource={list}
+            columns={columns}
+            pagination={pagination}
+            onChange={this.handleTableChange}
+          />
+        </Spin>
       </div>
     )
   }
