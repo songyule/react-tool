@@ -123,7 +123,7 @@ function handleAttribute (attributes) {
 }
 
 function handleClasses (classes) {
-  classes = classes.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
+  // classes = classes.filter(item => [undefined, 1, 2].indexOf(item.level) > -1)
   classes.forEach(item => {
     item.disabled = item.status !== 1
   })
