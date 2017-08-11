@@ -558,7 +558,7 @@ export default class CreateOffer extends PureComponent {
           <Button type="primary" onClick={this.handleSubmit} style={{ marginRight: '20px'}}> 保存报价 </Button>
           <Popconfirm title="返回报价工单所填写的数据将不会保存，请确定返回" okText="确认" cancelText="取消" onConfirm={this.confirmBack}>
             <Button> 返回 </Button>
-          </Link>
+          </Popconfirm>
         </div>
         <Modal
           visible={visible}
