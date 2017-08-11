@@ -37,7 +37,8 @@ class newEnquiry extends PureComponent {
     enquiryMes: {},
     spuImgArr: [],
     enqId: '',
-    expressObj: {}
+    expressObj: {},
+    isSelectReq: true
   }
   showModal = (val) => { // 需求单模态框
     if (val === 'req') {
@@ -79,6 +80,7 @@ class newEnquiry extends PureComponent {
     if (val.name === 'req') {
       console.log(val.reqMes)
       if (!val.reqMes) return this.setState({reqVisible: val.visible, reqNumber: val.select[0] || ''})
+      this.setState({isSelectReq: true})
       if (val.reqMes.spu) val.reqMes.classify = this.classify(val.reqMes.sku_snapshot && val.reqMes.sku_snapshot.spu.commodity_class)
       let fileArr = []
       val.reqMes.img_arr.map((item, index) => {
@@ -136,7 +138,7 @@ class newEnquiry extends PureComponent {
     this.setState({ fileList })
   }
   checkNumber = (value) => {
-    let reg = /^[0-9]+.?[0-9]*$/
+    let reg = /^\+?[1-9][0-9]*$/
     if (reg.test(value)) {
       return true
     }
@@ -145,6 +147,7 @@ class newEnquiry extends PureComponent {
   handleSubmit = (e) => { // 表单提交按钮
     e && e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!this.checkNumber(values.bulk_estimate_amount)) return this.total('预计大货数量 为纯数字')
       if (!err && this.checkNumber(values.bulk_estimate_amount)) {
         let arr = []
         this.state.fileList.map(item => {
@@ -467,7 +470,9 @@ class newEnquiry extends PureComponent {
                                                 })(
                                                     <Input className={style.inputTitle} disabled></Input>
                                                 )}
-                                                <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
+                                                {
+                                                  !this.state.isReq && <Button type="primary" style={{marginLeft: 10}} onClick={this.showGoodsSelect}>选择商品</Button>
+                                                }
                                               </FormItem>
                                               <FormItem label="SKU描述">
                                                 <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} key='123'></Table>

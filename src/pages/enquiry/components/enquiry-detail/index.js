@@ -99,11 +99,13 @@ class newEnquiry extends PureComponent {
     })
   }
   componentWillReceiveProps (nextProps) {
-    const enquiryMes = this.props.enquiryMes || {}
+    const enquiryMes = nextProps.enquiryMes || {}
+    console.log(enquiryMes)
     this.setState({reqMes: nextProps.enquiryMes})
     if (JSON.stringify(nextProps.enquiryMes.sku_snapshot) === '{}') return
     const skuSnapshot = enquiryMes.sku_snapshot || {}
     const spu = skuSnapshot.spu || {}
+    console.log(spu)
     this.setState({
       skuData: skuSnapshot.attribute,
       spuData: spu.commodity_attribute,
@@ -305,7 +307,7 @@ class newEnquiry extends PureComponent {
                                                 <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='skuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品描述">
-                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.skuData} rowKey='spuTable'></Table>
+                                                <Table className={style.table} pagination={false} columns={columns} dataSource={this.state.spuData} rowKey='spuTable'></Table>
                                               </FormItem>
                                               <FormItem label="商品图片">
                                                 {
