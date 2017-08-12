@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 import { Input, Radio, Button, Table, Form, Select, Cascader } from 'antd'
 import style from '../../css/new-enquiry.css'
 import * as commodityActions from 'actions/commodity'
-import { getClass } from 'actions/commodity'
 import { creatSampling, kd100 } from 'actions/sampling'
 import { format, classToSelected } from 'utils'
 import { bindActionCreators } from 'redux'
@@ -59,14 +58,6 @@ class newEnquiry extends PureComponent {
       })
     })
   }
-  classify (val) {
-    if (!val) return
-    let classArr = []
-    val.map(item => {
-      return classArr.push(item.name_cn)
-    })
-    return classArr.join(',')
-  }
   history = (e) => {
     console.log(e)
     e = Number(e)
@@ -119,7 +110,7 @@ class newEnquiry extends PureComponent {
     })
   }
   render () {
-    const { getFieldDecorator, getFieldValue} = this.props.form
+    const { getFieldDecorator } = this.props.form
     const { reqMes } = this.state
     const columns = [{
       title: '属性',
@@ -295,7 +286,7 @@ class newEnquiry extends PureComponent {
               </FormItem>
             </div>
             {
-              this.state.isType !== 3 &&  <div>
+              reqMes.sampling_type !== 2 &&  <div>
                                               <FormItem label="SKUID" className={style.mBottom}>
                                                 {getFieldDecorator('sku_id', {
                                                   initialValue: (reqMes.sku_snapshot && reqMes.sku_snapshot.id) || ''
